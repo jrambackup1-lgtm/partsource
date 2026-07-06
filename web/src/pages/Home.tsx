@@ -12,7 +12,8 @@ import {
   FileSpreadsheet,
   Download,
   AlertTriangle,
-  X
+  X,
+  Search
 } from 'lucide-react';
 import { fuse, parseCustomPart, Part, suppliers, db, hashCode } from '../lib/decoder';
 import { useBOM } from '../hooks/useBOM';
@@ -179,6 +180,77 @@ export function Home() {
   const [isBrokerageModalOpen, setIsBrokerageModalOpen] = useState(false);
   const navigate = useNavigate();
   const { bomList, orders, updateBomQty, deleteBomItem, exportBOM, exportPDF, importCSV, placeOrder } = useBOM();
+
+  // Search states for the page-level center search bar
+  const [query, setQuery] = useState('');
+  const [dropdownResults, setDropdownResults] = useState<{ item: Part; score?: number }[]>([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [activeDropdownIndex, setActiveDropdownIndex] = useState(-1);
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
+
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setQuery(val);
+    setActiveDropdownIndex(-1);
+
+    if (!val.trim()) {
+      setShowDropdown(false);
+      setDropdownResults([]);
+      return;
+    }
+
+    const results = fuse.search(val);
+    if (results.length > 0) {
+      setDropdownResults(results.slice(0, 5) as { item: Part; score?: number }[]);
+    } else {
+      setDropdownResults([]);
+    }
+    setShowDropdown(true);
+  };
+
+  const performSearch = (searchQuery: string) => {
+    if (!searchQuery.trim()) return;
+    setShowDropdown(false);
+    
+    let results = fuse.search(searchQuery);
+    let item: Part;
+    if (results.length > 0 && results[0].score! < 0.5) {
+      item = results[0].item;
+    } else {
+      item = parseCustomPart(searchQuery);
+    }
+    
+    navigate(`/parts/${encodeURIComponent(item.partNumber)}`);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (activeDropdownIndex >= 0 && dropdownResults[activeDropdownIndex]) {
+        performSearch(dropdownResults[activeDropdownIndex].item.partNumber);
+      } else {
+        performSearch(query);
+      }
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (dropdownResults.length > 0 || (query && dropdownResults.length === 0)) {
+        setActiveDropdownIndex((prev) => 
+          (prev + 1) % (dropdownResults.length > 0 ? dropdownResults.length : 1)
+        );
+      }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (dropdownResults.length > 0 || (query && dropdownResults.length === 0)) {
+        const len = dropdownResults.length > 0 ? dropdownResults.length : 1;
+        setActiveDropdownIndex((prev) => (prev - 1 + len) % len);
+      }
+    }
+  };
+
+  const triggerSearch = (q: string) => {
+    setQuery(q);
+    performSearch(q);
+  };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -387,6 +459,81 @@ export function Home() {
               <span>Global Search Active: Press ⌘ K to search anything</span>
             </div>
           </div>
+
+          {/* Majestic Immersive Center Search Card */}
+          <div className="bg-white border border-slate-200 rounded-2xl p-8 flex flex-col items-center justify-center text-center w-full relative overflow-visible shadow-sm">
+            <h2 className="text-2xl font-black text-slate-900 tracking-tight m-0 mb-2">Search Industrial Hardware</h2>
+            <p className="text-xs text-slate-400 font-semibold m-0 mb-6 max-w-md">Search standard fasteners, nuts, bolts, washers, or type specifications to parse them dynamically.</p>
+            
+            <div className="relative w-full max-w-xl">
+              <div className="flex items-center bg-slate-50 rounded-xl p-1 px-3 border border-slate-200 focus-within:bg-white focus-within:shadow-[0_0_0_2px_#0f172a] focus-within:border-transparent transition-all">
+                <Search className="w-5 h-5 text-slate-400 shrink-0" />
+                <input 
+                  type="text" 
+                  className="flex-1 border-none py-2 px-3 text-sm bg-transparent outline-none text-slate-900 font-sans"
+                  placeholder="Search by McMaster part number, specs..." 
+                  autoComplete="off" 
+                  spellCheck="false"
+                  value={query}
+                  onChange={handleSearchChange}
+                  onKeyDown={handleKeyDown}
+                  onFocus={() => { if(query) setShowDropdown(true) }}
+                  onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+                />
+                <button 
+                  className="bg-slate-900 hover:bg-slate-800 text-white border-none py-2 px-6 rounded-lg text-xs font-bold cursor-pointer transition-colors shadow-sm"
+                  onClick={() => performSearch(query)}
+                >
+                  Find
+                </button>
+              </div>
+
+              {/* Search Results Dropdown inside the Card */}
+              {showDropdown && (
+                <div ref={dropdownRef} className="absolute top-[calc(100%+0.5rem)] left-0 right-0 bg-white border border-slate-200 rounded-xl shadow-lg z-20 max-h-[250px] overflow-y-auto text-left py-1 animate-in fade-in slide-in-from-top-1 duration-150">
+                  {dropdownResults.length > 0 ? (
+                    dropdownResults.map((res, i) => (
+                      <div 
+                        key={i}
+                        className={`px-4 py-3.5 cursor-pointer border-b border-slate-50 text-xs text-slate-500 last:border-b-0 flex items-center justify-between transition-colors ${activeDropdownIndex === i ? 'bg-slate-50 text-slate-900' : 'hover:bg-slate-50 hover:text-slate-900'}`}
+                        onMouseDown={() => performSearch(res.item.partNumber)}
+                      >
+                        <div className="flex flex-col gap-0.5">
+                          <span className="font-bold text-slate-950 text-sm mono">{res.item.partNumber}</span>
+                          <span className="text-[11px] font-medium text-slate-400">{res.item.type} &middot; {res.item.thread} x {res.item.length !== 'N/A' ? res.item.length : 'N/A'}</span>
+                        </div>
+                        <ArrowRight className="w-4 h-4 text-slate-400" />
+                      </div>
+                    ))
+                  ) : query ? (
+                    <div 
+                      className="px-4 py-3.5 text-xs text-slate-400 italic hover:bg-slate-50 hover:text-slate-900 cursor-pointer flex items-center justify-between"
+                      onMouseDown={() => performSearch(query)}
+                    >
+                      <span>No exact match. Click to parse "{query}" dynamically...</span>
+                      <ArrowRight className="w-4 h-4 text-slate-400" />
+                    </div>
+                  ) : null}
+                </div>
+              )}
+            </div>
+
+            {/* Quick searches shortcuts */}
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mr-2">Common Searches:</span>
+              {['91251A242', '91290A115', '91247A142', '92210A110', '90596A005', '91166A005'].map(pn => (
+                <button 
+                  key={pn} 
+                  onClick={() => triggerSearch(pn)} 
+                  className="bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-[11px] font-bold px-3 py-1.5 rounded-lg cursor-pointer transition-colors mono shadow-sm"
+                >
+                  {pn}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="border-b border-slate-200/60 my-2"></div>
 
           {/* Grid of hardware cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
