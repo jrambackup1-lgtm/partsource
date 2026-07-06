@@ -1,0 +1,299 @@
+import { useState, useEffect } from 'react';
+import Papa from 'papaparse';
+import { fuse, parseCustomPart } from '../lib/decoder';
+
+export interface BOMItem {
+  partNumber: string;
+  description: string;
+  material: string;
+  supplier: string;
+  qty: number;
+  unitCost: number;
+}
+
+export interface Order {
+  id: string;
+  date: string;
+  items: BOMItem[];
+  subtotal: number;
+  shippingFee: number;
+  brokerageFee: number;
+  total: number;
+  status: 'Order Submitted' | 'Quoting & Consolidating' | 'Shipped from Consolidated Warehouse' | 'Delivered';
+  trackingNumber?: string;
+  customer?: {
+    name: string;
+    email: string;
+    company: string;
+  };
+  shippingAddress?: string;
+}
+
+export function useBOM() {
+  const [bomList, setBomList] = useState<BOMItem[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('partsource_bom');
+    if (saved) {
+      try {
+        setBomList(JSON.parse(saved));
+      } catch (e) {
+        console.error("Failed to parse BOM from local storage", e);
+      }
+    }
+    const savedOrders = localStorage.getItem('partsource_orders');
+    if (savedOrders) {
+      try {
+        setOrders(JSON.parse(savedOrders));
+      } catch (e) {
+        console.error("Failed to parse orders from local storage", e);
+      }
+    }
+  }, []);
+
+  const saveBOM = (newList: BOMItem[]) => {
+    setBomList(newList);
+    localStorage.setItem('partsource_bom', JSON.stringify(newList));
+  };
+
+  const saveOrders = (newOrders: Order[]) => {
+    setOrders(newOrders);
+    localStorage.setItem('partsource_orders', JSON.stringify(newOrders));
+  };
+
+  const updateOrder = (updatedOrder: Order) => {
+    const newOrders = orders.map((o) => (o.id === updatedOrder.id ? updatedOrder : o));
+    saveOrders(newOrders);
+  };
+
+  const placeOrder = (orderData: Omit<Order, 'id' | 'date'>) => {
+    const newOrder: Order = {
+      ...orderData,
+      id: Math.random().toString(36).substring(2, 9).toUpperCase(),
+      date: new Date().toISOString(),
+    };
+    const newOrders = [newOrder, ...orders];
+    saveOrders(newOrders);
+    saveBOM([]); // Clear BOM after placing order
+  };
+
+  const clearBom = () => saveBOM([]);
+
+
+  const addToBOM = (item: BOMItem) => {
+    const existingIndex = bomList.findIndex(b => b.partNumber === item.partNumber && b.supplier === item.supplier);
+    const newList = [...bomList];
+    if (existingIndex >= 0) {
+      newList[existingIndex].qty += item.qty;
+    } else {
+      newList.push(item);
+    }
+    saveBOM(newList);
+  };
+
+  const updateBomQty = (index: number, qty: number) => {
+    if (qty > 0) {
+      const newList = [...bomList];
+      newList[index].qty = qty;
+      saveBOM(newList);
+    }
+  };
+
+  const deleteBomItem = (index: number) => {
+    const newList = [...bomList];
+    newList.splice(index, 1);
+    saveBOM(newList);
+  };
+
+  const exportBOM = () => {
+    if (bomList.length === 0) {
+      alert('BOM is empty.');
+      return;
+    }
+    const csv = Papa.unparse(bomList);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'partsource_bom.csv';
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const exportPDF = async () => {
+    if (bomList.length === 0) {
+      alert('BOM is empty.');
+      return;
+    }
+
+    try {
+      const { jsPDF } = await import('jspdf');
+      const autoTableModule = await import('jspdf-autotable');
+      const autoTable = autoTableModule.default || (autoTableModule as any);
+      
+      // We have to cast jsPDF to any to access autoTable, or rely on it extending the prototype
+      const doc = new jsPDF() as any;
+      
+      const totalCost = bomList.reduce((sum, item) => sum + (item.qty * item.unitCost), 0);
+      const totalItems = bomList.length;
+      const totalQty = bomList.reduce((acc, item) => acc + item.qty, 0);
+
+      // Add Branding Header
+      doc.setFontSize(22);
+      doc.setTextColor(15, 23, 42); // slate-900
+      doc.text("partsource.io", 14, 22);
+      
+      doc.setFontSize(10);
+      doc.setTextColor(100, 116, 139); // slate-500
+      doc.text("Industrial Hardware Sourcing", 14, 28);
+      
+      doc.setFontSize(16);
+      doc.setTextColor(15, 23, 42);
+      doc.text("Bill of Materials Summary", 14, 40);
+
+      // Summary Info
+      doc.setFontSize(11);
+      doc.text(`Date: ${new Date().toLocaleDateString()}`, 14, 50);
+      doc.text(`Total Unique Items: ${totalItems}`, 14, 56);
+      doc.text(`Total Quantity: ${totalQty}`, 14, 62);
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "bold");
+      doc.text(`Estimated Total Cost: $${totalCost.toFixed(2)}`, 14, 70);
+
+      // Table
+      const tableColumn = ["Part Number", "Description", "Supplier", "Qty", "Unit Cost", "Total"];
+      const tableRows = bomList.map(item => [
+        item.partNumber,
+        item.description,
+        item.supplier,
+        item.qty.toString(),
+        `$${item.unitCost.toFixed(2)}`,
+        `$${(item.qty * item.unitCost).toFixed(2)}`
+      ]);
+
+      autoTable(doc, {
+        startY: 80,
+        head: [tableColumn],
+        body: tableRows,
+        theme: 'striped',
+        headStyles: { fillColor: [15, 23, 42], textColor: 255 }, // slate-900 header
+        styles: { fontSize: 9 },
+        columnStyles: {
+          4: { halign: 'right' },
+          5: { halign: 'right' }
+        },
+      });
+
+      // Footer
+      const pageCount = doc.internal.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setTextColor(100, 116, 139);
+        doc.text(
+          `Page ${i} of ${pageCount} | Generated by partsource.io - Built by Jay - jayar.co`,
+          doc.internal.pageSize.width / 2,
+          doc.internal.pageSize.height - 10,
+          { align: 'center' }
+        );
+      }
+
+      doc.save('partsource_bom_summary.pdf');
+    } catch (error) {
+      console.error("Failed to generate PDF", error);
+      alert("Failed to generate PDF. Please try again.");
+    }
+  };
+
+  const importCSV = (file: File) => {
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: (results) => {
+        const rows = results.data as any[];
+        let addedCount = 0;
+        const currentList = [...bomList];
+
+        rows.forEach(row => {
+          if (row.partNumber && row.qty && row.unitCost) {
+            // Handle native export format
+            const bomItem: BOMItem = {
+              partNumber: row.partNumber,
+              description: row.description || '',
+              material: row.material || '',
+              supplier: row.supplier || 'Imported',
+              qty: parseInt(row.qty) || 1,
+              unitCost: parseFloat(row.unitCost) || 0
+            };
+            const existingIndex = currentList.findIndex(b => b.partNumber === bomItem.partNumber && b.supplier === bomItem.supplier);
+            if (existingIndex >= 0) {
+              currentList[existingIndex].qty += bomItem.qty;
+            } else {
+              currentList.push(bomItem);
+            }
+            addedCount++;
+          } else {
+            // Fallback for flat CSV or TXT file
+            const rowValues = Object.values(row);
+            const rowStr = rowValues.join(' ');
+            const match = rowStr.match(/\b([a-zA-Z0-9-]{5,15})\b/);
+            if (match) {
+              const potentialPn = match[1];
+              // Ignore matches that are just the header string
+              if (potentialPn.toUpperCase() === 'PARTNUMBER') return;
+
+              let searchRes = fuse.search(potentialPn);
+              let item;
+              
+              if (searchRes.length > 0 && searchRes[0].score! < 0.5) {
+                item = searchRes[0].item;
+              } else {
+                item = parseCustomPart(potentialPn);
+              }
+              
+              if (item && (item.type !== "Custom Fastener" || potentialPn.length > 5)) {
+                const description = `${item.type} ${item.thread} x ${item.length !== 'N/A' ? item.length : ''}`;
+                const bomItem: BOMItem = {
+                  partNumber: item.partNumber,
+                  description,
+                  material: item.material,
+                  supplier: 'Zoro (Auto)',
+                  qty: 10,
+                  unitCost: item.mcmasterPrice * 0.85
+                };
+
+                const existingIndex = currentList.findIndex(b => b.partNumber === bomItem.partNumber && b.supplier === bomItem.supplier);
+                if (existingIndex >= 0) {
+                  currentList[existingIndex].qty += bomItem.qty;
+                } else {
+                  currentList.push(bomItem);
+                }
+                addedCount++;
+              }
+            }
+          }
+        });
+        
+        saveBOM(currentList);
+        alert(`Successfully imported ${addedCount} items into the BOM.`);
+      }
+    });
+  };
+
+  return {
+    bomList,
+    orders,
+    addToBOM,
+    updateBomQty,
+    deleteBomItem,
+    exportBOM,
+    exportPDF,
+    importCSV,
+    placeOrder,
+    updateOrder,
+    clearBom
+  };
+}
