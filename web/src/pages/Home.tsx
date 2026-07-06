@@ -245,8 +245,8 @@ export function Home() {
         </button>
       </nav>
 
-      <main className="flex flex-col flex-grow p-6 overflow-y-auto relative">
-        <div className={`absolute inset-0 p-6 transition-opacity duration-200 flex flex-col ${activeTab === 'finder' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
+      <main className="flex flex-col flex-grow relative overflow-hidden">
+        <div className={`absolute inset-0 p-6 transition-opacity duration-200 flex flex-col overflow-y-auto ${activeTab === 'finder' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
           <div className="grid grid-cols-1 gap-6 w-full max-w-[800px] mx-auto">
             
             <div className="bento-card p-8 flex flex-col items-center justify-center text-center w-full">
@@ -325,7 +325,7 @@ export function Home() {
           </div>
         </div>
 
-        <div className={`absolute inset-0 p-6 transition-opacity duration-200 flex flex-col ${activeTab === 'bom' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
+        <div className={`absolute inset-0 p-6 transition-opacity duration-200 flex flex-col overflow-y-auto ${activeTab === 'bom' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
           <div className="flex flex-col gap-6 max-w-[1200px] w-full mx-auto">
             <div className="bg-blue-900 rounded-xl p-6 flex flex-col sm:flex-row items-center justify-between gap-6 shrink-0 shadow-lg relative overflow-hidden">
               <div className="absolute top-0 left-0 w-1 h-full bg-blue-400"></div>
@@ -451,7 +451,7 @@ export function Home() {
 
           </div>
         </div>
-        <div className={`absolute inset-0 p-6 transition-opacity duration-200 flex flex-col ${activeTab === 'orders' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
+        <div className={`absolute inset-0 p-6 transition-opacity duration-200 flex flex-col overflow-y-auto ${activeTab === 'orders' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
           <div className="flex flex-col gap-6 max-w-[800px] w-full mx-auto">
             <div>
               <h2 className="text-2xl font-bold m-0 text-[var(--text-primary)]">Active Sourcing Orders</h2>

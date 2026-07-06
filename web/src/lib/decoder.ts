@@ -32,7 +32,8 @@ export const db: Part[] = [
 export const fuse = new Fuse(db, { 
   keys: ['partNumber', 'type', 'thread', 'length'],
   threshold: 0.3,
-  ignoreLocation: true
+  ignoreLocation: true,
+  includeScore: true
 });
 
 export const suppliers = [
