@@ -22,7 +22,10 @@ import { BrokerageModal } from '../components/BrokerageModal';
 import { OrderCard } from '../components/OrderCard';
 
 // ----------------------------------------------------
-// Cost Savings Chart component (Inline SVG)
+// Cost Savings Chart component (Precision Blueprint style)
+// ----------------------------------------------------
+// ----------------------------------------------------
+// Cost Savings Chart component (Clean Modern style)
 // ----------------------------------------------------
 function CostSavingsChart({ data, referenceCost }: { data: { name: string, totalCost: number, shipDays: number }[], referenceCost: number }) {
   const { formatPrice } = useCurrency();
@@ -33,24 +36,28 @@ function CostSavingsChart({ data, referenceCost }: { data: { name: string, total
   const savings = referenceCost - bestSupplier.totalCost;
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl p-6 flex flex-col h-full justify-between">
-      <div>
-        <h3 className="m-0 text-xs font-bold text-slate-400 uppercase tracking-wider">
-          Consolidated Cost Simulation
-        </h3>
-        <p className="text-[11px] text-slate-500 mt-1">BOM values simulated across approved vendors.</p>
+    <div className="bg-white border border-slate-200 rounded-xl p-6 flex flex-col h-full justify-between relative overflow-hidden shadow-xs">
+      <div className="relative z-10 text-left">
+        <div className="flex items-center justify-between">
+          <h3 className="m-0 text-xs font-semibold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+            <span className="w-1.5 h-1.5 bg-blue-600 rounded-full"></span>
+            Consolidated Cost Simulation
+          </h3>
+          <span className="text-[10px] font-medium text-slate-500 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded">V2.0</span>
+        </div>
+        <p className="text-xs text-slate-500 mt-1.5 leading-normal">Comparative analysis of active BOM across approved supplier channels</p>
         
         {savings > 0 && (
-          <div className="bg-emerald-50 border border-emerald-100 p-3 rounded-xl flex items-center gap-2.5 mt-4">
-            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
-            <span className="text-[11px] font-bold text-emerald-800 leading-normal">
-              Best value: {bestSupplier.name} (save {formatPrice(savings)})
+          <div className="bg-emerald-50 border border-emerald-100 p-3 rounded-lg flex items-center gap-2.5 mt-4">
+            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></div>
+            <span className="text-xs font-medium text-emerald-800">
+              Optimal consolidator: <strong className="font-semibold">{bestSupplier.name}</strong> (saves {formatPrice(savings)})
             </span>
           </div>
         )}
       </div>
 
-      <div className="w-full h-[150px] relative mt-6">
+      <div className="w-full h-[150px] relative mt-6 z-10">
         <svg viewBox="0 0 1000 150" preserveAspectRatio="none" className="w-full h-full overflow-visible">
           {/* Grid lines */}
           {[0, 0.5, 1].map((tick, i) => {
@@ -59,7 +66,7 @@ function CostSavingsChart({ data, referenceCost }: { data: { name: string, total
             return (
               <g key={i}>
                 <line x1="60" y1={y} x2="1000" y2={y} stroke="#f1f5f9" strokeWidth="1" strokeDasharray="4 4" />
-                <text x="50" y={y + 3} textAnchor="end" className="text-[10px] fill-slate-400 font-mono font-bold">
+                <text x="50" y={y + 3} textAnchor="end" className="text-[10px] fill-slate-400 font-sans font-medium">
                   ${val.toFixed(0)}
                 </text>
               </g>
@@ -68,31 +75,63 @@ function CostSavingsChart({ data, referenceCost }: { data: { name: string, total
 
           {/* Bars */}
           {data.map((d, i) => {
-            const barWidth = 60;
+            const barWidth = 64;
             const spacing = (940 - (data.length * barWidth)) / (data.length + 1);
             const x = 60 + spacing + i * (barWidth + spacing);
-            const height = Math.max(5, (d.totalCost / maxCost) * 120);
+            const height = Math.max(8, (d.totalCost / maxCost) * 120);
             const y = 120 - height;
             const isBest = i === 0;
             const isRef = d.name === 'McMaster-Carr';
             
             return (
               <g key={d.name} className="group/bar cursor-pointer">
+                {/* Visual bar backdrop */}
+                <rect 
+                  x={x} 
+                  y={0} 
+                  width={barWidth} 
+                  height={120} 
+                  className="fill-transparent group-hover/bar:fill-slate-50 transition-colors"
+                />
+                
+                {/* SVG Bar */}
                 <rect 
                   x={x} 
                   y={y} 
                   width={barWidth} 
                   height={height} 
-                  rx="6"
-                  className={`${isBest ? 'fill-slate-900' : isRef ? 'fill-slate-200' : 'fill-slate-400'} transition-all duration-300 hover:brightness-95`}
+                  rx="4"
+                  className={`transition-all duration-300 ${
+                    isBest 
+                      ? 'fill-emerald-500/20 stroke-emerald-500 stroke-2' 
+                      : isRef 
+                        ? 'fill-slate-100 stroke-slate-350 stroke-1' 
+                        : 'fill-blue-500/10 stroke-blue-500 stroke-1.5'
+                  }`}
                 />
+                
+                {/* Supplier name labels */}
                 <text 
                   x={x + barWidth / 2} 
-                  y="140" 
+                  y="138" 
                   textAnchor="middle" 
-                  className={`text-[10px] font-bold ${isBest ? 'fill-slate-900' : 'fill-slate-400'}`}
+                  className={`text-[10px] font-sans font-semibold tracking-wide ${
+                    isBest ? 'fill-emerald-700' : isRef ? 'fill-slate-400' : 'fill-slate-650'
+                  }`}
                 >
-                  {d.name.substring(0, 8)}
+                  {d.name.substring(0, 9)}
+                </text>
+
+                {/* Price indicators on top of the bars on hover */}
+                <text 
+                  x={x + barWidth / 2} 
+                  y={y - 8} 
+                  textAnchor="middle" 
+                  className={`text-[10px] font-sans font-bold ${
+                    isBest ? 'fill-emerald-600' : 'fill-slate-500'
+                  } opacity-0 group-hover/bar:opacity-100 transition-opacity`}
+                >
+                  ${d.totalCost.toFixed(0)}
                 </text>
               </g>
             );
@@ -104,21 +143,20 @@ function CostSavingsChart({ data, referenceCost }: { data: { name: string, total
 }
 
 // ----------------------------------------------------
-// Hardware Card component (Pillio style)
+// Hardware Card component (Clean Spec style)
 // ----------------------------------------------------
 function HardwareCard({ part }: { part: Part; key?: string }) {
   const navigate = useNavigate();
-  const hash = hashCode(part.partNumber);
   const discountPct = Math.round((1 - 0.70) * 100);
 
   return (
     <div 
       onClick={() => navigate(`/parts/${encodeURIComponent(part.partNumber)}`)}
-      className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col justify-between hover:shadow-md hover:border-slate-300 transition-all cursor-pointer group"
+      className="bg-white border border-slate-200 rounded-lg p-5 flex flex-col justify-between hover:border-slate-400 hover:shadow-xs active:scale-[0.99] transition-all duration-200 cursor-pointer group relative text-left"
     >
-      <div className="flex gap-4 items-start">
-        {/* Left image icon */}
-        <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center shrink-0 border border-slate-100 overflow-hidden">
+      <div className="flex gap-4 items-start relative z-10">
+        {/* Left image icon inside technical border */}
+        <div className="w-14 h-14 rounded-md bg-slate-50 flex items-center justify-center shrink-0 border border-slate-150 p-1 overflow-hidden">
           <img 
             src={
               part.type.toLowerCase().includes('screw') || part.type.toLowerCase().includes('bolt') 
@@ -126,41 +164,41 @@ function HardwareCard({ part }: { part: Part; key?: string }) {
                 : 'https://images.unsplash.com/photo-1544413660-299165566b1d?auto=format&fit=crop&q=80&w=100'
             } 
             alt={part.partNumber}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+            className="w-full h-full object-cover group-hover:scale-105 transition-all duration-300"
           />
         </div>
 
         {/* Middle text specifications */}
         <div className="flex-1 min-w-0 flex flex-col gap-0.5">
           <div className="flex items-center justify-between gap-2">
-            <span className="font-bold text-slate-900 text-sm mono truncate">{part.partNumber}</span>
-            <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0 shadow-[0_0_6px_rgba(16,185,129,0.5)]"></span>
+            <span className="font-mono font-bold text-slate-900 text-xs tracking-wider truncate">{part.partNumber}</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
           </div>
-          <span className="text-[11px] font-semibold text-slate-400 truncate">{part.type}</span>
-          <span className="text-xs font-bold text-slate-700 mt-1 mono">{part.thread} {part.length !== 'N/A' ? `x ${part.length}` : ''}</span>
+          <span className="text-[10px] font-sans uppercase tracking-wider text-slate-400 font-bold truncate">{part.type}</span>
+          <span className="text-xs font-sans font-semibold text-slate-700 mt-1">{part.thread} {part.length !== 'N/A' ? `x ${part.length}` : ''}</span>
         </div>
       </div>
 
       {/* Progress Metric details */}
-      <div className="mt-4 flex flex-col gap-1.5">
-        <div className="flex items-center justify-between text-[11px] font-bold">
-          <span className="text-slate-400">Distributors</span>
-          <span className="text-slate-700">5 Approved</span>
+      <div className="mt-5 flex flex-col gap-1.5 relative z-10">
+        <div className="flex items-center justify-between text-[10px] font-sans font-bold uppercase tracking-wider">
+          <span className="text-slate-450">Approved Suppliers</span>
+          <span className="text-slate-750">5 Channels</span>
         </div>
-        <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+        <div className="w-full h-1 bg-slate-100 rounded-full overflow-hidden">
           <div className="h-full bg-slate-900 rounded-full" style={{ width: '85%' }}></div>
         </div>
-        <div className="flex items-center justify-between text-[10px] font-medium text-slate-400 mt-0.5">
-          <span>McMaster price: ${part.mcmasterPrice.toFixed(2)}</span>
-          <span className="text-emerald-600 font-semibold">Save up to {discountPct}%</span>
+        <div className="flex items-center justify-between text-[10px] font-sans font-semibold mt-0.5">
+          <span className="text-slate-450">List: ${part.mcmasterPrice.toFixed(2)}</span>
+          <span className="text-emerald-600 font-bold">Save {discountPct}%</span>
         </div>
       </div>
 
       {/* Card Footer */}
-      <div className="mt-5 pt-3 border-t border-slate-50 flex items-center justify-between text-[11px] text-slate-400">
-        <span className="truncate max-w-[150px] font-semibold">{part.standard}</span>
+      <div className="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] font-sans uppercase tracking-wider text-slate-400 relative z-10 font-bold">
+        <span className="truncate max-w-[150px]">{part.standard}</span>
         <div className="flex items-center gap-1 text-slate-900 font-bold group-hover:translate-x-1 transition-transform">
-          <span>Details</span>
+          <span>View Specs</span>
           <ArrowRight className="w-3.5 h-3.5" />
         </div>
       </div>
@@ -294,64 +332,58 @@ export function Home() {
           TAB 1: DASHBOARD / OVERVIEW
           ---------------------------------------------------- */}
       {activeTab === 'dashboard' && (
-        <div className="flex flex-col gap-8 w-full max-w-[1200px] mx-auto">
+        <div className="flex flex-col gap-8 w-full max-w-[1200px] mx-auto text-left">
           {/* Heading */}
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 m-0">Sourcing Dashboard</h1>
-            <p className="text-slate-500 m-0 mt-1 font-semibold text-sm">Real-time consolidated analytics for your bills of materials.</p>
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900 m-0">Sourcing Overview</h1>
+            <p className="text-slate-500 m-0 mt-1 text-sm">Consolidated analytics and routing optimization for queued bills of materials.</p>
           </div>
 
-          {/* Stats Grid (Pillio style) */}
+          {/* Stats Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Card 1: BOM Cost */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 flex flex-col justify-between shadow-sm relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-1 bg-slate-900"></div>
+            <div className="bg-white border border-slate-200 rounded-xl p-6 flex flex-col justify-between hover:border-slate-350 transition-colors relative overflow-hidden shadow-xs">
               <div className="flex justify-between items-center text-slate-400">
-                <span className="text-xs font-bold uppercase tracking-wider">Total BOM Cost</span>
-                <DollarSign className="w-4 h-4 text-slate-300" />
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-450">BOM Total Cost</span>
               </div>
               <div className="mt-4">
-                <span className="text-3xl font-black tracking-tight text-slate-900 mono">{formatPrice(totalBomCost)}</span>
-                <span className="block text-[10px] font-semibold text-slate-400 mt-1">Simulated across 5 approved vendors</span>
+                <span className="text-2xl font-semibold tracking-tight text-slate-900">{formatPrice(totalBomCost)}</span>
+                <span className="block text-[10px] font-medium text-slate-400 mt-1 uppercase tracking-wider">Across 5 vendor routes</span>
               </div>
             </div>
 
             {/* Card 2: Items count */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 flex flex-col justify-between shadow-sm relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-1 bg-slate-900"></div>
+            <div className="bg-white border border-slate-200 rounded-xl p-6 flex flex-col justify-between hover:border-slate-350 transition-colors relative overflow-hidden shadow-xs">
               <div className="flex justify-between items-center text-slate-400">
-                <span className="text-xs font-bold uppercase tracking-wider">BOM Items</span>
-                <Layers className="w-4 h-4 text-slate-300" />
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-450">Unique Items</span>
               </div>
               <div className="mt-4">
-                <span className="text-3xl font-black tracking-tight text-slate-900 mono">{totalItems}</span>
-                <span className="block text-[10px] font-semibold text-slate-400 mt-1">{totalQty} total units in active list</span>
+                <span className="text-2xl font-semibold tracking-tight text-slate-900">{totalItems}</span>
+                <span className="block text-[10px] font-medium text-slate-400 mt-1 uppercase tracking-wider">{totalQty} total fasteners queued</span>
               </div>
             </div>
 
             {/* Card 3: Est Savings */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 flex flex-col justify-between shadow-sm relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-1 bg-emerald-500"></div>
+            <div className="bg-white border border-slate-200 rounded-xl p-6 flex flex-col justify-between hover:border-slate-350 transition-colors relative overflow-hidden shadow-xs">
+              <div className="absolute top-0 left-0 w-full h-0.5 bg-emerald-500"></div>
               <div className="flex justify-between items-center text-emerald-600">
-                <span className="text-xs font-bold uppercase tracking-wider">Estimated Savings</span>
-                <Percent className="w-4 h-4 text-emerald-400" />
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-emerald-600">Estimated Savings</span>
+                <span className="text-[10px] font-semibold bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded">BOM-OPT</span>
               </div>
               <div className="mt-4">
-                <span className="text-3xl font-black tracking-tight text-emerald-600 mono">{formatPrice(estSavings)}</span>
-                <span className="block text-[10px] font-bold text-emerald-500 mt-1">Compared to McMaster list price</span>
+                <span className="text-2xl font-semibold tracking-tight text-emerald-600">{formatPrice(estSavings)}</span>
+                <span className="block text-[10px] font-medium text-emerald-500 mt-1 uppercase tracking-wider">vs McMaster catalog list</span>
               </div>
             </div>
 
             {/* Card 4: Orders */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 flex flex-col justify-between shadow-sm relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-1 bg-slate-900"></div>
+            <div className="bg-white border border-slate-200 rounded-xl p-6 flex flex-col justify-between hover:border-slate-350 transition-colors relative overflow-hidden shadow-xs">
               <div className="flex justify-between items-center text-slate-400">
-                <span className="text-xs font-bold uppercase tracking-wider">Brokerage Orders</span>
-                <Package className="w-4 h-4 text-slate-300" />
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-450">Active Shipments</span>
               </div>
               <div className="mt-4">
-                <span className="text-3xl font-black tracking-tight text-slate-900 mono">{orders.length}</span>
-                <span className="block text-[10px] font-semibold text-slate-400 mt-1">Consolidation consignments in system</span>
+                <span className="text-2xl font-semibold tracking-tight text-slate-900">{orders.length}</span>
+                <span className="block text-[10px] font-medium text-slate-400 mt-1 uppercase tracking-wider">Consolidated Brokerage batches</span>
               </div>
             </div>
           </div>
@@ -359,10 +391,13 @@ export function Home() {
           {/* Bento grid layout */}
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
             {/* Left section: Active BOM panel */}
-            <div className="lg:col-span-3 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+            <div className="lg:col-span-3 bg-white border border-slate-200 rounded-xl p-6 shadow-xs flex flex-col justify-between relative">
               <div>
-                <h3 className="m-0 text-base font-bold text-slate-950">Active Bill of Materials</h3>
-                <p className="text-xs text-slate-400 m-0 mt-0.5">Quick overview of items currently queued for sourcing.</p>
+                <h3 className="m-0 text-sm font-semibold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-slate-900 rounded-full"></span>
+                  Active Bill of Materials
+                </h3>
+                <p className="text-xs text-slate-450 mt-1">Consolidated specifications pending fulfillment</p>
               </div>
 
               {bomList.length > 0 ? (
@@ -370,18 +405,18 @@ export function Home() {
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                       <thead>
-                        <tr className="border-b border-slate-100">
-                          <th className="pb-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">Part</th>
-                          <th className="pb-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 text-right">Qty</th>
-                          <th className="pb-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 text-right">Total</th>
+                        <tr className="border-b border-slate-100 text-slate-450 text-[10px] font-semibold uppercase tracking-wider">
+                          <th className="pb-3">Part Identification</th>
+                          <th className="pb-3 text-right">Units</th>
+                          <th className="pb-3 text-right">Est. Cost</th>
                         </tr>
                       </thead>
                       <tbody>
                         {bomList.slice(0, 3).map((item, i) => (
-                          <tr key={i} className="border-b border-slate-50 last:border-none hover:bg-slate-50 transition-colors">
-                            <td className="py-3 text-xs font-bold text-slate-900 mono">{item.partNumber}</td>
-                            <td className="py-3 text-xs text-slate-500 text-right font-semibold mono">{item.qty}</td>
-                            <td className="py-3 text-xs text-slate-900 text-right font-bold mono">{formatPrice(item.qty * item.unitCost)}</td>
+                          <tr key={i} className="border-b border-slate-100 last:border-none hover:bg-slate-50/50 transition-colors">
+                            <td className="py-3 text-xs font-mono font-bold text-slate-800 tracking-wider">{item.partNumber}</td>
+                            <td className="py-3 text-xs text-slate-650 text-right font-medium">{item.qty}</td>
+                            <td className="py-3 text-xs text-slate-900 text-right font-semibold">{formatPrice(item.qty * item.unitCost)}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -389,35 +424,35 @@ export function Home() {
                   </div>
                   
                   {bomList.length > 3 && (
-                    <div className="text-xs text-slate-400 text-center font-medium mt-1">
-                      And {bomList.length - 3} more items...
+                    <div className="text-[11px] text-slate-500 text-center font-medium mt-1 bg-slate-50 py-2 border border-slate-150 rounded">
+                      And {bomList.length - 3} additional items configured in workspace
                     </div>
                   )}
 
-                  <div className="flex gap-3 mt-4 pt-4 border-t border-slate-100">
+                  <div className="flex gap-3 mt-4 pt-4 border-t border-slate-150">
                     <Link to="/?tab=bom" className="no-underline flex-1">
-                      <button className="w-full bg-slate-50 hover:bg-slate-100 text-slate-900 border border-slate-200 py-2.5 rounded-xl text-xs font-bold cursor-pointer transition-all">
-                        Open BOM Manager
+                      <button className="w-full bg-slate-50 hover:bg-slate-100 text-slate-800 border border-slate-200 py-2 px-4 rounded-md text-xs font-semibold cursor-pointer transition-all active:scale-[0.98]">
+                        Manage BOM Specs
                       </button>
                     </Link>
                     <button 
                       onClick={() => setIsBrokerageModalOpen(true)}
-                      className="flex-1 bg-slate-900 hover:bg-slate-800 text-white border-none py-2.5 rounded-xl text-xs font-bold cursor-pointer transition-all shadow-sm"
+                      className="flex-1 bg-slate-900 hover:bg-slate-800 text-white border-none py-2 px-4 rounded-md text-xs font-semibold cursor-pointer transition-all active:scale-[0.98] shadow-xs"
                     >
-                      Fulfill Consolidated BOM
+                      Fulfill BOM Request
                     </button>
                   </div>
                 </div>
               ) : (
-                <div className="flex-1 flex flex-col items-center justify-center text-center p-8 mt-4">
-                  <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 mb-4 shadow-inner">
-                    <Layers className="w-6 h-6" />
+                <div className="flex-grow flex flex-col items-center justify-center text-center p-8 mt-4 border border-dashed border-slate-200 rounded-lg">
+                  <div className="w-10 h-10 bg-slate-50 border border-slate-150 flex items-center justify-center text-slate-400 mb-4 rounded-lg">
+                    <Layers className="w-5 h-5" />
                   </div>
-                  <h4 className="m-0 text-sm font-bold text-slate-800">Your BOM list is empty</h4>
-                  <p className="text-xs text-slate-400 mt-1 max-w-[280px] leading-relaxed">Add components to your list from the catalog to run vendor price comparisons.</p>
-                  <Link to="/?tab=finder" className="no-underline mt-4">
-                    <button className="bg-slate-900 hover:bg-slate-800 text-white border-none py-2 px-5 rounded-xl text-xs font-bold cursor-pointer transition-colors shadow-sm">
-                      Go to Part Finder
+                  <h4 className="m-0 text-sm font-semibold text-slate-800">Workspace BOM is empty</h4>
+                  <p className="text-xs text-slate-400 mt-1 max-w-[280px] leading-relaxed">Add components to run vendor-equivalent cost simulations</p>
+                  <Link to="/?tab=finder" className="no-underline mt-5">
+                    <button className="bg-slate-900 hover:bg-slate-800 text-white border-none py-2 px-5 rounded-md text-xs font-semibold cursor-pointer transition-all active:scale-[0.98] shadow-xs">
+                      Browse catalog
                     </button>
                   </Link>
                 </div>
@@ -425,16 +460,16 @@ export function Home() {
             </div>
 
             {/* Right section: SVG chart */}
-            <div className="lg:col-span-2 shadow-sm rounded-2xl overflow-hidden bg-white border border-slate-200">
+            <div className="lg:col-span-2 shadow-xs rounded-xl bg-white border border-slate-200 relative">
               {bomList.length > 0 ? (
                 <CostSavingsChart data={supplierCosts} referenceCost={mcmasterCost} />
               ) : (
                 <div className="p-6 flex flex-col items-center justify-center text-center h-full min-h-[220px]">
-                  <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 mb-3">
+                  <div className="w-10 h-10 bg-slate-50 border border-slate-150 flex items-center justify-center text-slate-450 mb-3 rounded-lg">
                     <Percent className="w-5 h-5" />
                   </div>
-                  <h4 className="m-0 text-xs font-bold text-slate-800 uppercase tracking-wider">No Simulation Data</h4>
-                  <p className="text-[11px] text-slate-400 mt-1 max-w-[200px]">Simulations require at least 1 item in your BOM list.</p>
+                  <h4 className="m-0 text-sm font-semibold text-slate-800">No Simulation Data</h4>
+                  <p className="text-xs text-slate-450 mt-1.5 max-w-[200px]">Simulations require at least 1 item in workspace</p>
                 </div>
               )}
             </div>
@@ -450,28 +485,28 @@ export function Home() {
           {/* Header instructions */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 m-0">Part Finder</h1>
-              <p className="text-slate-500 m-0 mt-1 font-semibold text-sm">Select an approved standard fastener below to configure vendor equivalents.</p>
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900 m-0">Part Finder</h1>
+              <p className="text-slate-500 m-0 mt-1 text-sm">Configure approved standard fasteners and compare vendor equivalents.</p>
             </div>
             
-            <div className="bg-slate-900 text-white px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 self-start md:self-auto shadow-sm">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>Global Search Active: Press ⌘ K to search anything</span>
+            <div className="bg-slate-900 text-white px-4 py-2.5 rounded-lg text-xs font-semibold flex items-center gap-2 self-start md:self-auto shadow-sm">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-450 animate-pulse"></span>
+              <span>Index Active (⌘K)</span>
             </div>
           </div>
 
-          {/* Majestic Immersive Center Search Card */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-8 flex flex-col items-center justify-center text-center w-full relative overflow-visible shadow-sm">
-            <h2 className="text-2xl font-black text-slate-900 tracking-tight m-0 mb-2">Search Industrial Hardware</h2>
-            <p className="text-xs text-slate-400 font-semibold m-0 mb-6 max-w-md">Search standard fasteners, nuts, bolts, washers, or type specifications to parse them dynamically.</p>
+          {/* Search Card */}
+          <div className="bg-white border border-slate-200 rounded-xl p-8 flex flex-col items-center justify-center text-center w-full relative overflow-visible shadow-xs">
+            <h2 className="text-lg font-semibold text-slate-900 m-0 mb-1.5">Search Hardware Database</h2>
+            <p className="text-xs text-slate-500 m-0 mb-6 max-w-md">Search standard fasteners, nuts, bolts, washers, or spec terms to identify parts instantly</p>
             
             <div className="relative w-full max-w-xl">
-              <div className="flex items-center bg-slate-50 rounded-xl p-1 px-3 border border-slate-200 focus-within:bg-white focus-within:shadow-[0_0_0_2px_#0f172a] focus-within:border-transparent transition-all">
-                <Search className="w-5 h-5 text-slate-400 shrink-0" />
+              <div className="flex items-center bg-slate-50 rounded-lg p-1 px-3 border border-slate-200 focus-within:bg-white focus-within:ring-1 focus-within:ring-slate-950 focus-within:border-slate-950 transition-all">
+                <Search className="w-4 h-4 text-slate-400 shrink-0" />
                 <input 
                   type="text" 
-                  className="flex-1 border-none py-2 px-3 text-sm bg-transparent outline-none text-slate-900 font-sans"
-                  placeholder="Search by McMaster part number, specs..." 
+                  className="flex-1 border-none py-2 px-3 text-xs bg-transparent outline-none text-slate-900"
+                  placeholder="Enter McMaster part number or specifications..." 
                   autoComplete="off" 
                   spellCheck="false"
                   value={query}
@@ -481,37 +516,37 @@ export function Home() {
                   onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
                 />
                 <button 
-                  className="bg-slate-900 hover:bg-slate-800 text-white border-none py-2 px-6 rounded-lg text-xs font-bold cursor-pointer transition-colors shadow-sm"
+                  className="bg-slate-900 hover:bg-slate-800 text-white border-none py-2 px-6 rounded-md text-xs font-semibold cursor-pointer transition-all active:scale-[0.98] shadow-sm"
                   onClick={() => performSearch(query)}
                 >
-                  Find
+                  Search
                 </button>
               </div>
 
               {/* Search Results Dropdown inside the Card */}
               {showDropdown && (
-                <div ref={dropdownRef} className="absolute top-[calc(100%+0.5rem)] left-0 right-0 bg-white border border-slate-200 rounded-xl shadow-lg z-20 max-h-[250px] overflow-y-auto text-left py-1 animate-in fade-in slide-in-from-top-1 duration-150">
+                <div ref={dropdownRef} className="absolute top-[calc(100%+0.25rem)] left-0 right-0 bg-white border border-slate-200 rounded-lg shadow-md z-20 max-h-[250px] overflow-y-auto text-left py-1 animate-in fade-in duration-100">
                   {dropdownResults.length > 0 ? (
                     dropdownResults.map((res, i) => (
                       <div 
                         key={i}
-                        className={`px-4 py-3.5 cursor-pointer border-b border-slate-50 text-xs text-slate-500 last:border-b-0 flex items-center justify-between transition-colors ${activeDropdownIndex === i ? 'bg-slate-50 text-slate-900' : 'hover:bg-slate-50 hover:text-slate-900'}`}
+                        className={`px-4 py-3 cursor-pointer border-b border-slate-100 text-xs text-slate-500 last:border-b-0 flex items-center justify-between transition-colors ${activeDropdownIndex === i ? 'bg-slate-50 text-slate-900' : 'hover:bg-slate-50 hover:text-slate-900'}`}
                         onMouseDown={() => performSearch(res.item.partNumber)}
                       >
                         <div className="flex flex-col gap-0.5">
-                          <span className="font-bold text-slate-950 text-sm mono">{res.item.partNumber}</span>
-                          <span className="text-[11px] font-medium text-slate-400">{res.item.type} &middot; {res.item.thread} x {res.item.length !== 'N/A' ? res.item.length : 'N/A'}</span>
+                          <span className="font-mono font-bold text-slate-950 text-xs tracking-wider">{res.item.partNumber}</span>
+                          <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">{res.item.type} &middot; {res.item.thread} x {res.item.length !== 'N/A' ? res.item.length : 'N/A'}</span>
                         </div>
-                        <ArrowRight className="w-4 h-4 text-slate-400" />
+                        <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
                       </div>
                     ))
                   ) : query ? (
                     <div 
-                      className="px-4 py-3.5 text-xs text-slate-400 italic hover:bg-slate-50 hover:text-slate-900 cursor-pointer flex items-center justify-between"
+                      className="px-4 py-3 text-xs text-slate-450 hover:bg-slate-50 hover:text-slate-900 cursor-pointer flex items-center justify-between font-medium"
                       onMouseDown={() => performSearch(query)}
                     >
                       <span>No exact match. Click to parse "{query}" dynamically...</span>
-                      <ArrowRight className="w-4 h-4 text-slate-400" />
+                      <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
                     </div>
                   ) : null}
                 </div>
@@ -520,12 +555,12 @@ export function Home() {
 
             {/* Quick searches shortcuts */}
             <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mr-2">Common Searches:</span>
-              {['91251A242', '91290A115', '91247A142', '92210A110', '90596A005', '91166A005'].map(pn => (
+              <span className="text-[11px] font-semibold text-slate-400 mr-2">Shortcuts:</span>
+              {['91251A542', '91290A115', '91247A142', '92210A110'].map(pn => (
                 <button 
                   key={pn} 
                   onClick={() => triggerSearch(pn)} 
-                  className="bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-[11px] font-bold px-3 py-1.5 rounded-lg cursor-pointer transition-colors mono shadow-sm"
+                  className="bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs px-3 py-1 rounded-md cursor-pointer transition-all active:scale-[0.98] shadow-xs"
                 >
                   {pn}
                 </button>
@@ -542,87 +577,89 @@ export function Home() {
             ))}
           </div>
         </div>
-      )}
-
-      {/* ----------------------------------------------------
+      )}      {/* ----------------------------------------------------
           TAB 3: BOM MANAGER TABLE
           ---------------------------------------------------- */}
       {activeTab === 'bom' && (
-        <div className="flex flex-col gap-8 w-full max-w-[1200px] mx-auto">
+        <div className="flex flex-col gap-8 w-full max-w-[1200px] mx-auto text-left">
           {/* Fulfill Hero */}
-          <div className="bg-slate-900 text-white rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden shadow-md">
-            <div className="absolute top-0 left-0 w-1.5 h-full bg-emerald-500"></div>
+          <div className="bg-slate-900 text-white rounded-xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden shadow-xs">
             <div className="z-10 text-left">
-              <h3 className="m-0 text-white text-lg font-bold">Consolidated Brokerage Fulfillment</h3>
-              <p className="m-0 text-xs text-slate-400 mt-1 max-w-[500px] leading-relaxed">
-                Submit your active BOM to have us consolidate your orders, audit compliance certificates, and ship everything in a single box.
+              <h3 className="m-0 text-white text-sm font-semibold uppercase tracking-wider flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                Consolidated Brokerage Fulfillment
+              </h3>
+              <p className="m-0 text-xs text-slate-300 mt-1.5 max-w-[500px] leading-relaxed">
+                Submit active BOM to consolidate orders, audit compliance certificates, and combine shipments in a single routing batch.
               </p>
             </div>
             <button 
-              className="bg-white hover:bg-slate-100 text-slate-900 border-none py-2.5 px-6 rounded-xl text-xs font-extrabold cursor-pointer transition-all whitespace-nowrap z-10 shadow-sm"
+              className="bg-white hover:bg-slate-50 text-slate-900 border-none py-2.5 px-6 rounded-md text-xs font-semibold cursor-pointer transition-all active:scale-[0.98] whitespace-nowrap z-10 shadow-sm"
               onClick={() => setIsBrokerageModalOpen(true)}
             >
-              Fulfill Consolidated BOM
+              Execute Fulfillment
             </button>
           </div>
 
           {/* Table Header controls */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <h2 className="m-0 text-xl font-extrabold text-slate-900">Active BOM List</h2>
+            <h2 className="m-0 text-lg font-semibold text-slate-900">
+              Active BOM Registry
+            </h2>
             <div className="flex gap-2">
               <input type="file" id="csvFileInput" accept=".csv,.txt" className="hidden" onChange={handleFileChange} />
               <button 
-                className="bg-white border border-slate-200 py-2 px-4 rounded-xl text-xs font-bold text-slate-700 cursor-pointer hover:bg-slate-50 transition-colors shadow-sm flex items-center gap-1.5"
+                className="bg-white border border-slate-200 py-2 px-3.5 rounded-md text-xs font-medium text-slate-700 cursor-pointer hover:bg-slate-50 transition-all active:scale-[0.98] shadow-xs flex items-center gap-1.5"
                 onClick={() => document.getElementById('csvFileInput')?.click()}
               >
-                <FileSpreadsheet className="w-4 h-4 text-slate-400" /> Import CSV
+                <FileSpreadsheet className="w-3.5 h-3.5 text-slate-400" /> Import CSV
               </button>
               <button 
-                className="bg-white border border-slate-200 py-2 px-4 rounded-xl text-xs font-bold text-slate-700 cursor-pointer hover:bg-slate-50 transition-colors shadow-sm flex items-center gap-1.5"
+                className="bg-white border border-slate-200 py-2 px-3.5 rounded-md text-xs font-medium text-slate-700 cursor-pointer hover:bg-slate-50 transition-all active:scale-[0.98] shadow-xs flex items-center gap-1.5"
                 onClick={exportBOM}
               >
-                <Download className="w-4 h-4 text-slate-400" /> Export CSV
+                <Download className="w-3.5 h-3.5 text-slate-400" /> Export CSV
               </button>
               <button 
-                className="bg-slate-900 text-white border-none py-2 px-4 rounded-xl text-xs font-bold cursor-pointer hover:bg-slate-800 transition-colors shadow-sm flex items-center gap-1.5"
+                className="bg-slate-900 text-white border-none py-2 px-3.5 rounded-md text-xs font-semibold cursor-pointer hover:bg-slate-800 transition-all active:scale-[0.98] shadow-xs flex items-center gap-1.5"
                 onClick={exportPDF}
               >
-                <Download className="w-4 h-4 text-white" /> Download PDF
+                <Download className="w-3.5 h-3.5 text-white" /> Save PDF
               </button>
             </div>
           </div>
 
           {/* The Main BOM list table */}
-          <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+          <div className="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full border-collapse text-left m-0 min-w-[800px]">
                 <thead>
-                  <tr className="bg-slate-50/70 border-b border-slate-200 text-slate-400 text-[10px] font-bold uppercase tracking-wider">
-                    <th className="p-4 pl-6">Part Number</th>
+                  <tr className="bg-slate-50/70 border-b border-slate-200 text-slate-450 text-[10px] font-semibold uppercase tracking-wider">
+                    <th className="p-4 pl-6">Part Identification</th>
                     <th className="p-4">Description</th>
-                    <th className="p-4">Supplier</th>
+                    <th className="p-4">Supplier Routing</th>
                     <th className="p-4">Quantity</th>
                     <th className="p-4 text-right">Unit Price</th>
-                    <th className="p-4 text-right">Total Price</th>
+                    <th className="p-4 text-right">Extended Price</th>
                     <th className="p-4 pr-6 w-12"></th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="text-xs">
                   {bomList.length > 0 ? (
                     bomList.map((item, i) => (
-                      <tr key={i} className="border-b border-slate-100 last:border-0 hover:bg-slate-50/50 transition-colors">
-                        <td className="p-4 pl-6 text-xs font-bold text-slate-900 mono whitespace-nowrap">{item.partNumber}</td>
-                        <td className="p-4 text-xs text-slate-500 truncate max-w-[250px]" title={item.description}>{item.description}</td>
-                        <td className="p-4 text-xs text-slate-500">
-                          <span className="bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-full text-[10px] font-semibold">{item.supplier}</span>
+                      <tr key={i} className="border-b border-slate-100 last:border-0 hover:bg-slate-50/30 transition-colors">
+                        <td className="p-4 pl-6 font-mono font-bold text-slate-900 tracking-wider whitespace-nowrap">{item.partNumber}</td>
+                        <td className="p-4 text-slate-500 font-medium truncate max-w-[250px]" title={item.description}>{item.description}</td>
+                        <td className="p-4 text-slate-500">
+                          <span className="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[10px] font-semibold border border-slate-200">{item.supplier}</span>
                         </td>
                         <td className="p-4">
-                          <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-lg p-0.5 w-fit shadow-sm">
+                          <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-lg p-0.5 w-fit shadow-xs">
                             <button 
-                              className="bg-transparent border-none text-slate-400 hover:text-slate-950 p-1 rounded cursor-pointer hover:bg-slate-50 transition-colors"
+                              className="bg-transparent border-none text-slate-400 hover:text-slate-950 p-1 cursor-pointer hover:bg-slate-50 transition-colors"
                               onClick={() => updateBomQty(i, Math.max(1, item.qty - 1))}
                             >
-                              <Minus className="w-3 h-3" />
+                              <Minus className="w-2.5 h-2.5" />
                             </button>
                             <input 
                               type="number" 
@@ -632,22 +669,22 @@ export function Home() {
                               onChange={(e) => updateBomQty(i, parseInt(e.target.value) || 1)} 
                             />
                             <button 
-                              className="bg-transparent border-none text-slate-400 hover:text-slate-950 p-1 rounded cursor-pointer hover:bg-slate-50 transition-colors"
+                              className="bg-transparent border-none text-slate-400 hover:text-slate-950 p-1 cursor-pointer hover:bg-slate-50 transition-colors"
                               onClick={() => updateBomQty(i, item.qty + 1)}
                             >
-                              <Plus className="w-3 h-3" />
+                              <Plus className="w-2.5 h-2.5" />
                             </button>
                           </div>
                         </td>
-                        <td className="p-4 text-xs mono text-right text-slate-500 font-semibold">{formatPrice(item.unitCost)}</td>
-                        <td className="p-4 text-xs mono font-bold text-slate-900 text-right">{formatPrice(item.qty * item.unitCost)}</td>
+                        <td className="p-4 text-right text-slate-500 font-semibold tracking-wider font-mono">{formatPrice(item.unitCost)}</td>
+                        <td className="p-4 font-bold text-slate-900 text-right tracking-wider font-mono">{formatPrice(item.qty * item.unitCost)}</td>
                         <td className="p-4 pr-6 text-right">
                           <button 
-                            className="text-slate-300 bg-transparent border-none p-1.5 cursor-pointer hover:text-red-600 hover:bg-red-50 transition-all rounded-lg" 
+                            className="text-slate-350 bg-transparent border-none p-1.5 cursor-pointer hover:text-red-650 hover:bg-red-50 transition-colors rounded-md" 
                             onClick={() => deleteBomItem(i)} 
                             title="Delete item"
                           >
-                            <X className="w-4 h-4" />
+                            <X className="w-3.5 h-3.5" />
                           </button>
                         </td>
                       </tr>
@@ -655,11 +692,11 @@ export function Home() {
                   ) : (
                     <tr>
                       <td colSpan={7} className="text-center p-12">
-                        <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 mx-auto mb-4 shadow-inner">
-                          <Layers className="w-6 h-6" />
+                        <div className="w-10 h-10 bg-slate-50 border border-slate-150 flex items-center justify-center text-slate-400 mx-auto mb-4 rounded-lg">
+                          <Layers className="w-5 h-5" />
                         </div>
-                        <h4 className="m-0 text-slate-800 font-bold text-sm">No items in active BOM</h4>
-                        <p className="text-xs text-slate-400 mt-1 max-w-[280px] mx-auto leading-relaxed">Search components above using the catalog and add them to compare prices.</p>
+                        <h4 className="m-0 text-slate-800 font-semibold text-xs">No active queued BOM items</h4>
+                        <p className="text-xs text-slate-400 mt-1 max-w-[280px] mx-auto leading-relaxed">Search components and add them to compare pricing equivalents.</p>
                       </td>
                     </tr>
                   )}
@@ -671,21 +708,21 @@ export function Home() {
           {/* BOM Totals summary row */}
           {bomList.length > 0 && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-2">
-              <div className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col justify-between shadow-sm">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Unique Items</span>
-                <span className="text-xl font-black text-slate-900 mt-1.5 mono">{totalItems}</span>
+              <div className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col justify-between shadow-xs relative">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-450">Unique Items</span>
+                <span className="text-xl font-bold text-slate-900 mt-1.5">{totalItems}</span>
               </div>
-              <div className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col justify-between shadow-sm">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Quantity</span>
-                <span className="text-xl font-black text-slate-900 mt-1.5 mono">{totalQty}</span>
+              <div className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col justify-between shadow-xs relative">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-450">Total Quantity</span>
+                <span className="text-xl font-bold text-slate-900 mt-1.5">{totalQty}</span>
               </div>
-              <div className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col justify-between shadow-sm">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600">Est. Savings</span>
-                <span className="text-xl font-black text-emerald-600 mt-1.5 mono">${estSavings.toFixed(2)}</span>
+              <div className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col justify-between shadow-xs relative">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-emerald-600">Simulated Savings</span>
+                <span className="text-xl font-bold text-emerald-600 mt-1.5">${estSavings.toFixed(2)}</span>
               </div>
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between shadow-md">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total BOM Cost</span>
-                <span className="text-xl font-black text-white mt-1.5 mono">${totalBomCost.toFixed(2)}</span>
+              <div className="bg-slate-900 border-none rounded-xl p-5 flex flex-col justify-between shadow-sm relative text-white">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Consolidated Cost</span>
+                <span className="text-xl font-bold text-white mt-1.5">${totalBomCost.toFixed(2)}</span>
               </div>
             </div>
           )}
