@@ -14,12 +14,12 @@ export function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
-  const activeTab = searchParams.get('tab') || 'dashboard';
+  const activeTab = searchParams.get('tab') || 'finder';
   const path = location.pathname;
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/?tab=dashboard' },
-    { id: 'finder', label: 'Part Finder', icon: Search, path: '/?tab=finder' },
+    { id: 'finder', label: 'Part Finder', icon: Search, path: '/' },
     { id: 'bom', label: 'BOM Manager', icon: Layers, path: '/?tab=bom' },
     { id: 'orders', label: 'Sourcing Orders', icon: Package, path: '/?tab=orders' },
   ];

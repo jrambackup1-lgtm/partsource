@@ -175,7 +175,7 @@ export function Home() {
   const { formatPrice } = useCurrency();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const activeTab = searchParams.get('tab') || 'dashboard';
+  const activeTab = searchParams.get('tab') || 'finder';
 
   const [isBrokerageModalOpen, setIsBrokerageModalOpen] = useState(false);
   const navigate = useNavigate();
