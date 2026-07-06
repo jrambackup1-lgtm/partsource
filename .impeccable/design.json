@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-07T02:49:00Z",
+  "title": "Design System: PartsSource",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Slate Navy",
+        "canonical": "#0f172a",
+        "tonalRamp": ["#020617", "#0f172a", "#1e293b", "#334155", "#475569", "#64748b", "#94a3b8", "#cbd5e1"]
+      },
+      "bg-page": {
+        "role": "neutral",
+        "displayName": "Slate Page",
+        "canonical": "#f8fafc",
+        "tonalRamp": ["#cbd5e1", "#e2e8f0", "#f1f5f9", "#f8fafc", "#fcfdfe", "#ffffff", "#ffffff", "#ffffff"]
+      },
+      "bg-surface": {
+        "role": "neutral",
+        "displayName": "Pure White",
+        "canonical": "#ffffff",
+        "tonalRamp": ["#94a3b8", "#cbd5e1", "#e2e8f0", "#f1f5f9", "#f8fafc", "#ffffff", "#ffffff", "#ffffff"]
+      },
+      "accent": {
+        "role": "accent",
+        "displayName": "Sky Accent",
+        "canonical": "#0284c7",
+        "tonalRamp": ["#0369a1", "#0284c7", "#0ea5e9", "#38bdf8", "#7dd3fc", "#bae6fd", "#e0f2fe", "#f0f9ff"]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display Sans",
+        "purpose": "Dashboard page headers and main panel titles."
+      },
+      "body": {
+        "displayName": "Body Sans",
+        "purpose": "Standard details, parts specification content, and tables."
+      },
+      "label": {
+        "displayName": "Label Mono",
+        "purpose": "Technical indexes, part numbers, unit cost numbers, and date tags."
+      }
+    },
+    "shadows": [
+      {
+        "name": "ambient-low",
+        "value": "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+        "purpose": "Subtle border overlay shadow for container elements."
+      }
+    ],
+    "motion": [
+      {
+        "name": "spring-tactile",
+        "value": "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Reactivity active scale and hover transitions on buttons."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Tactile submission button used for primary sourcing actions.",
+      "html": "<button class=\"ds-btn-primary\">Consolidate Sourcing Channel</button>",
+      "css": ".ds-btn-primary { background-color: #0f172a; color: #ffffff; padding: 8px 16px; border-radius: 6px; font-family: sans-serif; font-size: 14px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-primary:hover { background-color: #1e293b; } .ds-btn-primary:active { transform: scale(0.98); }"
+    },
+    {
+      "name": "Spec Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Information container framing technical attributes and compliance metrics.",
+      "html": "<div class=\"ds-card\"><h3 class=\"ds-card-title\">Component Specifications</h3><p class=\"ds-card-desc\">Detailed view of parameters extracted from design requirements.</p></div>",
+      "css": ".ds-card { background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; font-family: sans-serif; } .ds-card-title { font-size: 14px; font-weight: 600; color: #0f172a; margin: 0 0 8px 0; } .ds-card-desc { font-size: 12px; color: #475569; margin: 0; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Mechanical Blueprint Vault",
+    "overview": "PartsSource uses a clean, high-density, precise visual layout. The visual architecture is inspired by premium modern engineering software: clean lines, generous data densities, clear hierarchies, and subtle micro-motions. It rejects the stereotypical dark-hacker glowing grid tropes in favor of professional web standards tailored for engineers and procurement panels.",
+    "keyCharacteristics": [
+      "Clean slate-50 and white page backgrounds to establish clarity.",
+      "Standard typography weights (using Inter display/sans scales) instead of default monospace.",
+      "Subtly rounded borders (10px and 12px radii) to frame stats and tables.",
+      "Tactile micro-animations (active:scale-[0.98] transition-all) to signal interface reactivity."
+    ],
+    "rules": [
+      {
+        "name": "The Rarity of Accent Rule",
+        "body": "The primary accent blue (#0284c7) is reserved solely for focus borders, matching badge details, and visual selection markers. It must never cover more than 10% of any layout surface.",
+        "section": "colors"
+      },
+      {
+        "name": "The Elevation Response Rule",
+        "body": "Surfaces are flat by default. Subtle shadows appear only as a hover response on interactive cards.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do use uppercase monospace text purely for part numbers, cost fields, and registry IDs.",
+      "Do use distinct background tints to highlight table sections.",
+      "Do apply active:scale-[0.98] transitions on buttons to provide tactile feedback."
+    ],
+    "donts": [
+      "Don't use neon-cyan linear gradients or wireframe grid patterns behind dashboards.",
+      "Don't add arbitrary absolute crosshair + signs to container corners.",
+      "Don't place mock system tags like [SYS-01] or [notice] in text headers.",
+      "Don't combine a solid card border with heavy, wide box-shadows."
+    ]
+  }
+}
