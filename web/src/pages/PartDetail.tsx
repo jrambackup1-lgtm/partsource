@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, ExternalLink, Search } from 'lucide-react';
-import { fuse, parseCustomPart, Part, suppliers, hashCode, db } from '../lib/decoder';
+import { fuse, parseCustomPart, Part, suppliers, hashCode, db, getEquivalentPartNumber } from '../lib/decoder';
 import { useBOM } from '../hooks/useBOM';
 import { useCurrency, rates } from '../contexts/CurrencyContext';
 
@@ -117,6 +117,26 @@ export function PartDetail() {
   const { addToBOM } = useBOM();
   const { currency } = useCurrency();
   const [item, setItem] = useState<Part | null>(null);
+  const [liveData, setLiveData] = useState<any>(null);
+  const [loadingLive, setLoadingLive] = useState(false);
+
+  useEffect(() => {
+    if (item?.partNumber) {
+      setLoadingLive(true);
+      fetch(`http://localhost:3005/api/scrape?partNumber=${encodeURIComponent(item.partNumber)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.success) {
+            setLiveData(data);
+          }
+          setLoadingLive(false);
+        })
+        .catch(err => {
+          console.warn("Failed to load live data, falling back to simulated logic:", err);
+          setLoadingLive(false);
+        });
+    }
+  }, [item?.partNumber]);
 
   // Preview mode CAD vs Photo
   const [previewMode, setPreviewMode] = useState<'cad' | 'photo'>('cad');
@@ -340,9 +360,21 @@ export function PartDetail() {
           <div className="bg-white border border-slate-200 rounded-xl p-6 relative shadow-xs overflow-hidden">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-semibold text-slate-450 uppercase tracking-wider">Part Identification</span>
-              <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> Active Sourcing
-              </span>
+              <div className="flex items-center gap-2">
+                {loadingLive && (
+                  <span className="text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full animate-pulse">
+                    Live Scraping...
+                  </span>
+                )}
+                {liveData && (
+                  <span className="text-[10px] font-semibold text-blue-700 bg-blue-50 px-2.5 py-0.5 border border-blue-150 rounded-full flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span> Live Zoro Pricing
+                  </span>
+                )}
+                <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> Active Sourcing
+                </span>
+              </div>
             </div>
             <h1 className="text-2xl font-bold tracking-tight text-slate-900 m-0 mb-1 mt-3">{item.partNumber}</h1>
             <h2 className="text-sm font-semibold text-slate-500 mt-1 mb-5">
@@ -368,19 +400,28 @@ export function PartDetail() {
                   </tr>
                 </thead>
                 <tbody>
-                  {suppliers.map((sup, index) => {
-                    const price = item.mcmasterPrice * sup.discount;
-                    const stock = (hash % (1000 * (index + 1))) + 50;
-                    const href = sup.urlTemplate + encodeURIComponent(item.partNumber);
+                  {[{ name: 'McMaster-Carr', discount: 1.0, isDfars: true, isIso: true, isUsa: true, shipDays: 1, urlTemplate: 'https://www.mcmaster.com/' }, ...suppliers].map((sup, index) => {
+                    const baseMcMasterPrice = liveData ? liveData.mcmasterEstimatedPrice : item.mcmasterPrice;
+                    
+                    let price = baseMcMasterPrice * sup.discount;
+                    let stock = (hash % (1000 * (index + 1))) + 50;
+                    let href = sup.name === 'McMaster-Carr' ? `https://www.mcmaster.com/${item.partNumber}` : sup.urlTemplate + encodeURIComponent(getEquivalentPartNumber(sup.name, item.partNumber));
+                    let stockLabel = stock > 500 ? 'In stock' : '2-3 days';
+                    
+                    if (liveData && sup.name === 'Zoro') {
+                      price = liveData.zoro.unitPrice;
+                      stock = liveData.zoro.stockCount;
+                      stockLabel = liveData.zoro.stockStatus;
+                      href = liveData.zoro.url;
+                    }
                     
                     // Discount pill logic
                     const discountPct = Math.round((1 - sup.discount) * 100);
                     const isMcMaster = sup.name === 'McMaster-Carr';
                     
                     // Stock color logic
-                    const isHighStock = stock > 500;
+                    const isHighStock = stockLabel.toLowerCase().includes('in stock') || stock > 500;
                     const stockColor = isHighStock ? '#166534' : '#92400e';
-                    const stockLabel = isHighStock ? 'In stock' : '2-3 days';
                     
                     // Compliance logic
                     const failsDfars = filterDfars && !sup.isDfars;
@@ -396,6 +437,9 @@ export function PartDetail() {
                               {sup.name}
                               {isLocked && <span className="bg-red-50 text-red-700 text-[10px] font-semibold px-2 py-0.5 border border-red-150 rounded">LOCKED</span>}
                             </div>
+                            <span className="text-[10px] font-mono text-slate-400 bg-slate-50 border border-slate-150 px-1.5 py-0.5 rounded w-fit select-all">
+                              PN: {getEquivalentPartNumber(sup.name, item.partNumber)}
+                            </span>
                             {filterUsa && sup.isUsa && !isLocked && (
                               <span className="text-[10px] text-blue-650 font-semibold">🇺🇸 Domestic origin</span>
                             )}

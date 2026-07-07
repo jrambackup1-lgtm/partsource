@@ -55,5 +55,5 @@ This checklist tracks completed stages, pending prompts to run in AI Studio, and
 - [ ] **Local Build Verification**: Run `npm run build` or `next build` to verify there are no compilation or sitemap generation memory issues.
 - [ ] **Replace Mock Data with Real Tools**:
   - Replace simulated pricing/stock with actual scraper scripts or distributor APIs (e.g. Zoro API).
-  - Replace `LocalStorage` for Sourcing orders with a backend server database (e.g., PostgreSQL/Supabase) and user authentication (NextAuth).
+  - [x] **Database & Auth**: ❌ Not plugged. Sourcing order data resides entirely in browser client-side `localStorage`.
   - Add active Slack/Discord webhooks to notify the sourcing broker of orders.

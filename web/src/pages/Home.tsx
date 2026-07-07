@@ -383,7 +383,7 @@ export function Home() {
               </div>
               <div className="mt-4">
                 <span className="text-2xl font-semibold tracking-tight text-slate-900">{orders.length}</span>
-                <span className="block text-[10px] font-medium text-slate-400 mt-1 uppercase tracking-wider">Consolidated Brokerage batches</span>
+                <span className="block text-[10px] font-medium text-slate-400 mt-1 uppercase tracking-wider">Consolidated Sourcing batches</span>
               </div>
             </div>
           </div>
@@ -587,7 +587,7 @@ export function Home() {
             <div className="z-10 text-left">
               <h3 className="m-0 text-white text-sm font-semibold uppercase tracking-wider flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                Consolidated Brokerage Fulfillment
+                Consolidated Sourcing Fulfillment
               </h3>
               <p className="m-0 text-xs text-slate-300 mt-1.5 max-w-[500px] leading-relaxed">
                 Submit active BOM to consolidate orders, audit compliance certificates, and combine shipments in a single routing batch.
@@ -735,7 +735,7 @@ export function Home() {
       {activeTab === 'orders' && (
         <div className="flex flex-col gap-8 w-full max-w-[800px] mx-auto text-left">
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 m-0">Brokerage Order History</h1>
+            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 m-0">Sourcing Order History</h1>
             <p className="text-slate-500 m-0 mt-1 font-semibold text-sm">Track shipments, quotes, and consolidation status here.</p>
           </div>
           
@@ -749,7 +749,7 @@ export function Home() {
             <div className="text-center p-12 bg-white border border-slate-200 rounded-2xl shadow-sm mt-4">
               <Package className="w-12 h-12 mx-auto text-slate-300 mb-4" />
               <h3 className="text-base font-bold text-slate-800 m-0 mb-2">No Sourcing Orders Found</h3>
-              <p className="text-xs text-slate-400 m-0 leading-relaxed max-w-[320px] mx-auto">You have no active or completed brokerage consignments. Compile a BOM and click "Fulfill" to launch a consolidated order.</p>
+              <p className="text-xs text-slate-400 m-0 leading-relaxed max-w-[320px] mx-auto">You have no active or completed consolidated consignments. Compile a BOM and click "Fulfill" to launch a consolidated order.</p>
             </div>
           )}
         </div>

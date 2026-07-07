@@ -212,22 +212,139 @@ export function useBOM() {
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,
+      transformHeader: (header) => {
+        const normalized = header.toLowerCase().trim().replace(/[\s_-]+/g, ' ');
+        if (
+          normalized === 'part number' ||
+          normalized === 'part #' ||
+          normalized === 'part#' ||
+          normalized === 'pn' ||
+          normalized === 'part no' ||
+          normalized === 'part no.' ||
+          normalized === 'partno' ||
+          normalized === 'sku' ||
+          normalized === 'item' ||
+          normalized === 'item #' ||
+          normalized === 'item number' ||
+          normalized === 'itemno' ||
+          normalized === 'item no'
+        ) {
+          return 'partNumber';
+        }
+        if (
+          normalized === 'qty' ||
+          normalized === 'quantity' ||
+          normalized === 'count' ||
+          normalized === 'amount' ||
+          normalized === 'qnty' ||
+          normalized === 'pcs' ||
+          normalized === 'pieces'
+        ) {
+          return 'qty';
+        }
+        if (
+          normalized === 'unit cost' ||
+          normalized === 'unitcost' ||
+          normalized === 'price' ||
+          normalized === 'cost' ||
+          normalized === 'unit price' ||
+          normalized === 'unitprice' ||
+          normalized === 'rate' ||
+          normalized === 'price per unit' ||
+          normalized === 'price/unit'
+        ) {
+          return 'unitCost';
+        }
+        if (
+          normalized === 'description' ||
+          normalized === 'desc' ||
+          normalized === 'part description' ||
+          normalized === 'item description' ||
+          normalized === 'details'
+        ) {
+          return 'description';
+        }
+        if (
+          normalized === 'material' ||
+          normalized === 'mat' ||
+          normalized === 'substance' ||
+          normalized === 'alloy' ||
+          normalized === 'composition'
+        ) {
+          return 'material';
+        }
+        if (
+          normalized === 'supplier' ||
+          normalized === 'vendor' ||
+          normalized === 'source' ||
+          normalized === 'manufacturer' ||
+          normalized === 'mfg' ||
+          normalized === 'distributor'
+        ) {
+          return 'supplier';
+        }
+        return header;
+      },
       complete: (results) => {
         const rows = results.data as any[];
         let addedCount = 0;
         const currentList = [...bomList];
 
         rows.forEach(row => {
-          if (row.partNumber && row.qty && row.unitCost) {
-            // Handle native export format
+          if (row.partNumber && typeof row.partNumber === 'string' && row.partNumber.trim()) {
+            const cleanPartNumber = row.partNumber.trim();
+            
+            let qty = 1;
+            if (row.qty !== undefined && row.qty !== null && row.qty !== '') {
+              const parsedQty = parseInt(String(row.qty).replace(/[^0-9]/g, ''));
+              if (!isNaN(parsedQty)) {
+                qty = parsedQty;
+              }
+            }
+
+            let unitCost = 0;
+            if (row.unitCost !== undefined && row.unitCost !== null && row.unitCost !== '') {
+              const parsedCost = parseFloat(String(row.unitCost).replace(/[^0-9.]/g, ''));
+              if (!isNaN(parsedCost)) {
+                unitCost = parsedCost;
+              }
+            }
+
+            // Autofill price if missing
+            if (!unitCost) {
+              const decoded = parseCustomPart(cleanPartNumber);
+              if (decoded && decoded.mcmasterPrice) {
+                unitCost = decoded.mcmasterPrice * 0.85;
+              }
+            }
+
+            // Construct description
+            let description = row.description || '';
+            if (!description) {
+              const decoded = parseCustomPart(cleanPartNumber);
+              if (decoded) {
+                description = `${decoded.type} ${decoded.thread || ''} ${decoded.length && decoded.length !== 'N/A' ? 'x ' + decoded.length : ''}`.trim().replace(/\s+/g, ' ');
+              }
+            }
+
+            // Construct material
+            let material = row.material || '';
+            if (!material) {
+              const decoded = parseCustomPart(cleanPartNumber);
+              if (decoded && decoded.material) {
+                material = decoded.material;
+              }
+            }
+
             const bomItem: BOMItem = {
-              partNumber: row.partNumber,
-              description: row.description || '',
-              material: row.material || '',
+              partNumber: cleanPartNumber,
+              description: description || 'Imported Part',
+              material: material || 'Steel',
               supplier: row.supplier || 'Imported',
-              qty: parseInt(row.qty) || 1,
-              unitCost: parseFloat(row.unitCost) || 0
+              qty,
+              unitCost
             };
+
             const existingIndex = currentList.findIndex(b => b.partNumber === bomItem.partNumber && b.supplier === bomItem.supplier);
             if (existingIndex >= 0) {
               currentList[existingIndex].qty += bomItem.qty;

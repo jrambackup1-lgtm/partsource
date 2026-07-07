@@ -39,8 +39,8 @@ export function BrokerageModal({ isOpen, onClose, bomList, onPlaceOrder, onSucce
   const config = destinationConfig[destination];
   const flatShippingFee = config.shipping;
   const duties = totalBomCost * config.dutyPct;
-  const brokerageFee = totalBomCost * 0.15; // 15% take-rate
-  const finalTotal = totalBomCost + flatShippingFee + duties + brokerageFee;
+  const brokerageFee = totalBomCost * 0.15; // 15% take-rate for internal admin console reference
+  const finalTotal = totalBomCost + flatShippingFee + duties;
 
   const handleNext = () => {
     if (step === 2) {
@@ -85,7 +85,7 @@ export function BrokerageModal({ isOpen, onClose, bomList, onPlaceOrder, onSucce
           <div>
             <h3 className="m-0 text-xl font-bold text-slate-900 flex items-center gap-2">
               <Package className="w-5 h-5 text-blue-600" />
-              BOM Brokerage Checkout
+              BOM Consolidated Checkout
             </h3>
             <p className="m-0 text-xs text-slate-500 mt-1">Consolidate orders across multiple distributors into a single shipment.</p>
           </div>
@@ -266,13 +266,7 @@ export function BrokerageModal({ isOpen, onClose, bomList, onPlaceOrder, onSucce
                         <span className="font-mono font-bold text-slate-800">{formatPrice(duties)}</span>
                       </div>
                     )}
-                    <div className="flex justify-between items-center mb-4 text-sm pb-4 border-b border-slate-200">
-                      <span className="text-slate-600 flex items-center gap-2">
-                        <DollarSign className="w-4 h-4" /> Brokerage Transaction Fee (15%)
-                      </span>
-                      <span className="font-mono font-bold text-slate-800">{formatPrice(brokerageFee)}</span>
-                    </div>
-                    <div className="flex justify-between items-center text-lg">
+                    <div className="border-t border-slate-200 pt-4 mt-1 flex justify-between items-center text-lg">
                       <span className="font-bold text-slate-900">Total Final Cost</span>
                       <span className="font-mono font-extrabold text-blue-700">{formatPrice(finalTotal)}</span>
                     </div>

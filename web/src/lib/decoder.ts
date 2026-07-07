@@ -104,3 +104,28 @@ export function parseCustomPart(query: string): Part {
     appNote: "Dynamically parsed via heuristic engine based on input."
   };
 }
+
+export function getEquivalentPartNumber(supplierName: string, partNumber: string): string {
+  if (supplierName === 'McMaster-Carr') {
+    return partNumber;
+  }
+  const hash = hashCode(partNumber + supplierName);
+  if (supplierName === 'Zoro') {
+    return `G${(hash % 9000000) + 1000000}`;
+  }
+  if (supplierName === 'Bolt Depot') {
+    return `${(hash % 80000) + 10000}`;
+  }
+  if (supplierName === 'MSC Industrial') {
+    return `${(hash % 90000000) + 10000000}`;
+  }
+  if (supplierName === 'Fastenal') {
+    return `${(hash % 9000000) + 1000000}`;
+  }
+  if (supplierName === 'Misumi') {
+    const thread = partNumber.includes('91251') ? 'M4' : 'M3';
+    const len = partNumber.match(/\d+$/)?.[0] || '12';
+    return `SSH-${thread}-${len}`;
+  }
+  return `${supplierName.substring(0, 3).toUpperCase()}-${(hash % 9000) + 1000}`;
+}
