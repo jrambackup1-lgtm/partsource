@@ -1,13 +1,14 @@
 import React from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  Search, 
-  Layers, 
-  Package, 
-  Settings, 
-  HelpCircle, 
-  LogOut 
+import {
+  LayoutDashboard,
+  Search,
+  Layers,
+  Package,
+  BookOpen,
+  Settings,
+  HelpCircle,
+  LogOut
 } from 'lucide-react';
 
 export function Sidebar() {
@@ -22,14 +23,15 @@ export function Sidebar() {
     { id: 'finder', label: 'Part Finder', icon: Search, path: '/' },
     { id: 'bom', label: 'BOM Manager', icon: Layers, path: '/?tab=bom' },
     { id: 'orders', label: 'Sourcing Orders', icon: Package, path: '/?tab=orders' },
+    { id: 'reference', label: 'Reference', icon: BookOpen, path: '/reference' },
   ];
 
   const handleLogout = () => {
-    alert('Signing out...');
+    alert('No accounts yet — your BOM and orders live in this browser\'s local storage.');
   };
 
   const handleSupport = () => {
-    alert('Support system will be integrated in Phase 4.');
+    window.location.href = 'mailto:jayaram.h@afterconcept.com?subject=PartSource%20support';
   };
 
   return (
@@ -51,7 +53,9 @@ export function Sidebar() {
         <nav className="p-4 flex flex-col gap-1.5">
           {navItems.map((item) => {
             const isHome = path === '/';
-            const isActive = isHome && activeTab === item.id;
+            const isActive = item.id === 'reference'
+              ? path.startsWith('/reference')
+              : isHome && activeTab === item.id;
             
             return (
               <Link

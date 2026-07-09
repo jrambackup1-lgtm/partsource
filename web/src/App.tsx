@@ -11,6 +11,7 @@ import { Home } from './pages/Home';
 import { PartDetail } from './pages/PartDetail';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { WidgetEmbed } from './pages/WidgetEmbed';
+import { ReferenceIndex, ReferenceArticle } from './pages/Reference';
 import { CurrencyProvider } from './contexts/CurrencyContext';
 
 function AppContent() {
@@ -41,6 +42,8 @@ function AppContent() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/parts/:partNumber" element={<PartDetail />} />
+              <Route path="/reference" element={<ReferenceIndex />} />
+              <Route path="/reference/:slug" element={<ReferenceArticle />} />
               <Route path="/admin" element={<AdminDashboard />} />
             </Routes>
           </div>
