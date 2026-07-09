@@ -324,6 +324,27 @@ export function Home() {
   const totalItems = bomList.length;
   const totalQty = bomList.reduce((acc, item) => acc + item.qty, 0);
 
+  // "Quote my BOM" lead capture: zero-backend — prefilled mailto, with the
+  // full BOM copied to the clipboard (mailto bodies get truncated by clients).
+  const [quoteCopied, setQuoteCopied] = useState(false);
+  const requestQuote = () => {
+    const lines = bomList.map(i =>
+      `${i.qty} × ${i.partNumber} — ${i.description} (${i.material}) — preferred supplier: ${i.supplier}`);
+    const body = [
+      'Hi Jay,', '', 'Please quote the following BOM:', '',
+      ...lines, '',
+      `Tool-estimated total: $${totalBomCost.toFixed(2)}`, '',
+      'Name:', 'Company:', 'Ship-to (city/country):', 'Target date:', '',
+    ].join('\n');
+    navigator.clipboard?.writeText(body).catch(() => {});
+    setQuoteCopied(true);
+    setTimeout(() => setQuoteCopied(false), 3000);
+    const mailBody = lines.length > 40
+      ? body.split('\n').slice(0, 8).join('\n') + '\n… (full BOM is on your clipboard — paste it here)'
+      : body;
+    window.location.href = `mailto:jayaram.h@afterconcept.com?subject=${encodeURIComponent(`BOM quote request (${totalItems} lines)`)}&body=${encodeURIComponent(mailBody)}`;
+  };
+
   // Compute simulated costs for all suppliers
   const supplierCosts = useMemo(() => {
     if (bomList.length === 0) return [];
@@ -578,7 +599,7 @@ export function Home() {
             {/* Quick searches shortcuts */}
             <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
               <span className="text-[11px] font-semibold text-slate-400 mr-2">Shortcuts:</span>
-              {['91251A542', '91290A115', '91247A142', '92210A110'].map(pn => (
+              {['91290A115', 'DIN912-M4X12', 'DIN934-M6', 'M5 socket head cap screw'].map(pn => (
                 <button 
                   key={pn} 
                   onClick={() => triggerSearch(pn)} 
@@ -619,12 +640,21 @@ export function Home() {
                 Submit active BOM to consolidate orders, audit compliance certificates, and combine shipments in a single routing batch.
               </p>
             </div>
-            <button 
-              className="bg-white hover:bg-slate-50 text-slate-900 border-none py-2.5 px-6 rounded-md text-xs font-semibold cursor-pointer transition-all active:scale-[0.98] whitespace-nowrap z-10 shadow-sm"
-              onClick={() => setIsBrokerageModalOpen(true)}
-            >
-              Execute Fulfillment
-            </button>
+            <div className="flex flex-col sm:flex-row gap-2 z-10">
+              <button
+                className="bg-emerald-500 hover:bg-emerald-400 text-white border-none py-2.5 px-6 rounded-md text-xs font-semibold cursor-pointer transition-all active:scale-[0.98] whitespace-nowrap shadow-sm"
+                onClick={requestQuote}
+                title="Opens an email with your BOM prefilled (also copied to clipboard)"
+              >
+                {quoteCopied ? 'BOM copied — email opened' : 'Request Sourcing Quote'}
+              </button>
+              <button
+                className="bg-white hover:bg-slate-50 text-slate-900 border-none py-2.5 px-6 rounded-md text-xs font-semibold cursor-pointer transition-all active:scale-[0.98] whitespace-nowrap shadow-sm"
+                onClick={() => setIsBrokerageModalOpen(true)}
+              >
+                Execute Fulfillment
+              </button>
+            </div>
           </div>
 
           {/* Table Header controls */}

@@ -1,9 +1,10 @@
+import { db } from '../lib/decoder';
+
 export function Footer() {
   return (
     <footer className="h-auto py-3 bg-[var(--bg-surface)] border-t border-[var(--border)] px-6 flex flex-col md:flex-row items-center justify-between text-[var(--text-secondary)] text-[10px] shrink-0 mt-auto gap-2">
       <div className="flex gap-4">
-        <span>Session ID: <span className="mono">MC-782-X2</span></span>
-        <span>Database: <span className="mono">v1.04.12</span></span>
+        <span>Catalog: <span className="mono">{db.length.toLocaleString()} parts</span></span>
       </div>
       <div className="text-center md:text-right flex flex-col md:items-end gap-0.5">
         <span>Not affiliated with, endorsed by, or sponsored by McMaster-Carr or any listed supplier. Estimated prices are our own approximations.</span>

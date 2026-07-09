@@ -10,7 +10,7 @@ export function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<'orders' | 'widget'>('orders');
 
   // Widget settings state
-  const [widgetPartNumber, setWidgetPartNumber] = useState('91251A542');
+  const [widgetPartNumber, setWidgetPartNumber] = useState('DIN912-M4X12');
   const [widgetTheme, setWidgetTheme] = useState('dark');
   const [widgetAccent, setWidgetAccent] = useState('#3b82f6');
   const [widgetShowGrid, setWidgetShowGrid] = useState(true);
@@ -76,7 +76,7 @@ export function AdminDashboard() {
             </h1>
             <p className="text-xs text-slate-350 mt-1.5 leading-normal">Management workspace for consolidated brokerage orders and vendor integrations.</p>
           </div>
-          <span className="text-[10px] font-medium text-slate-350 bg-slate-800 px-2.5 py-0.5 rounded-md">V1.0</span>
+          <span className="text-[10px] font-semibold text-amber-300 bg-slate-800 px-2.5 py-0.5 rounded-md border border-amber-400/30">Demo — orders live in this browser only</span>
         </div>
         
         <div className="flex gap-2 mt-8 z-10 relative">
@@ -176,7 +176,7 @@ export function AdminDashboard() {
                     value={widgetPartNumber}
                     onChange={(e) => setWidgetPartNumber(e.target.value)}
                     className="w-full border border-slate-200 rounded-lg p-2.5 bg-slate-50 focus:bg-white focus:border-slate-950 outline-none transition-all text-xs font-semibold"
-                    placeholder="e.g. 91251A542"
+                    placeholder="e.g. DIN912-M4X12"
                   />
                   <p className="text-[10px] text-slate-400 mt-1.5 font-medium">// Part loaded on widget initialization.</p>
                 </div>

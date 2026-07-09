@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, ExternalLink, Search } from 'lucide-react';
 import { findCatalogPart, parseCustomPart, Part, suppliers, db, getSupplierSearchUrl, buildSupplierQuery } from '../lib/decoder';
+import { REF_PAGES } from '../lib/reference';
 import { useBOM } from '../hooks/useBOM';
 import { useCurrency, rates } from '../contexts/CurrencyContext';
 
@@ -290,6 +291,7 @@ export function PartDetail() {
   // A price estimate exists for catalog parts and well-decoded guesses; for
   // everything else we show honest link-outs instead of a fabricated matrix.
   const canPrice = item.mcmasterPrice > 0;
+  const refChart = REF_PAGES.find(r => r.catalogStandard === item.standard);
 
   return (
     <div className="flex flex-col flex-grow w-full max-w-[1200px] mx-auto p-6 overflow-y-auto font-sans text-left">
@@ -326,6 +328,11 @@ export function PartDetail() {
                 ))}
               </tbody>
             </table>
+            {refChart && (
+              <Link to={`/reference/${refChart.slug}`} className="py-2.5 px-4 text-[11px] font-semibold text-slate-600 no-underline hover:text-slate-900 hover:underline border-t border-slate-100 bg-slate-50/50">
+                Full {item.standard} size chart →
+              </Link>
+            )}
           </div>
 
           <div className="bg-white border border-slate-200 rounded-xl flex flex-col p-5 gap-4 shadow-xs">
@@ -352,6 +359,9 @@ export function PartDetail() {
                  Compliance filters are active. Non-compliant vendor offers are restricted.
                </div>
             )}
+            <p className="text-[10px] text-slate-400 m-0 leading-relaxed">
+              Vendor capability flags are indicative only — always verify certifications and traceability per order.
+            </p>
           </div>
         </div>
 
@@ -393,6 +403,25 @@ export function PartDetail() {
                   ? 'The specifications below were decoded from your input — verify them before ordering. Prices are rough estimates.'
                   : 'We could not decode reliable specifications from it, so no specs or prices are shown. Use the supplier links below to search the raw number, or request indexing and we’ll source it.'}
                 {' '}<a className="font-bold underline" href={`mailto:jayaram.h@afterconcept.com?subject=${encodeURIComponent('PartSource indexing request: ' + item.partNumber)}`}>Request this part</a>
+              </div>
+            )}
+            {isUnindexed && liveData?.zoro?.name && (
+              <div className="text-xs text-blue-900 bg-blue-50 border border-blue-200 p-4 rounded-lg leading-relaxed mb-3">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
+                  <strong className="uppercase tracking-wider text-[10px]">Live cross-reference from Zoro</strong>
+                </div>
+                <div className="font-semibold">{liveData.zoro.name}</div>
+                <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-blue-800">
+                  {liveData.zoro.unitPrice > 0 && <span>${liveData.zoro.unitPrice.toFixed(2)}/unit{liveData.zoro.packSize > 1 ? ` (pack of ${liveData.zoro.packSize})` : ''}</span>}
+                  {liveData.zoro.stockStatus && <span>{liveData.zoro.stockStatus}</span>}
+                  <a href={liveData.zoro.url} target="_blank" rel="noreferrer" className="font-bold underline inline-flex items-center gap-1">
+                    View on Zoro <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
+                <div className="mt-1.5 text-[10px] text-blue-700">
+                  Matched by Zoro's own cross-reference — verify specifications before ordering.
+                </div>
               </div>
             )}
             <div className="text-xs text-slate-650 bg-slate-50 border border-slate-150 p-4 rounded-lg leading-relaxed">
