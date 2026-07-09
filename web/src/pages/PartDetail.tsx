@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, ExternalLink, Search } from 'lucide-react';
-import { fuse, parseCustomPart, Part, suppliers, hashCode, db, getEquivalentPartNumber } from '../lib/decoder';
+import { fuse, parseCustomPart, Part, suppliers, hashCode, db, getSupplierSearchUrl, buildSupplierQuery } from '../lib/decoder';
 import { useBOM } from '../hooks/useBOM';
 import { useCurrency, rates } from '../contexts/CurrencyContext';
 
@@ -120,23 +120,49 @@ export function PartDetail() {
   const [liveData, setLiveData] = useState<any>(null);
   const [loadingLive, setLoadingLive] = useState(false);
 
+  // The Zoro scraper is an optional live-pricing overlay. When it is not
+  // running (e.g. on a static host) or Zoro blocks the request, the app falls
+  // back to computed pricing and never shows a fake "Live" badge. The URL is
+  // configurable via VITE_SCRAPER_URL; defaulting to localhost:3001.
+  const SCRAPER_URL = import.meta.env.VITE_SCRAPER_URL || 'http://localhost:3001';
+
   useEffect(() => {
-    if (item?.partNumber) {
-      setLoadingLive(true);
-      fetch(`http://localhost:3005/api/scrape?partNumber=${encodeURIComponent(item.partNumber)}`)
-        .then(res => res.json())
-        .then(data => {
-          if (data && data.success) {
-            setLiveData(data);
-          }
-          setLoadingLive(false);
-        })
-        .catch(err => {
-          console.warn("Failed to load live data, falling back to simulated logic:", err);
-          setLoadingLive(false);
-        });
-    }
-  }, [item?.partNumber]);
+    if (!item?.partNumber) return;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 6000);
+
+    setLoadingLive(true);
+    setLiveData(null);
+
+    fetch(`${SCRAPER_URL}/api/scrape?partNumber=${encodeURIComponent(item.partNumber)}`, {
+      signal: controller.signal,
+    })
+      .then(res => res.json())
+      .then(data => {
+        // Only treat a genuinely successful scrape as live data; otherwise the
+        // computed price table is authoritative and no badge is shown.
+        if (data && data.success) {
+          setLiveData(data);
+        } else {
+          setLiveData(null);
+        }
+        setLoadingLive(false);
+      })
+      .catch(err => {
+        // Scraper not running, timed out, or blocked — fall back silently.
+        if (err.name !== 'AbortError') {
+          console.warn('Live pricing unavailable, using computed prices:', err.message);
+        }
+        setLiveData(null);
+        setLoadingLive(false);
+      })
+      .finally(() => clearTimeout(timeout));
+
+    return () => {
+      clearTimeout(timeout);
+      controller.abort();
+    };
+  }, [item?.partNumber, SCRAPER_URL]);
 
   // Preview mode CAD vs Photo
   const [previewMode, setPreviewMode] = useState<'cad' | 'photo'>('cad');
@@ -405,19 +431,26 @@ export function PartDetail() {
                     
                     let price = baseMcMasterPrice * sup.discount;
                     let stock = (hash % (1000 * (index + 1))) + 50;
-                    let href = sup.name === 'McMaster-Carr' ? `https://www.mcmaster.com/${item.partNumber}` : sup.urlTemplate + encodeURIComponent(getEquivalentPartNumber(sup.name, item.partNumber));
+                    let href = sup.name === 'McMaster-Carr'
+                      ? `https://www.mcmaster.com/${item.partNumber}`
+                      : getSupplierSearchUrl(sup.urlTemplate, item);
                     let stockLabel = stock > 500 ? 'In stock' : '2-3 days';
-                    
+                    // Data provenance: only Zoro can be "Live"; everyone else is
+                    // simulated/estimated per the PRD pricing model.
+                    let isLive = false;
+
                     if (liveData && sup.name === 'Zoro') {
                       price = liveData.zoro.unitPrice;
                       stock = liveData.zoro.stockCount;
                       stockLabel = liveData.zoro.stockStatus;
                       href = liveData.zoro.url;
+                      isLive = true;
                     }
-                    
+
                     // Discount pill logic
                     const discountPct = Math.round((1 - sup.discount) * 100);
                     const isMcMaster = sup.name === 'McMaster-Carr';
+                    const queryStr = isMcMaster ? item.partNumber : buildSupplierQuery(item);
                     
                     // Stock color logic
                     const isHighStock = stockLabel.toLowerCase().includes('in stock') || stock > 500;
@@ -435,10 +468,15 @@ export function PartDetail() {
                           <div className="flex flex-col gap-1 text-left">
                             <div className="flex items-center gap-2">
                               {sup.name}
+                              {isLive ? (
+                                <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-semibold px-1.5 py-0.5 rounded uppercase tracking-wide" title="Price and stock read live from the supplier's published product data">Live</span>
+                              ) : (
+                                <span className="bg-slate-100 text-slate-500 border border-slate-200 text-[10px] font-medium px-1.5 py-0.5 rounded uppercase tracking-wide" title="Price estimated from the McMaster reference and simulated discount model">Estimated</span>
+                              )}
                               {isLocked && <span className="bg-red-50 text-red-700 text-[10px] font-semibold px-2 py-0.5 border border-red-150 rounded">LOCKED</span>}
                             </div>
-                            <span className="text-[10px] font-mono text-slate-400 bg-slate-50 border border-slate-150 px-1.5 py-0.5 rounded w-fit select-all">
-                              PN: {getEquivalentPartNumber(sup.name, item.partNumber)}
+                            <span className="text-[10px] font-mono text-slate-400 bg-slate-50 border border-slate-150 px-1.5 py-0.5 rounded w-fit select-all" title="Search query sent to this supplier's site">
+                              {isMcMaster ? `PN: ${queryStr}` : `q: ${queryStr}`}
                             </span>
                             {filterUsa && sup.isUsa && !isLocked && (
                               <span className="text-[10px] text-blue-650 font-semibold">🇺🇸 Domestic origin</span>
