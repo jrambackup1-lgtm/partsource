@@ -2,6 +2,10 @@
 node_modules/
 **/node_modules/
 
+# Python virtual environments
+.venv/
+**/.venv/
+
 # Production builds
 dist/
 build/
@@ -19,6 +23,9 @@ Thumbs.db
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Local backup of the web app (pre-scraper snapshot, kept out of history)
+web_backup_vite/
 
 # Environment variables
 .env

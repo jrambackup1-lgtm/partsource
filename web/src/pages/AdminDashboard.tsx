@@ -47,9 +47,12 @@ export function AdminDashboard() {
     setSelectedOrder(newOrder);
   };
 
+  // Built from the current origin so the snippet works on localhost, GitHub
+  // Pages (/partsource/ base), and the future partsource.io domain alike.
+  const embedCode = `<iframe src="${window.location.origin}${import.meta.env.BASE_URL}embed/${widgetPartNumber}?theme=${widgetTheme}&accent=${encodeURIComponent(widgetAccent)}&grid=${widgetShowGrid}" width="100%" height="400" frameborder="0"></iframe>`;
+
   const handleCopyCode = () => {
-    const code = `<iframe src="https://partsource.io/embed/${widgetPartNumber}?theme=${widgetTheme}&accent=${encodeURIComponent(widgetAccent)}&grid=${widgetShowGrid}" width="100%" height="400" frameborder="0"></iframe>`;
-    navigator.clipboard.writeText(code);
+    navigator.clipboard.writeText(embedCode);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -227,7 +230,7 @@ export function AdminDashboard() {
                 <h3 className="text-[11px] font-bold text-slate-400 mb-3 uppercase tracking-wider">Embed Integration Code</h3>
                 <div className="relative">
                   <pre className="bg-slate-900 text-slate-300 p-4 rounded-lg overflow-x-auto text-[11px] font-mono leading-relaxed border border-slate-850 shadow-inner w-full">
-                    {`<iframe src="https://partsource.io/embed/${widgetPartNumber}?theme=${widgetTheme}&accent=${encodeURIComponent(widgetAccent)}&grid=${widgetShowGrid}" width="100%" height="400" frameborder="0"></iframe>`}
+                    {embedCode}
                   </pre>
                   <button 
                     onClick={handleCopyCode}

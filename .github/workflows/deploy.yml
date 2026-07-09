@@ -35,11 +35,25 @@ jobs:
       - name: Install dependencies
         run: npm ci
         working-directory: web
-        
+
+      - name: Test
+        run: npm run test
+        working-directory: web
+
       - name: Build
+        # VITE_SCRAPER_URL is the hosted Zoro-pricing scraper (Fly.io / Render).
+        # Configure it as a repository variable (Settings -> Secrets and variables ->
+        # Actions -> Variables). When unset, the frontend falls back to estimated prices.
+        env:
+          VITE_SCRAPER_URL: ${{ vars.VITE_SCRAPER_URL }}
         run: npm run build
         working-directory: web
-        
+
+      - name: Add SPA fallback
+        # GitHub Pages serves 404.html for unknown paths; copying index.html
+        # lets deep links like /partsource/parts/91251A242 boot the router.
+        run: cp web/dist/index.html web/dist/404.html
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
         

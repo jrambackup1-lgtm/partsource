@@ -56,7 +56,7 @@ function AppContent() {
 export default function App() {
   return (
     <CurrencyProvider>
-      <Router>
+      <Router basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
         <AppContent />
       </Router>
     </CurrencyProvider>
