@@ -163,11 +163,9 @@ export function Header() {
 
         {/* User Card */}
         <div className="flex items-center gap-3">
-          <img 
-            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" 
-            alt="Jay Profile" 
-            className="w-9 h-9 rounded-full object-cover border border-slate-100 shadow-sm"
-          />
+          <div className="w-9 h-9 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs font-bold border border-slate-100 shadow-sm select-none">
+            JS
+          </div>
           <div className="hidden md:flex flex-col text-left">
             <span className="text-xs font-bold text-slate-900 leading-tight">Jay Sourcing</span>
             <span className="text-[10px] font-semibold text-slate-400">@jay_sourcing</span>

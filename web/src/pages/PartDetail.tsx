@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, ExternalLink, Search } from 'lucide-react';
-import { fuse, parseCustomPart, Part, suppliers, hashCode, db, getSupplierSearchUrl, buildSupplierQuery } from '../lib/decoder';
+import { findCatalogPart, parseCustomPart, Part, suppliers, db, getSupplierSearchUrl, buildSupplierQuery } from '../lib/decoder';
 import { useBOM } from '../hooks/useBOM';
 import { useCurrency, rates } from '../contexts/CurrencyContext';
 
@@ -134,7 +134,10 @@ export function PartDetail() {
     setLoadingLive(true);
     setLiveData(null);
 
-    fetch(`${SCRAPER_URL}/api/scrape?partNumber=${encodeURIComponent(item.partNumber)}`, {
+    // Verified McMaster crosses search Zoro by the MPN (Zoro cross-indexes
+    // them); generated/guessed parts search by their decoded spec instead.
+    const zoroQuery = item.mcmaster ?? buildSupplierQuery(item);
+    fetch(`${SCRAPER_URL}/api/scrape?partNumber=${encodeURIComponent(item.partNumber)}&q=${encodeURIComponent(zoroQuery)}`, {
       signal: controller.signal,
     })
       .then(res => res.json())
@@ -164,9 +167,6 @@ export function PartDetail() {
     };
   }, [item?.partNumber, SCRAPER_URL]);
 
-  // Preview mode CAD vs Photo
-  const [previewMode, setPreviewMode] = useState<'cad' | 'photo'>('cad');
-
   // Compliance Filters
   const [filterDfars, setFilterDfars] = useState(false);
   const [filterIso, setFilterIso] = useState(false);
@@ -175,13 +175,9 @@ export function PartDetail() {
   useEffect(() => {
     if (partNumber) {
       const decoded = decodeURIComponent(partNumber);
-      const searchRes = fuse.search(decoded);
-      let foundItem: Part;
-      if (searchRes.length > 0 && searchRes[0].score! < 0.5) {
-        foundItem = searchRes[0].item;
-      } else {
-        foundItem = parseCustomPart(decoded);
-      }
+      // Exact catalog / McMaster-cross match wins; unknown numbers fall through
+      // to the honest decoder instead of fuzzy-matching onto a wrong part.
+      const foundItem: Part = findCatalogPart(decoded) ?? parseCustomPart(decoded);
       setItem(foundItem);
 
       // SEO Logic
@@ -197,7 +193,7 @@ export function PartDetail() {
       metaDesc.setAttribute('content', `Compare pricing and inventory for ${foundItem.partNumber} / ${foundItem.type}. ${foundItem.appNote}`);
 
       let metaRobots = document.querySelector('meta[name="robots"]');
-      if (foundItem.standard === 'Unknown' || foundItem.thread === 'Unknown') {
+      if (foundItem.unindexed || foundItem.standard === 'Unknown' || foundItem.thread === 'Unknown') {
         if (!metaRobots) {
           metaRobots = document.createElement('meta');
           metaRobots.setAttribute('name', 'robots');
@@ -210,7 +206,12 @@ export function PartDetail() {
         }
       }
 
-      // JSON-LD Structured Data
+      // JSON-LD Structured Data — only for indexed catalog parts; guessed
+      // parts are noindexed and must not emit structured offers.
+      if (foundItem.unindexed) {
+        document.querySelector('#json-ld-product')?.remove();
+        return;
+      }
       const curRate = rates[currency];
       const allPrices = suppliers.map(s => foundItem.mcmasterPrice * s.discount * curRate);
       const lowPriceStr = Math.min(...allPrices).toFixed(2);
@@ -285,7 +286,10 @@ export function PartDetail() {
     ['Standard', item.standard]
   ];
 
-  const hash = hashCode(item.partNumber);
+  const isUnindexed = !!item.unindexed;
+  // A price estimate exists for catalog parts and well-decoded guesses; for
+  // everything else we show honest link-outs instead of a fabricated matrix.
+  const canPrice = item.mcmasterPrice > 0;
 
   return (
     <div className="flex flex-col flex-grow w-full max-w-[1200px] mx-auto p-6 overflow-y-auto font-sans text-left">
@@ -300,42 +304,12 @@ export function PartDetail() {
         {/* Left Column: Drawing and Specs */}
         <div className="flex flex-col gap-6 xl:col-span-1">
           <div className="bg-white border border-slate-200 rounded-xl flex flex-col relative group aspect-square shadow-xs overflow-hidden">
-            {/* Header controls for CAD / Photo switcher */}
-            <div className="absolute top-3 left-3 right-3 flex items-center justify-between z-10">
+            <div className="absolute top-3 left-3 z-10">
               <div className="bg-slate-900/90 text-white text-[10px] font-semibold py-1 px-2.5 rounded-md shadow-xs">
                 {item.category}
               </div>
-              <div className="flex bg-white/95 backdrop-blur border border-slate-200 p-0.5 text-[10px] font-semibold rounded-lg shadow-xs">
-                <button 
-                  onClick={() => setPreviewMode('cad')}
-                  className={`border-none py-1 px-3.5 rounded-md cursor-pointer transition-all active:scale-[0.98] ${previewMode === 'cad' ? 'bg-slate-900 text-white shadow-xs' : 'bg-transparent text-slate-500 hover:text-slate-900'}`}
-                >
-                  CAD View
-                </button>
-                <button 
-                  onClick={() => setPreviewMode('photo')}
-                  className={`border-none py-1 px-3.5 rounded-md cursor-pointer transition-all active:scale-[0.98] ${previewMode === 'photo' ? 'bg-slate-900 text-white shadow-xs' : 'bg-transparent text-slate-500 hover:text-slate-900'}`}
-                >
-                  Photo
-                </button>
-              </div>
             </div>
-            
-            {previewMode === 'cad' ? (
-              <FastenerSchematic item={item} />
-            ) : (
-              <img 
-                src={
-                  item.type.toLowerCase().includes('screw') || item.type.toLowerCase().includes('bolt') 
-                    ? 'https://images.unsplash.com/photo-1588610502120-77a87e5b2203?auto=format&fit=crop&q=80&w=600'
-                    : item.type.toLowerCase().includes('nut') 
-                      ? 'https://images.unsplash.com/photo-1544413660-299165566b1d?auto=format&fit=crop&q=80&w=600'
-                      : `https://placehold.co/600x600/f8fafc/94a3b8?text=${encodeURIComponent(item.partNumber)}`
-                } 
-                alt={item.partNumber}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-102"
-              />
-            )}
+            <FastenerSchematic item={item} />
           </div>
 
           <div className="bg-white border border-slate-200 rounded-xl flex flex-col shadow-xs overflow-hidden">
@@ -397,20 +371,36 @@ export function PartDetail() {
                     <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span> Live Zoro Pricing
                   </span>
                 )}
-                <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> Active Sourcing
-                </span>
+                {isUnindexed ? (
+                  <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 bg-amber-500 rounded-full"></span> Not Indexed
+                  </span>
+                ) : (
+                  <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> Indexed Catalog
+                  </span>
+                )}
               </div>
             </div>
             <h1 className="text-2xl font-bold tracking-tight text-slate-900 m-0 mb-1 mt-3">{item.partNumber}</h1>
             <h2 className="text-sm font-semibold text-slate-500 mt-1 mb-5">
               {item.type} &middot; {item.thread} {item.length !== 'N/A' ? `x ${item.length}` : ''}
             </h2>
+            {isUnindexed && (
+              <div className="text-xs text-amber-800 bg-amber-50 border border-amber-200 p-4 rounded-lg leading-relaxed mb-3">
+                <strong>This part number is not in our indexed catalog.</strong>{' '}
+                {canPrice
+                  ? 'The specifications below were decoded from your input — verify them before ordering. Prices are rough estimates.'
+                  : 'We could not decode reliable specifications from it, so no specs or prices are shown. Use the supplier links below to search the raw number, or request indexing and we’ll source it.'}
+                {' '}<a className="font-bold underline" href={`mailto:jayaram.h@afterconcept.com?subject=${encodeURIComponent('PartSource indexing request: ' + item.partNumber)}`}>Request this part</a>
+              </div>
+            )}
             <div className="text-xs text-slate-650 bg-slate-50 border border-slate-150 p-4 rounded-lg leading-relaxed">
               <strong className="text-slate-800">Application Note:</strong> {item.appNote}
             </div>
           </div>
 
+          {canPrice ? (
           <div className="bg-white border border-slate-200 rounded-xl flex flex-col shadow-xs overflow-hidden">
             <h2 className="m-0 py-3.5 px-4 text-xs font-semibold text-slate-800 border-b border-slate-150 bg-slate-50">
               Supplier Pricing Matrix
@@ -426,22 +416,23 @@ export function PartDetail() {
                   </tr>
                 </thead>
                 <tbody>
-                  {[{ name: 'McMaster-Carr', discount: 1.0, isDfars: true, isIso: true, isUsa: true, shipDays: 1, urlTemplate: 'https://www.mcmaster.com/' }, ...suppliers].map((sup, index) => {
+                  {(item.mcmaster
+                    ? [{ name: 'McMaster-Carr', discount: 1.0, isDfars: true, isIso: true, isUsa: true, shipDays: 1, urlTemplate: 'https://www.mcmaster.com/' }, ...suppliers]
+                    : suppliers
+                  ).map((sup, index) => {
                     const baseMcMasterPrice = liveData ? liveData.mcmasterEstimatedPrice : item.mcmasterPrice;
-                    
+
                     let price = baseMcMasterPrice * sup.discount;
-                    let stock = (hash % (1000 * (index + 1))) + 50;
                     let href = sup.name === 'McMaster-Carr'
-                      ? `https://www.mcmaster.com/${item.partNumber}`
+                      ? `https://www.mcmaster.com/${item.mcmaster}`
                       : getSupplierSearchUrl(sup.urlTemplate, item);
-                    let stockLabel = stock > 500 ? 'In stock' : '2-3 days';
-                    // Data provenance: only Zoro can be "Live"; everyone else is
-                    // simulated/estimated per the PRD pricing model.
+                    // No fabricated stock: estimated rows just point at the
+                    // supplier; only a live Zoro read shows real availability.
+                    let stockLabel = 'Check site';
                     let isLive = false;
 
                     if (liveData && sup.name === 'Zoro') {
                       price = liveData.zoro.unitPrice;
-                      stock = liveData.zoro.stockCount;
                       stockLabel = liveData.zoro.stockStatus;
                       href = liveData.zoro.url;
                       isLive = true;
@@ -450,11 +441,12 @@ export function PartDetail() {
                     // Discount pill logic
                     const discountPct = Math.round((1 - sup.discount) * 100);
                     const isMcMaster = sup.name === 'McMaster-Carr';
-                    const queryStr = isMcMaster ? item.partNumber : buildSupplierQuery(item);
-                    
+                    const queryStr = isMcMaster ? item.mcmaster! : buildSupplierQuery(item);
+
                     // Stock color logic
-                    const isHighStock = stockLabel.toLowerCase().includes('in stock') || stock > 500;
-                    const stockColor = isHighStock ? '#166534' : '#92400e';
+                    const stockColor = isLive
+                      ? (stockLabel.toLowerCase().includes('in stock') ? '#166534' : '#92400e')
+                      : '#64748b';
                     
                     // Compliance logic
                     const failsDfars = filterDfars && !sup.isDfars;
@@ -499,10 +491,7 @@ export function PartDetail() {
                         <td className="py-4 px-4 text-xs">
                           <div className="flex items-center gap-1.5 text-left">
                             <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: stockColor }}></div>
-                            <div className="flex flex-col">
-                              <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: stockColor }}>{stockLabel}</span>
-                              <span className="text-[10px] text-slate-400 font-medium">{stock.toLocaleString()} units</span>
-                            </div>
+                            <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: stockColor }}>{stockLabel}</span>
                           </div>
                         </td>
                         <td className="py-4 px-4 pr-6 text-right font-sans">
@@ -540,6 +529,32 @@ export function PartDetail() {
               </table>
             </div>
           </div>
+          ) : (
+          <div className="bg-white border border-slate-200 rounded-xl flex flex-col shadow-xs overflow-hidden">
+            <h2 className="m-0 py-3.5 px-4 text-xs font-semibold text-slate-800 border-b border-slate-150 bg-slate-50">
+              Search This Part Number at Suppliers
+            </h2>
+            <div className="p-5 flex flex-col gap-4">
+              <p className="text-xs text-slate-500 m-0 leading-relaxed">
+                No indexed pricing for this part. These links search each supplier's
+                site for <span className="font-mono font-bold text-slate-700">{item.partNumber}</span> directly.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {suppliers.map(sup => (
+                  <a
+                    key={sup.name}
+                    href={sup.urlTemplate + encodeURIComponent(item.partNumber)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="bg-slate-900 text-white hover:bg-slate-800 py-1.5 px-3.5 rounded-md no-underline font-semibold text-xs flex items-center gap-1.5 transition-all active:scale-[0.98] shadow-xs"
+                  >
+                    <Search className="w-3.5 h-3.5" /> {sup.name} <ExternalLink className="w-3 h-3.5" />
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+          )}
 
           <div className="bg-white border border-slate-200 rounded-xl flex flex-col shadow-xs overflow-hidden">
             <h2 className="m-0 py-3.5 px-4 text-xs font-semibold text-slate-800 border-b border-slate-150 bg-slate-50">

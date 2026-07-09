@@ -5,8 +5,9 @@ export function Footer() {
         <span>Session ID: <span className="mono">MC-782-X2</span></span>
         <span>Database: <span className="mono">v1.04.12</span></span>
       </div>
-      <div className="text-center md:text-right">
-        Built by Jay. Need custom machinery or mechanical design consulting? <a href="https://jayar.co" target="_blank" rel="noreferrer" className="text-[var(--accent)] hover:underline font-bold">Visit jayar.co</a>
+      <div className="text-center md:text-right flex flex-col md:items-end gap-0.5">
+        <span>Not affiliated with, endorsed by, or sponsored by McMaster-Carr or any listed supplier. Estimated prices are our own approximations.</span>
+        <span>Built by Jay. Need custom machinery or mechanical design consulting? <a href="https://jayar.co" target="_blank" rel="noreferrer" className="text-[var(--accent)] hover:underline font-bold">Visit jayar.co</a></span>
       </div>
     </footer>
   );

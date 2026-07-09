@@ -15,7 +15,7 @@ import {
   X,
   Search
 } from 'lucide-react';
-import { fuse, parseCustomPart, Part, suppliers, db, hashCode } from '../lib/decoder';
+import { fuse, parseCustomPart, Part, suppliers, db } from '../lib/decoder';
 import { useBOM } from '../hooks/useBOM';
 import { useCurrency } from '../contexts/CurrencyContext';
 import { BrokerageModal } from '../components/BrokerageModal';
@@ -143,11 +143,41 @@ function CostSavingsChart({ data, referenceCost }: { data: { name: string, total
 }
 
 // ----------------------------------------------------
+// Category glyph — simple line-art per fastener family
+// (replaces stock photos of the wrong hardware)
+// ----------------------------------------------------
+function FastenerGlyph({ type }: { type: string }) {
+  const t = type.toLowerCase();
+  const isScrew = t.includes('screw') || t.includes('bolt');
+  const isNut = t.includes('nut');
+  return (
+    <svg viewBox="0 0 48 48" className="w-full h-full text-slate-500" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      {isScrew ? (
+        <g>
+          <path d="M8 16 L15 16 L17 20 L15 24 L8 24 L6 20 Z" fill="#f1f5f9" />
+          <rect x="17" y="17.5" width="23" height="5" fill="#fff" />
+          {[22, 26, 30, 34, 38].map(x => <line key={x} x1={x} y1="17.5" x2={x - 1.5} y2="22.5" strokeWidth="1" />)}
+        </g>
+      ) : isNut ? (
+        <g>
+          <path d="M17 12 L31 12 L38 24 L31 36 L17 36 L10 24 Z" fill="#f1f5f9" />
+          <circle cx="24" cy="24" r="6.5" fill="#fff" />
+        </g>
+      ) : (
+        <g>
+          <circle cx="24" cy="24" r="13" fill="#f1f5f9" />
+          <circle cx="24" cy="24" r="5.5" fill="#fff" />
+        </g>
+      )}
+    </svg>
+  );
+}
+
+// ----------------------------------------------------
 // Hardware Card component (Clean Spec style)
 // ----------------------------------------------------
 function HardwareCard({ part }: { part: Part; key?: string }) {
   const navigate = useNavigate();
-  const discountPct = Math.round((1 - 0.70) * 100);
 
   return (
     <div 
@@ -156,16 +186,8 @@ function HardwareCard({ part }: { part: Part; key?: string }) {
     >
       <div className="flex gap-4 items-start relative z-10">
         {/* Left image icon inside technical border */}
-        <div className="w-14 h-14 rounded-md bg-slate-50 flex items-center justify-center shrink-0 border border-slate-150 p-1 overflow-hidden">
-          <img 
-            src={
-              part.type.toLowerCase().includes('screw') || part.type.toLowerCase().includes('bolt') 
-                ? 'https://images.unsplash.com/photo-1588610502120-77a87e5b2203?auto=format&fit=crop&q=80&w=100'
-                : 'https://images.unsplash.com/photo-1544413660-299165566b1d?auto=format&fit=crop&q=80&w=100'
-            } 
-            alt={part.partNumber}
-            className="w-full h-full object-cover group-hover:scale-105 transition-all duration-300"
-          />
+        <div className="w-14 h-14 rounded-md bg-slate-50 flex items-center justify-center shrink-0 border border-slate-150 p-1.5 overflow-hidden">
+          <FastenerGlyph type={part.type} />
         </div>
 
         {/* Middle text specifications */}
@@ -189,8 +211,8 @@ function HardwareCard({ part }: { part: Part; key?: string }) {
           <div className="h-full bg-slate-900 rounded-full" style={{ width: '85%' }}></div>
         </div>
         <div className="flex items-center justify-between text-[10px] font-sans font-semibold mt-0.5">
-          <span className="text-slate-450">List: ${part.mcmasterPrice.toFixed(2)}</span>
-          <span className="text-emerald-600 font-bold">Save {discountPct}%</span>
+          <span className="text-slate-450">Est. list ${part.mcmasterPrice.toFixed(2)}</span>
+          {part.mcmaster && <span className="text-slate-500 font-bold" title="Verified McMaster-Carr cross-reference">MC cross ✓</span>}
         </div>
       </div>
 
@@ -570,11 +592,15 @@ export function Home() {
 
           <div className="border-b border-slate-200/60 my-2"></div>
 
-          {/* Grid of hardware cards */}
+          {/* Grid of hardware cards — verified McMaster crosses first, capped;
+              the full catalog is reachable through search. */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {db.map((part) => (
+            {db.slice(0, 24).map((part) => (
               <HardwareCard key={part.partNumber} part={part} />
             ))}
+          </div>
+          <div className="text-center text-xs text-slate-400 font-medium pb-4">
+            Showing 24 of {db.length.toLocaleString()} indexed parts — use search to find the rest.
           </div>
         </div>
       )}      {/* ----------------------------------------------------

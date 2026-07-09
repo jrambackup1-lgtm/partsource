@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Search, ExternalLink } from 'lucide-react';
-import { fuse, parseCustomPart, Part, suppliers, hashCode, getEquivalentPartNumber } from '../lib/decoder';
+import { findCatalogPart, parseCustomPart, Part, suppliers, buildSupplierQuery, getSupplierSearchUrl } from '../lib/decoder';
 
 export function WidgetEmbed() {
   const { partNumber } = useParams();
@@ -16,13 +16,7 @@ export function WidgetEmbed() {
   useEffect(() => {
     if (partNumber) {
       const decoded = decodeURIComponent(partNumber);
-      const searchRes = fuse.search(decoded);
-      let foundItem: Part;
-      if (searchRes.length > 0 && searchRes[0].score! < 0.5) {
-        foundItem = searchRes[0].item;
-      } else {
-        foundItem = parseCustomPart(decoded);
-      }
+      const foundItem: Part = findCatalogPart(decoded) ?? parseCustomPart(decoded);
       setItem(foundItem);
     }
   }, [partNumber]);
@@ -46,8 +40,6 @@ export function WidgetEmbed() {
   const textSecondary = isLight ? '#475569' : '#94a3b8';
   const headerBg = isLight ? '#f8fafc' : isSlate ? '#0f172a' : '#0d1527';
   const rowHoverBg = isLight ? '#f8fafc' : isSlate ? '#152238' : '#0d1527';
-
-  const hash = hashCode(item.partNumber);
 
   const handleCTAClick = () => {
     window.open(`/parts/${encodeURIComponent(item.partNumber)}`, '_blank');
@@ -141,13 +133,15 @@ export function WidgetEmbed() {
             </div>
             
             <div className="flex flex-col division-y" style={{ color: textPrimary }}>
-              {[{ name: 'McMaster-Carr', discount: 1.0, urlTemplate: 'https://www.mcmaster.com/' }, ...suppliers].slice(0, 3).map((sup, index) => {
+              {(item.mcmaster
+                ? [{ name: 'McMaster-Carr', discount: 1.0, urlTemplate: 'https://www.mcmaster.com/' }, ...suppliers]
+                : suppliers
+              ).slice(0, 3).map((sup) => {
                 const price = item.mcmasterPrice * sup.discount;
-                const stock = (hash % (1000 * (index + 1))) + 50;
-                const isHighStock = stock > 500;
-                const stockColor = isHighStock ? '#10b981' : '#f59e0b';
-                const stockLabel = isHighStock ? 'In Stock' : '2-3 Days';
-                const href = sup.name === 'McMaster-Carr' ? `https://www.mcmaster.com/${item.partNumber}` : sup.urlTemplate + encodeURIComponent(getEquivalentPartNumber(sup.name, item.partNumber));
+                const isMcMaster = sup.name === 'McMaster-Carr';
+                const href = isMcMaster
+                  ? `https://www.mcmaster.com/${item.mcmaster}`
+                  : getSupplierSearchUrl(sup.urlTemplate, item);
 
                 return (
                   <div 
@@ -169,15 +163,12 @@ export function WidgetEmbed() {
                         {sup.name}
                       </span>
                       <span className="text-[9px] font-mono opacity-50" style={{ color: textSecondary }}>
-                        PN: {getEquivalentPartNumber(sup.name, item.partNumber)}
+                        {isMcMaster ? `PN: ${item.mcmaster}` : `q: ${buildSupplierQuery(item)}`}
                       </span>
                       <div className="flex items-center gap-1 mt-0.5">
-                        <span 
-                          className="w-1.5 h-1.5 rounded-full" 
-                          style={{ backgroundColor: stockColor }}
-                        ></span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
                         <span className="text-[8.5px] font-medium opacity-75" style={{ color: textSecondary }}>
-                          {stockLabel} ({stock} units)
+                          Est. price · check site for stock
                         </span>
                       </div>
                     </div>
