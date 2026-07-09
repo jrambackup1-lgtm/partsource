@@ -16,8 +16,10 @@ import {
   getSupplierSearchUrl,
   parseCustomPart,
   findCatalogPart,
+  MCMASTER_CROSSES,
   type Part,
 } from '../src/lib/decoder';
+import { REF_PAGES } from '../src/lib/reference';
 
 type TestFn = () => void | Promise<void>;
 const tests: { name: string; fn: TestFn }[] = [];
@@ -73,7 +75,7 @@ test('buildSupplierQuery: hex nut has no length', () => {
 
 test('getSupplierSearchUrl: encodes query and uses supplier template', () => {
   const zoro = suppliers.find(s => s.name === 'Zoro')!;
-  const part = db.find(p => p.partNumber === '91251A245')!;
+  const part = db.find(p => p.partNumber === 'DIN912-M4X20')!;
   const url = getSupplierSearchUrl(zoro.urlTemplate, part);
   assert(url.startsWith('https://www.zoro.com/search?q='), 'zoro url prefix');
   // Spaces must be encoded (as + or %20).
@@ -98,16 +100,36 @@ test('parseCustomPart: explicit M4 x 20 socket cap screw', () => {
   assertEqual(p.finish, 'Black-Oxide', 'finish inferred from 91251');
 });
 
-test('parseCustomPart: stainless series 91290 infers stainless', () => {
+test('parseCustomPart: series 91290 is metric black-oxide alloy (previously mislabeled stainless)', () => {
   const p = parseCustomPart('91290A110');
-  assertEqual(p.material, '18-8 Stainless Steel', 'stainless from 91290');
+  assertEqual(p.material, 'Alloy Steel', 'alloy from 91290');
+  assertEqual(p.finish, 'Black-Oxide', 'black-oxide from 91290');
+  assertEqual(p.type, 'Socket Head Cap Screw', 'SHCS family');
+});
+
+test('parseCustomPart: series 91292 is the metric stainless SHCS family', () => {
+  const p = parseCustomPart('91292A110');
+  assertEqual(p.material, '18-8 Stainless Steel', 'stainless from 91292');
   assertEqual(p.finish, 'Plain', 'plain finish from stainless series');
+});
+
+test('parseCustomPart: unknown series prefix infers nothing', () => {
+  const p = parseCustomPart('99136A101');
+  assertEqual(p.type, 'Custom Fastener', 'no type from unknown prefix');
+  assertEqual(p.standard, 'Unknown', 'no standard from unknown prefix');
 });
 
 test('parseCustomPart: imperial thread yields TPI pitch', () => {
   const p = parseCustomPart('91251A545 1/4"-20 socket cap x 1"');
   assertEqual(p.thread, '1/4"-20', 'imperial thread');
   assertEqual(p.pitch, '20 TPI', 'TPI pitch');
+  assertEqual(p.length, '1"', 'imperial length not confused by TPI digits');
+});
+
+test('parseCustomPart: fractional imperial length parsed after thread strip', () => {
+  const p = parseCustomPart('#10-24 hex bolt x 1/2"');
+  assertEqual(p.thread, '#10-24', 'unified thread');
+  assertEqual(p.length, '1/2"', 'fractional length, not the 24 TPI');
 });
 
 test('parseCustomPart: nut has N/A length and Hex Outer drive', () => {
@@ -126,19 +148,27 @@ test('parseCustomPart: washer category detected', () => {
 // --- Catalog integrity -----------------------------------------------------
 test('catalog: every entry has a valid partNumber and required fields', () => {
   for (const p of db) {
+    // Own standards-based PN is always the identity; a McMaster PN may be
+    // attached as a verified reference field only.
+    assert(/^(DIN|ISO)\d+-M[\d.]+(X\d+)?(-A2)?$/.test(p.partNumber), `bad partNumber: ${p.partNumber}`);
     if (p.mcmaster) {
-      // Verified McMaster crosses keep the MPN as identity.
-      assert(/^\d{5,6}[A-Z]\d{3,4}$/.test(p.partNumber), `bad McMaster partNumber format: ${p.partNumber}`);
-      assertEqual(p.mcmaster, p.partNumber, `mcmaster cross mismatch on ${p.partNumber}`);
-    } else {
-      // Generated entries use our own standards-based PN scheme.
-      assert(/^(DIN|ISO)\d+-M[\d.]+(X\d+)?(-A2)?$/.test(p.partNumber), `bad generated partNumber: ${p.partNumber}`);
+      assert(/^\d{5,6}[A-Z]\d{3,4}$/.test(p.mcmaster), `bad mcmaster cross format: ${p.mcmaster}`);
     }
     for (const key of ['category', 'type', 'thread', 'material', 'standard'] as const) {
       assert(p[key] && p[key].length > 0, `empty ${key} on ${p.partNumber}`);
     }
     assert(p.mcmasterPrice > 0 && p.mcmasterPrice < 100, `implausible price on ${p.partNumber}`);
     assert(!p.unindexed, `catalog entry marked unindexed: ${p.partNumber}`);
+  }
+});
+
+test('crosses: every hand-verified McMaster cross maps to a real catalog entry', () => {
+  assert(MCMASTER_CROSSES.length >= 1, 'crosses table must not be empty');
+  for (const c of MCMASTER_CROSSES) {
+    const part = db.find(p => p.partNumber === c.partNumber);
+    assert(!!part, `cross target missing from catalog: ${c.partNumber}`);
+    assertEqual(part!.mcmaster, c.mcmaster, `cross not applied to ${c.partNumber}`);
+    assert(c.note.length > 10, `cross ${c.mcmaster} missing provenance note`);
   }
 });
 
@@ -164,10 +194,11 @@ test('catalog: generated metric screws carry correct coarse pitch', () => {
 });
 
 // --- Catalog lookup ---------------------------------------------------------
-test('findCatalogPart: exact McMaster cross and own PN resolve; garbage does not', () => {
-  assertEqual(findCatalogPart('91251A242')?.partNumber, '91251A242', 'MPN exact match');
+test('findCatalogPart: verified cross and own PN resolve; unknown MPNs do not', () => {
+  assertEqual(findCatalogPart('91290A115')?.partNumber, 'DIN912-M3X10', 'verified MPN cross resolves to own PN');
   assertEqual(findCatalogPart('din912-m4x12')?.partNumber, 'DIN912-M4X12', 'own PN, case-insensitive');
   assertEqual(findCatalogPart('99136A101'), null, 'unknown MPN must not fuzzy-match a wrong part');
+  assertEqual(findCatalogPart('91251A242'), null, 'purged fabricated cross must no longer resolve');
 });
 
 test('parseCustomPart: unknown McMaster number is honestly unindexed', () => {
@@ -182,6 +213,40 @@ test('parseCustomPart: decoded spec still gets a price estimate', () => {
   const p = parseCustomPart('M5 socket head cap screw x 16mm');
   assertEqual(p.unindexed, true, 'guessed parts are always unindexed');
   assert(p.mcmasterPrice > 0, 'decoded spec should carry an estimate');
+});
+
+// --- Reference library -------------------------------------------------------
+test('reference: 10+ pages, unique slugs, tables populated, related links valid', () => {
+  assert(REF_PAGES.length >= 10, `too few reference pages: ${REF_PAGES.length}`);
+  const slugs = new Set(REF_PAGES.map(p => p.slug));
+  assertEqual(slugs.size, REF_PAGES.length, 'duplicate reference slugs');
+  for (const page of REF_PAGES) {
+    assert(page.title.length > 10 && page.description.length > 30, `thin metadata on ${page.slug}`);
+    assert(page.intro.length >= 1, `no intro on ${page.slug}`);
+    const tables = page.sections.filter(s => s.table);
+    for (const s of tables) {
+      assert(s.table!.rows.length >= 4, `sparse table in ${page.slug} / ${s.heading}`);
+      for (const row of s.table!.rows) {
+        assertEqual(row.length, s.table!.headers.length, `ragged row in ${page.slug} / ${s.heading}`);
+      }
+    }
+    for (const rel of page.related) {
+      assert(slugs.has(rel), `broken related link ${rel} on ${page.slug}`);
+    }
+    if (page.catalogStandard) {
+      assert(db.some(p => p.standard === page.catalogStandard),
+        `catalogStandard matches no parts: ${page.catalogStandard}`);
+    }
+  }
+});
+
+test('reference: computed torque values are physically sane', () => {
+  const torquePage = REF_PAGES.find(p => p.slug === 'socket-cap-screw-torque-chart')!;
+  const dry = torquePage.sections[0].table!;
+  const m6 = dry.rows.find(r => r[0] === 'M6')!;
+  const m6_129 = Number(m6[3]);
+  // Published dry torque for M6 class 12.9 is ~17 Nm; allow generous margin.
+  assert(m6_129 > 12 && m6_129 < 22, `M6 12.9 dry torque implausible: ${m6_129}`);
 });
 
 test('suppliers: all templates are https search URLs', () => {
