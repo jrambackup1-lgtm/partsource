@@ -15,6 +15,7 @@ import {
   buildSupplierQuery,
   getSupplierSearchUrl,
   parseCustomPart,
+  findCatalogPart,
   type Part,
 } from '../src/lib/decoder';
 
@@ -125,11 +126,19 @@ test('parseCustomPart: washer category detected', () => {
 // --- Catalog integrity -----------------------------------------------------
 test('catalog: every entry has a valid partNumber and required fields', () => {
   for (const p of db) {
-    assert(/^\d{5,6}[A-Z]\d{3,4}$/.test(p.partNumber), `bad partNumber format: ${p.partNumber}`);
+    if (p.mcmaster) {
+      // Verified McMaster crosses keep the MPN as identity.
+      assert(/^\d{5,6}[A-Z]\d{3,4}$/.test(p.partNumber), `bad McMaster partNumber format: ${p.partNumber}`);
+      assertEqual(p.mcmaster, p.partNumber, `mcmaster cross mismatch on ${p.partNumber}`);
+    } else {
+      // Generated entries use our own standards-based PN scheme.
+      assert(/^(DIN|ISO)\d+-M[\d.]+(X\d+)?(-A2)?$/.test(p.partNumber), `bad generated partNumber: ${p.partNumber}`);
+    }
     for (const key of ['category', 'type', 'thread', 'material', 'standard'] as const) {
       assert(p[key] && p[key].length > 0, `empty ${key} on ${p.partNumber}`);
     }
     assert(p.mcmasterPrice > 0 && p.mcmasterPrice < 100, `implausible price on ${p.partNumber}`);
+    assert(!p.unindexed, `catalog entry marked unindexed: ${p.partNumber}`);
   }
 });
 
@@ -141,8 +150,38 @@ test('catalog: no duplicate part numbers', () => {
   }
 });
 
-test('catalog: at least 50 entries (coverage goal)', () => {
-  assert(db.length >= 50, `catalog too small: ${db.length}`);
+test('catalog: at least 400 entries across 5+ categories of fastener families', () => {
+  assert(db.length >= 400, `catalog too small: ${db.length}`);
+  const types = new Set(db.map(p => p.type));
+  assert(types.size >= 6, `too few part types: ${[...types].join(', ')}`);
+});
+
+test('catalog: generated metric screws carry correct coarse pitch', () => {
+  const m4 = db.find(p => p.partNumber === 'DIN912-M4X12')!;
+  assert(!!m4, 'DIN912-M4X12 missing from generated catalog');
+  assertEqual(m4.pitch, '0.7 mm', 'M4 coarse pitch');
+  assertEqual(m4.standard, 'DIN 912 / ISO 4762', 'standard string');
+});
+
+// --- Catalog lookup ---------------------------------------------------------
+test('findCatalogPart: exact McMaster cross and own PN resolve; garbage does not', () => {
+  assertEqual(findCatalogPart('91251A242')?.partNumber, '91251A242', 'MPN exact match');
+  assertEqual(findCatalogPart('din912-m4x12')?.partNumber, 'DIN912-M4X12', 'own PN, case-insensitive');
+  assertEqual(findCatalogPart('99136A101'), null, 'unknown MPN must not fuzzy-match a wrong part');
+});
+
+test('parseCustomPart: unknown McMaster number is honestly unindexed', () => {
+  const p = parseCustomPart('99136A101');
+  assertEqual(p.unindexed, true, 'unindexed flag');
+  assertEqual(p.material, 'Unknown', 'no fabricated material');
+  assertEqual(p.finish, 'Unknown', 'no fabricated finish');
+  assertEqual(p.mcmasterPrice, 0, 'no fabricated price');
+});
+
+test('parseCustomPart: decoded spec still gets a price estimate', () => {
+  const p = parseCustomPart('M5 socket head cap screw x 16mm');
+  assertEqual(p.unindexed, true, 'guessed parts are always unindexed');
+  assert(p.mcmasterPrice > 0, 'decoded spec should carry an estimate');
 });
 
 test('suppliers: all templates are https search URLs', () => {

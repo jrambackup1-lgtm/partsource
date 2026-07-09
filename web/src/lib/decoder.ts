@@ -13,6 +13,10 @@ export interface Part {
   standard: string;
   mcmasterPrice: number;
   appNote: string;
+  /** Verified McMaster-Carr cross-reference PN (reference field only). */
+  mcmaster?: string;
+  /** True when this object was guessed from user input, not read from the catalog. */
+  unindexed?: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -22,7 +26,9 @@ export interface Part {
 // (DIN 912, ISO 4762, ASME B18.3, DIN 933/ISO 4017, DIN 934/ISO 4032,
 // DIN 125A/ISO 7089) plus supplier-published spec sheets. These are facts and
 // are freely redistributable. See research/data-sourcing-decision.md.
-export const db: Part[] = [
+// Entries here are hand-verified McMaster-Carr cross-references; the bulk of
+// the catalog is generated from the standards tables further below.
+const MCMASTER_CATALOG: Part[] = [
   // --- Socket Head Cap Screws, alloy steel, black-oxide (series 91251) ---
   {"partNumber": "91251A051", "category": "Screws & Bolts", "type": "Socket Head Cap Screw", "thread": "M1.6", "pitch": "0.35 mm", "length": "3 mm", "material": "Alloy Steel", "finish": "Black-Oxide", "drive": "Hex", "standard": "DIN 912 / ISO 4762", "mcmasterPrice": 0.25, "appNote": "Micro-sized fastener for electronics and precision instruments."},
   {"partNumber": "91251A108", "category": "Screws & Bolts", "type": "Socket Head Cap Screw", "thread": "M2", "pitch": "0.4 mm", "length": "6 mm", "material": "Alloy Steel", "finish": "Black-Oxide", "drive": "Hex", "standard": "DIN 912 / ISO 4762", "mcmasterPrice": 0.24, "appNote": "Small metric socket cap screw for fine instrumentation."},
@@ -95,13 +101,6 @@ export const db: Part[] = [
   {"partNumber": "90114A011", "category": "Washers", "type": "Split Lock Washer", "thread": "M5", "pitch": "N/A", "length": "N/A", "material": "Spring Steel", "finish": "Zinc-Plated", "drive": "N/A", "standard": "DIN 127B", "mcmasterPrice": 0.05, "appNote": "Spring tension keeps the assembly tight under vibration."},
   {"partNumber": "90114A019", "category": "Washers", "type": "Split Lock Washer", "thread": "M6", "pitch": "N/A", "length": "N/A", "material": "Spring Steel", "finish": "Zinc-Plated", "drive": "N/A", "standard": "DIN 127B", "mcmasterPrice": 0.06, "appNote": "Spring tension keeps the assembly tight under vibration."}
 ];
-
-export const fuse = new Fuse(db, {
-  keys: ['partNumber', 'type', 'thread', 'length'],
-  threshold: 0.3,
-  ignoreLocation: true,
-  includeScore: true
-});
 
 export const suppliers = [
   { name: "Zoro", discount: 0.85, urlTemplate: "https://www.zoro.com/search?q=", isDfars: true, isIso: true, isUsa: true, shipDays: 2 },
@@ -299,6 +298,11 @@ export function parseCustomPart(query: string): Part {
 
   const standard = STANDARD_BY_PREFIX[prefix] || 'Unknown';
 
+  // Honesty rules: never fabricate specifics. Material/finish stay Unknown
+  // unless inferred from a known McMaster series or explicit keywords, and a
+  // price estimate exists only when the spec decoded well enough to price.
+  const decodedEnough = thread !== 'Unknown' && type !== 'Custom Fastener';
+
   return {
     partNumber: q.toUpperCase(),
     category,
@@ -306,13 +310,185 @@ export function parseCustomPart(query: string): Part {
     thread,
     pitch,
     length,
-    material: material || 'Alloy Steel (Assumed)',
-    finish: finish || 'Plain (Assumed)',
+    material: material || 'Unknown',
+    finish: finish || 'Unknown',
     drive,
     standard,
-    mcmasterPrice: 0.50,
-    appNote: 'Dynamically parsed via heuristic engine based on input.'
+    mcmasterPrice: decodedEnough ? estimatePriceForSpecs(thread, length, type) : 0,
+    appNote: decodedEnough
+      ? 'Specs decoded from your input; this exact part is not in the indexed catalog.'
+      : 'This part number is not in the indexed catalog and could not be decoded.',
+    unindexed: true
   };
+}
+
+// ---------------------------------------------------------------------------
+// Standards-derived catalog generator
+// ---------------------------------------------------------------------------
+// Generates the bulk of the catalog from public DIN/ISO dimensional standards
+// (facts, freely redistributable — see research/data-sourcing-decision.md and
+// the V1 plan guardrails: own part numbers are the primary identity, the
+// McMaster PN is only a verified reference field on the hand-checked entries).
+
+const THREAD_DIA_MM: Record<string, number> = {
+  'M2': 2, 'M2.5': 2.5, 'M3': 3, 'M4': 4, 'M5': 5,
+  'M6': 6, 'M8': 8, 'M10': 10, 'M12': 12
+};
+
+// Standard length series (mm) and the stocked range per nominal diameter.
+const LENGTH_SERIES = [4, 5, 6, 8, 10, 12, 16, 20, 25, 30, 35, 40, 50, 60, 80];
+const LENGTH_RANGE: Record<string, [number, number]> = {
+  'M2': [4, 16], 'M2.5': [5, 20], 'M3': [5, 30], 'M4': [6, 40], 'M5': [8, 50],
+  'M6': [10, 60], 'M8': [12, 80], 'M10': [16, 80], 'M12': [20, 80]
+};
+
+interface ScrewFamily {
+  code: string;          // own-PN prefix, e.g. "DIN912"
+  type: string;
+  standard: string;
+  drive: string;
+  alloyNote: string;     // property class note for the plain-steel variant
+  alloyMaterial: string;
+  alloyFinish: string;
+  threads: string[];
+  maxLen: number;
+  priceFactor: number;
+}
+
+const SCREW_THREADS = Object.keys(THREAD_DIA_MM);
+const SCREW_FAMILIES: ScrewFamily[] = [
+  { code: 'DIN912', type: 'Socket Head Cap Screw', standard: 'DIN 912 / ISO 4762', drive: 'Hex',
+    alloyNote: 'class 12.9 alloy steel', alloyMaterial: 'Alloy Steel', alloyFinish: 'Black-Oxide',
+    threads: SCREW_THREADS, maxLen: 80, priceFactor: 1.0 },
+  { code: 'DIN7991', type: 'Flat Head Socket Cap Screw', standard: 'DIN 7991 / ISO 10642', drive: 'Hex',
+    alloyNote: 'class 10.9 alloy steel', alloyMaterial: 'Alloy Steel', alloyFinish: 'Black-Oxide',
+    threads: SCREW_THREADS.filter(t => t !== 'M12'), maxLen: 40, priceFactor: 0.95 },
+  { code: 'ISO7380', type: 'Button Head Socket Cap Screw', standard: 'ISO 7380', drive: 'Hex',
+    alloyNote: 'class 10.9 alloy steel', alloyMaterial: 'Alloy Steel', alloyFinish: 'Black-Oxide',
+    threads: SCREW_THREADS.filter(t => t !== 'M12'), maxLen: 40, priceFactor: 0.95 },
+  { code: 'DIN933', type: 'Hex Head Screw', standard: 'DIN 933 / ISO 4017', drive: 'Hex Outer',
+    alloyNote: 'class 8.8 steel', alloyMaterial: 'Steel', alloyFinish: 'Zinc-Plated',
+    threads: SCREW_THREADS.filter(t => !['M2', 'M2.5', 'M3'].includes(t)), maxLen: 80, priceFactor: 1.1 },
+];
+
+/** Deterministic price heuristic, calibrated against the verified entries. */
+function screwEstimate(diaMM: number, lenMM: number, factor: number, stainless: boolean): number {
+  const base = (0.05 * diaMM + 0.006 * lenMM + 0.06) * factor;
+  return Math.round(base * (stainless ? 1.35 : 1) * 100) / 100;
+}
+
+/** Price estimate for a spec decoded from free-form input (screws only need length). */
+export function estimatePriceForSpecs(thread: string, length: string, type: string): number {
+  const dia = THREAD_DIA_MM[thread] ?? 5;
+  const t = type.toLowerCase();
+  if (t.includes('nut')) return Math.round((0.02 * dia + 0.04) * 100) / 100;
+  if (t.includes('washer')) return Math.round((0.01 * dia + 0.02) * 100) / 100;
+  const len = parseFloat(length) || 16;
+  return screwEstimate(dia, len, 1.0, false);
+}
+
+function generateStandardsCatalog(): Part[] {
+  const parts: Part[] = [];
+  const variants = (alloyMaterial: string, alloyFinish: string, alloyNote: string) => [
+    { suffix: '', material: alloyMaterial, finish: alloyFinish, note: alloyNote, stainless: false },
+    { suffix: '-A2', material: '18-8 Stainless Steel', finish: 'Plain', note: 'A2 stainless steel', stainless: true },
+  ];
+
+  for (const fam of SCREW_FAMILIES) {
+    for (const thread of fam.threads) {
+      const [minL, maxL] = LENGTH_RANGE[thread];
+      const lengths = LENGTH_SERIES.filter(l => l >= minL && l <= Math.min(maxL, fam.maxLen));
+      for (const len of lengths) {
+        for (const v of variants(fam.alloyMaterial, fam.alloyFinish, fam.alloyNote)) {
+          parts.push({
+            partNumber: `${fam.code}-${thread}X${len}${v.suffix}`,
+            category: 'Screws & Bolts',
+            type: fam.type,
+            thread,
+            pitch: COARSE_PITCH_MM[thread],
+            length: `${len} mm`,
+            material: v.material,
+            finish: v.finish,
+            drive: fam.drive,
+            standard: fam.standard,
+            mcmasterPrice: screwEstimate(THREAD_DIA_MM[thread], len, fam.priceFactor, v.stainless),
+            appNote: `${fam.standard.split(' / ')[0]} ${fam.type.toLowerCase()}, ${thread}×${len} mm, ${v.note}. Dimensions per the published standard.`,
+          });
+        }
+      }
+    }
+  }
+
+  const nutWasherFamilies = [
+    { code: 'DIN934', type: 'Hex Nut', standard: 'DIN 934 / ISO 4032', drive: 'Hex Outer',
+      category: 'Nuts', steelMaterial: 'Steel', steelFinish: 'Zinc-Plated', steelNote: 'class 8 steel', priceMul: 1.0 },
+    { code: 'DIN985', type: 'Nylon-Insert Locknut', standard: 'DIN 985 / ISO 10511', drive: 'Hex Outer',
+      category: 'Nuts', steelMaterial: 'Steel', steelFinish: 'Zinc-Plated', steelNote: 'class 8 steel, prevailing-torque', priceMul: 1.6 },
+    { code: 'DIN125', type: 'Flat Washer', standard: 'DIN 125A / ISO 7089', drive: 'N/A',
+      category: 'Washers', steelMaterial: 'Steel', steelFinish: 'Zinc-Plated', steelNote: 'form A steel', priceMul: 1.0 },
+    { code: 'DIN127', type: 'Split Lock Washer', standard: 'DIN 127B', drive: 'N/A',
+      category: 'Washers', steelMaterial: 'Spring Steel', steelFinish: 'Zinc-Plated', steelNote: 'form B spring steel', priceMul: 0.8 },
+  ];
+
+  for (const fam of nutWasherFamilies) {
+    // DIN 127 spring washers are not commonly stocked in stainless; steel only.
+    const mats = fam.code === 'DIN127'
+      ? [{ suffix: '', material: fam.steelMaterial, finish: fam.steelFinish, note: fam.steelNote, stainless: false }]
+      : variants(fam.steelMaterial, fam.steelFinish, fam.steelNote);
+    for (const thread of SCREW_THREADS) {
+      const dia = THREAD_DIA_MM[thread];
+      const isWasher = fam.category === 'Washers';
+      const basePrice = isWasher ? 0.01 * dia + 0.02 : 0.02 * dia + 0.04;
+      for (const v of mats) {
+        parts.push({
+          partNumber: `${fam.code}-${thread}${v.suffix}`,
+          category: fam.category,
+          type: fam.type,
+          thread,
+          pitch: isWasher ? 'N/A' : COARSE_PITCH_MM[thread],
+          length: 'N/A',
+          material: v.material,
+          finish: v.finish,
+          drive: fam.drive,
+          standard: fam.standard,
+          mcmasterPrice: Math.round(basePrice * fam.priceMul * (v.stainless ? 1.3 : 1) * 100) / 100,
+          appNote: `${fam.standard.split(' / ')[0]} ${fam.type.toLowerCase()}, ${thread}, ${v.note}. Dimensions per the published standard.`,
+        });
+      }
+    }
+  }
+
+  return parts;
+}
+
+// Verified McMaster crosses keep their MPN as identity and carry the explicit
+// cross-reference field; generated entries use our own standards-based PNs.
+const mcmasterVerified: Part[] = MCMASTER_CATALOG.map(p => ({ ...p, mcmaster: p.partNumber }));
+export const db: Part[] = [...mcmasterVerified, ...generateStandardsCatalog()];
+
+export const fuse = new Fuse(db, {
+  keys: ['partNumber', 'mcmaster', 'type', 'thread', 'length', 'standard'],
+  threshold: 0.3,
+  ignoreLocation: true,
+  includeScore: true
+});
+
+/**
+ * Resolve a user-supplied part query to a catalog entry, or null.
+ * Exact PN / McMaster-cross matches win; otherwise only a very close fuzzy
+ * match is accepted so unknown numbers fall through to the honest decoder
+ * instead of rendering a wrong part.
+ */
+export function findCatalogPart(query: string): Part | null {
+  const norm = query.trim().toUpperCase();
+  if (!norm) return null;
+  const exact = db.find(
+    p => p.partNumber.toUpperCase() === norm || p.mcmaster?.toUpperCase() === norm
+  );
+  if (exact) return exact;
+  const res = fuse.search(query);
+  if (res.length > 0 && res[0].score! < 0.15) return res[0].item;
+  return null;
 }
 
 // --- Small hash helper retained (legacy callers may still import it) -------
