@@ -33,6 +33,24 @@ Living checklist for partsource.io. Supersedes the old AI Studio export checklis
       (see `research/data-sourcing-decision.md` + audit-doc guardrails); Fastener Superstore
       audited — no JSON-LD/affiliate/API → not viable
 
+### 2026-07-10 (later) — V1 feature push & cross-reference integrity audit
+- [x] **RED FLAG found & resolved**: the "60 verified" McMaster crosses were fabricated —
+      live Zoro data disproved them (91251A242 claimed M4×12, actually #10-24 × 1/2").
+      All purged. Crosses now live in `MCMASTER_CROSSES` (hand-verified, provenance-noted,
+      grown one real part at a time per the audit doc).
+- [x] MPN coverage now scales via the **live Zoro cross-reference card** on unknown-MPN pages
+      (supplier's own match: name/price/link, honestly labeled) + family-level series decoding
+      for 9 real McMaster series — no fabricated size claims anywhere
+- [x] Imperial length regex fix (TPI digits no longer misread as length)
+- [x] **BOM quote form** ("Request Sourcing Quote" → prefilled email + clipboard)
+- [x] **Reference library**: 12 deep pages (DIN 912/7991/933/934/125/127 + ISO 7380 size
+      charts, computed torque tables, pitch/tap-drill, property classes, MPN decoding guide,
+      metric-vs-imperial ID) — cross-linked with catalog parts
+- [x] Red-flag sweep: removed unused deps (@google/genai, express) & AI Studio leftovers,
+      real catalog count in footer, compliance verify-per-order caveat, admin Demo badge,
+      honest sidebar actions
+- [x] 23 unit tests + 14-check browser smoke, green locally and on production
+
 ---
 
 ## 2. Remaining — Launch Blockers
@@ -45,12 +63,9 @@ Living checklist for partsource.io. Supersedes the old AI Studio export checklis
 
 ## 3. Remaining — V1 Plan (per `mcmaster-tool-audit-and-v1-plan`)
 
-- [ ] Grow verified McMaster cross-references toward top 500–1,000 SKUs (manual curation,
-      validate against parts you own; crowdsource submissions later)
-- [ ] "Quote my BOM" lead form wired to email/Slack webhook (early brokerage validation —
-      the strongest revenue path per the audit doc)
-- [ ] 10–20 deep reference pages (DIN 934 size chart, socket-cap torque specs by size,
-      material selection notes) — real evergreen content, not page-per-SKU
+- [ ] Grow `MCMASTER_CROSSES` by hand: verify each MPN against a part in hand or the
+      supplier's own listing before adding (2 entries seeded; the live Zoro card covers
+      unknown MPNs honestly in the meantime). NEVER bulk-generate crosses again.
 - [ ] Email eProcurement@mcmaster.com about the cross-reference API use case (expect "no", closes ambiguity)
 - [ ] Ask Zoro/Fastenal/Grainger partnerships about affiliate/data-feed programs
 - [ ] Outreach in Eng-Tips / r/engineering threads where the demand quotes came from
@@ -76,3 +91,4 @@ Living checklist for partsource.io. Supersedes the old AI Studio export checklis
 | 2026-07-07 | Base-path commit broke routing; site deployed but rendered blank |
 | 2026-07-09 | Routing fixed, local + Pages verified, scraper live on Render, `VITE_SCRAPER_URL` wired; Zoro 403s Render IP → honest estimated fallback in prod |
 | 2026-07-10 | Audit-doc pivot: 585-part standards catalog, honest unindexed UX, fake stock/photos removed, disclaimer added, Fastener Superstore ruled out, 19/19 prod checks |
+| 2026-07-10 | V1 push: fabricated crosses purged (live data disproved them), hand-verified cross table + live Zoro cross card, BOM quote form, 12-page reference library, dep cleanup — 13/13 prod checks |
