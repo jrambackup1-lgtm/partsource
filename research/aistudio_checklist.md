@@ -23,14 +23,8 @@ This checklist tracks completed stages, pending prompts to run in AI Studio, and
 ## 2. Pending AI Studio Stages (To Run Next in AI Studio)
 *These prompts must be copied and run in AI Studio before copying the code out.*
 
-- [ ] **Stage 11**: Sourcing Widget embed generator & preview dashboard ([prd-aistudio6.md](file:///C:/Users/jayar/Projects/partsource/research/archive/prd-aistudio6.md))
-- [ ] **Stage 12**: JSON-LD Structured Product Data schema for Google rich search results ([prd-aistudio6.md](file:///C:/Users/jayar/Projects/partsource/research/archive/prd-aistudio6.md))
-- [ ] **Stage 13**: Syncing AVL Compliance filters with the SVG chart & normalizing CSV headers ([prd-aistudio7.md](file:///C:/Users/jayar/Projects/partsource/research/archive/prd-aistudio7.md))
-- [ ] **Stage 14**: Pre-populating Admin dashboard with dummy orders & upgrading regex rules ([prd-aistudio7.md](file:///C:/Users/jayar/Projects/partsource/research/archive/prd-aistudio7.md))
-- [ ] **Stage 15**: Parametric 3D CAD model visualizer & STEP/SolidWorks exporter ([prd-aistudio8.md](file:///C:/Users/jayar/Projects/partsource/research/archive/prd-aistudio8.md))
-- [ ] **Stage 16**: Torque tightness calculator, clearance hole sizes & tap drill references ([prd-aistudio8.md](file:///C:/Users/jayar/Projects/partsource/research/archive/prd-aistudio8.md))
-- [ ] **Stage 17**: Mechanical material datasheets (tensile/yield strength metrics & PDF export) ([prd-aistudio8.md](file:///C:/Users/jayar/Projects/partsource/research/archive/prd-aistudio8.md))
-- [ ] **Stage 18**: Split-Vendor BOM Pricing Optimizer & shipment lead-time router ([prd-aistudio8.md](file:///C:/Users/jayar/Projects/partsource/research/archive/prd-aistudio8.md))
+- [X] **Stage 11**: Sourcing Widget embed generator & preview dashboard ([prd-aistudio6.md](file:///C:/Users/jayar/Projects/partsource/research/archive/prd-aistudio6.md))
+- [X] **Stage 12**: JSON-LD Structured Product Data schema for Google rich search results ([prd-aistudio6.md](file:///C:/Users/
 
 ---
 
