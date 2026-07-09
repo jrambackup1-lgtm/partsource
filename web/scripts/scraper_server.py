@@ -23,7 +23,7 @@ import re
 import threading
 import time
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs, quote_plus
 
 from scrapling import Fetcher
 
@@ -118,19 +118,24 @@ class ScraperHandler(BaseHTTPRequestHandler):
             return
 
         if parsed.path == "/api/scrape":
-            part_number = parse_qs(parsed.query).get("partNumber", [None])[0]
+            params = parse_qs(parsed.query)
+            part_number = params.get("partNumber", [None])[0]
             if not part_number:
                 self._send_json(400, {"error": "Part number is required"})
                 return
-            print(f"scrape request: {part_number}")
-            payload = self.handle_scrape(part_number)
+            # Optional spec-derived search query (generated catalog parts have
+            # no McMaster PN; searching Zoro by decoded spec matches better).
+            query = params.get("q", [None])[0] or part_number
+            print(f"scrape request: {part_number} (q={query})")
+            payload = self.handle_scrape(part_number, query)
             self._send_json(200, payload)
             return
 
         self._send_json(404, {"error": "Not Found"})
 
     # --- Core scrape logic ---------------------------------------------------
-    def handle_scrape(self, part_number: str) -> dict:
+    def handle_scrape(self, part_number: str, query: str | None = None) -> dict:
+        query = query or part_number
         # 1. Cache hit?
         cached = _cache_get(part_number)
         if cached:
@@ -144,7 +149,7 @@ class ScraperHandler(BaseHTTPRequestHandler):
 
         # 3. Live Zoro read.
         try:
-            result = self.scrape_zoro(part_number)
+            result = self.scrape_zoro(part_number, query)
             if result.get("success"):
                 _cache_put(part_number, result)
             else:
@@ -155,8 +160,8 @@ class ScraperHandler(BaseHTTPRequestHandler):
             print(f"scrape exception for {part_number}: {exc}")
             return self._estimated(part_number, f"exception: {exc}")
 
-    def scrape_zoro(self, part_number: str) -> dict:
-        zoro_url = f"https://www.zoro.com/search?q={part_number}"
+    def scrape_zoro(self, part_number: str, query: str | None = None) -> dict:
+        zoro_url = f"https://www.zoro.com/search?q={quote_plus(query or part_number)}"
         fetcher = Fetcher(auto_match=False)
         response = fetcher.get(zoro_url, timeout=FETCH_TIMEOUT_SECONDS)
         if response.status != 200:
