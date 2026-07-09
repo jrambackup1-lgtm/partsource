@@ -1,0 +1,10 @@
+# Python dependencies for the optional Zoro live-pricing scraper.
+# The app is fully functional without these (fallback pricing is computed
+# in the browser); the scraper only adds a "Live Zoro Pricing" overlay.
+#
+# scrapling has weak dependency declarations — the extras below are all
+# required at runtime for the Fetcher to import successfully.
+scrapling>=0.4.10
+curl_cffi>=0.7.0
+playwright>=1.40.0
+browserforge>=1.2.0

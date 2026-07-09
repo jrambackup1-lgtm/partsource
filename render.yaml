@@ -1,0 +1,29 @@
+# Render Blueprint for the PartSource Zoro pricing scraper.
+#
+# Alternative to Fly.io. Deploy via Render dashboard: New -> Blueprint ->
+# point at this file. Render reads it and provisions the web service.
+#
+# Render's free tier sleeps after inactivity and cold-starts on first request
+# (~30-60s). Acceptable for an MVP overlay; upgrade to a paid instance later.
+
+services:
+  - type: web
+    name: partsource-scraper
+    runtime: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./web/scripts/Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PORT
+        value: 3001
+      - key: CACHE_TTL_SECONDS
+        value: "21600"
+      - key: CB_FAILURE_THRESHOLD
+        value: "8"
+      - key: CB_WINDOW_SECONDS
+        value: "300"
+      - key: CB_COOLDOWN_SECONDS
+        value: "120"
