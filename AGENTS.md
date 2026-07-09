@@ -13,7 +13,7 @@ Research vault and development project for the mechanical hardware sourcing tool
 - `research/archive/prd-aistudio6.md` — Google AI Studio prompt template (Stage 11 & 12 widget embed & SEO rich schema)
 - `research/archive/prd-aistudio7.md` — Google AI Studio prompt template (Stage 13 & 14 compliance sync & data refinements)
 - `research/archive/prd-aistudio8.md` — Google AI Studio prompt template (Stage 15, 16, 17, & 18 CAD, torque, material, and split-BOM)
-- `research/aistudio_checklist.md` — Checklist for verifying features before exporting locally
+- `research/aistudio_checklist.md` — Live ship checklist & log (done / remaining tasks)
 - `research/grill-decisions.md` — Finalized technical requirements & decisions
 - `research/business-plan.md` — Business plan, pillars, and domain architecture
 - `research/market-research.md` — Verified mechanical TAM, comparables & VC landscape
