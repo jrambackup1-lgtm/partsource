@@ -45,11 +45,11 @@ export const MCMASTER_CROSSES: McMasterCross[] = [
 ];
 
 export const suppliers = [
-  { name: "Zoro", discount: 0.85, urlTemplate: "https://www.zoro.com/search?q=", isDfars: true, isIso: true, isUsa: true, shipDays: 2 },
-  { name: "Bolt Depot", discount: 0.70, urlTemplate: "https://www.boltdepot.com/Product-Search.aspx?txt=", isDfars: false, isIso: false, isUsa: false, shipDays: 3 },
-  { name: "MSC Industrial", discount: 0.95, urlTemplate: "https://www.mscdirect.com/browse/tn?searchterm=", isDfars: true, isIso: true, isUsa: true, shipDays: 1 },
-  { name: "Fastenal", discount: 1.00, urlTemplate: "https://www.fastenal.com/products/search?term=", isDfars: true, isIso: true, isUsa: true, shipDays: 1 },
-  { name: "Misumi", discount: 0.90, urlTemplate: "https://us.misumi-ec.com/vona2/result/?Keyword=", isDfars: false, isIso: true, isUsa: false, shipDays: 5 }
+  { name: "Zoro", discount: 0.85, urlTemplate: "https://www.zoro.com/search?q=", shipDays: 2 },
+  { name: "Bolt Depot", discount: 0.70, urlTemplate: "https://www.boltdepot.com/Product-Search.aspx?txt=", shipDays: 3 },
+  { name: "MSC Industrial", discount: 0.95, urlTemplate: "https://www.mscdirect.com/browse/tn?searchterm=", shipDays: 1 },
+  { name: "Fastenal", discount: 1.00, urlTemplate: "https://www.fastenal.com/products/search?term=", shipDays: 1 },
+  { name: "Misumi", discount: 0.90, urlTemplate: "https://us.misumi-ec.com/vona2/result/?Keyword=", shipDays: 5 }
 ];
 
 // ---------------------------------------------------------------------------

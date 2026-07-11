@@ -4,6 +4,7 @@ import path from 'path';
 import {defineConfig} from 'vite';
 
 export default defineConfig(({command, isPreview}) => {
+  // Canonical production URL: https://jrambackup1-lgtm.github.io/partsource/
   return {
     // GitHub Pages serves the site under /partsource/; local dev stays at /.
     // `vite preview` runs with command === 'serve', so check isPreview too.

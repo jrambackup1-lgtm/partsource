@@ -11,27 +11,8 @@ export interface BOMItem {
   unitCost: number;
 }
 
-export interface Order {
-  id: string;
-  date: string;
-  items: BOMItem[];
-  subtotal: number;
-  shippingFee: number;
-  brokerageFee: number;
-  total: number;
-  status: 'Order Submitted' | 'Quoting & Consolidating' | 'Shipped from Consolidated Warehouse' | 'Delivered';
-  trackingNumber?: string;
-  customer?: {
-    name: string;
-    email: string;
-    company: string;
-  };
-  shippingAddress?: string;
-}
-
 export function useBOM() {
   const [bomList, setBomList] = useState<BOMItem[]>([]);
-  const [orders, setOrders] = useState<Order[]>([]);
 
   useEffect(() => {
     const saved = localStorage.getItem('partsource_bom');
@@ -42,40 +23,11 @@ export function useBOM() {
         console.error("Failed to parse BOM from local storage", e);
       }
     }
-    const savedOrders = localStorage.getItem('partsource_orders');
-    if (savedOrders) {
-      try {
-        setOrders(JSON.parse(savedOrders));
-      } catch (e) {
-        console.error("Failed to parse orders from local storage", e);
-      }
-    }
   }, []);
 
   const saveBOM = (newList: BOMItem[]) => {
     setBomList(newList);
     localStorage.setItem('partsource_bom', JSON.stringify(newList));
-  };
-
-  const saveOrders = (newOrders: Order[]) => {
-    setOrders(newOrders);
-    localStorage.setItem('partsource_orders', JSON.stringify(newOrders));
-  };
-
-  const updateOrder = (updatedOrder: Order) => {
-    const newOrders = orders.map((o) => (o.id === updatedOrder.id ? updatedOrder : o));
-    saveOrders(newOrders);
-  };
-
-  const placeOrder = (orderData: Omit<Order, 'id' | 'date'>) => {
-    const newOrder: Order = {
-      ...orderData,
-      id: Math.random().toString(36).substring(2, 9).toUpperCase(),
-      date: new Date().toISOString(),
-    };
-    const newOrders = [newOrder, ...orders];
-    saveOrders(newOrders);
-    saveBOM([]); // Clear BOM after placing order
   };
 
   const clearBom = () => saveBOM([]);
@@ -402,15 +354,12 @@ export function useBOM() {
 
   return {
     bomList,
-    orders,
     addToBOM,
     updateBomQty,
     deleteBomItem,
     exportBOM,
     exportPDF,
     importCSV,
-    placeOrder,
-    updateOrder,
     clearBom
   };
 }

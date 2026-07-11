@@ -42,7 +42,7 @@ export function WidgetEmbed() {
   const rowHoverBg = isLight ? '#f8fafc' : isSlate ? '#152238' : '#0d1527';
 
   const handleCTAClick = () => {
-    window.open(`/parts/${encodeURIComponent(item.partNumber)}`, '_blank');
+    window.open(`${import.meta.env.BASE_URL}parts/${encodeURIComponent(item.partNumber)}`, '_blank');
   };
 
   return (
@@ -73,7 +73,7 @@ export function WidgetEmbed() {
           className="px-2 py-0.5 text-[10px] font-semibold border rounded-md"
           style={{ backgroundColor: `${accent}15`, color: accent, borderColor: `${accent}30` }}
         >
-          Verified Match
+          Indexed Catalog
         </div>
       </div>
 
@@ -202,7 +202,7 @@ export function WidgetEmbed() {
             style={{ backgroundColor: accent }}
           >
             <Search className="w-3.5 h-3.5" />
-            Consolidate Sourcing Channel
+            Open Part Catalog
           </button>
         </div>
       </div>

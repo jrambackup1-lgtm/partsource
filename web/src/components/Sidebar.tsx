@@ -4,9 +4,7 @@ import {
   LayoutDashboard,
   Search,
   Layers,
-  Package,
   BookOpen,
-  Settings,
   HelpCircle,
   LogOut
 } from 'lucide-react';
@@ -22,7 +20,6 @@ export function Sidebar() {
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/?tab=dashboard' },
     { id: 'finder', label: 'Part Finder', icon: Search, path: '/' },
     { id: 'bom', label: 'BOM Manager', icon: Layers, path: '/?tab=bom' },
-    { id: 'orders', label: 'Sourcing Orders', icon: Package, path: '/?tab=orders' },
     { id: 'reference', label: 'Reference', icon: BookOpen, path: '/reference' },
   ];
 
@@ -77,18 +74,6 @@ export function Sidebar() {
 
       {/* Footer Navigation */}
       <div className="p-4 border-t border-slate-100 flex flex-col gap-1">
-        <Link
-          to="/admin"
-          className={`flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 no-underline ${
-            path === '/admin'
-              ? 'bg-slate-900 text-white shadow-sm'
-              : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
-          }`}
-        >
-          <Settings className={`w-5 h-5 ${path === '/admin' ? 'text-white' : 'text-slate-400'}`} />
-          Admin Portal
-        </Link>
-        
         <button
           onClick={handleSupport}
           className="flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-50 border-none bg-transparent text-left cursor-pointer w-full"

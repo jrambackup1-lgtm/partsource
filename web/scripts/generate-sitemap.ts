@@ -6,7 +6,7 @@ import { db } from '../src/lib/decoder';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const BASE_URL = 'https://partsource.io';
+const BASE_URL = 'https://jrambackup1-lgtm.github.io/partsource';
 
 function generateSitemap() {
   const validParts = db.filter(part => part.thread !== 'Unknown' && part.standard !== 'Unknown');

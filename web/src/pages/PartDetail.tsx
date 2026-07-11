@@ -118,61 +118,6 @@ export function PartDetail() {
   const { addToBOM } = useBOM();
   const { currency } = useCurrency();
   const [item, setItem] = useState<Part | null>(null);
-  const [liveData, setLiveData] = useState<any>(null);
-  const [loadingLive, setLoadingLive] = useState(false);
-
-  // The Zoro scraper is an optional live-pricing overlay. When it is not
-  // running (e.g. on a static host) or Zoro blocks the request, the app falls
-  // back to computed pricing and never shows a fake "Live" badge. The URL is
-  // configurable via VITE_SCRAPER_URL; defaulting to localhost:3001.
-  const SCRAPER_URL = import.meta.env.VITE_SCRAPER_URL || 'http://localhost:3001';
-
-  useEffect(() => {
-    if (!item?.partNumber) return;
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 6000);
-
-    setLoadingLive(true);
-    setLiveData(null);
-
-    // Verified McMaster crosses search Zoro by the MPN (Zoro cross-indexes
-    // them); generated/guessed parts search by their decoded spec instead.
-    const zoroQuery = item.mcmaster ?? buildSupplierQuery(item);
-    fetch(`${SCRAPER_URL}/api/scrape?partNumber=${encodeURIComponent(item.partNumber)}&q=${encodeURIComponent(zoroQuery)}`, {
-      signal: controller.signal,
-    })
-      .then(res => res.json())
-      .then(data => {
-        // Only treat a genuinely successful scrape as live data; otherwise the
-        // computed price table is authoritative and no badge is shown.
-        if (data && data.success) {
-          setLiveData(data);
-        } else {
-          setLiveData(null);
-        }
-        setLoadingLive(false);
-      })
-      .catch(err => {
-        // Scraper not running, timed out, or blocked — fall back silently.
-        if (err.name !== 'AbortError') {
-          console.warn('Live pricing unavailable, using computed prices:', err.message);
-        }
-        setLiveData(null);
-        setLoadingLive(false);
-      })
-      .finally(() => clearTimeout(timeout));
-
-    return () => {
-      clearTimeout(timeout);
-      controller.abort();
-    };
-  }, [item?.partNumber, SCRAPER_URL]);
-
-  // Compliance Filters
-  const [filterDfars, setFilterDfars] = useState(false);
-  const [filterIso, setFilterIso] = useState(false);
-  const [filterUsa, setFilterUsa] = useState(false);
-
   useEffect(() => {
     if (partNumber) {
       const decoded = decodeURIComponent(partNumber);
@@ -335,34 +280,6 @@ export function PartDetail() {
             )}
           </div>
 
-          <div className="bg-white border border-slate-200 rounded-xl flex flex-col p-5 gap-4 shadow-xs">
-            <h2 className="m-0 text-xs font-semibold text-slate-900 flex items-center gap-2">
-              <span className="w-1.5 h-1.5 bg-slate-900 rounded-full"></span>
-              Compliance Configuration
-            </h2>
-            <div className="flex flex-col gap-3">
-              <label className="flex items-center gap-3 text-xs text-slate-700 cursor-pointer group">
-                <input type="checkbox" checked={filterDfars} onChange={(e) => setFilterDfars(e.target.checked)} className="cursor-pointer accent-slate-900 w-4 h-4 rounded-md" />
-                <span className="font-semibold group-hover:text-slate-950 transition-colors">DFARS Compliant</span>
-              </label>
-              <label className="flex items-center gap-3 text-xs text-slate-700 cursor-pointer group">
-                <input type="checkbox" checked={filterIso} onChange={(e) => setFilterIso(e.target.checked)} className="cursor-pointer accent-slate-900 w-4 h-4 rounded-md" />
-                <span className="font-semibold group-hover:text-slate-950 transition-colors">ISO 9001 / AS9100</span>
-              </label>
-              <label className="flex items-center gap-3 text-xs text-slate-700 cursor-pointer group">
-                <input type="checkbox" checked={filterUsa} onChange={(e) => setFilterUsa(e.target.checked)} className="cursor-pointer accent-slate-900 w-4 h-4 rounded-md" />
-                <span className="font-semibold group-hover:text-slate-950 transition-colors">Domestic Origin Only (USA)</span>
-              </label>
-            </div>
-            {(filterDfars || filterIso || filterUsa) && (
-               <div className="bg-amber-50 text-amber-800 border border-amber-100 text-xs font-medium p-3 rounded-lg leading-relaxed shadow-xs">
-                 Compliance filters are active. Non-compliant vendor offers are restricted.
-               </div>
-            )}
-            <p className="text-[10px] text-slate-400 m-0 leading-relaxed">
-              Vendor capability flags are indicative only — always verify certifications and traceability per order.
-            </p>
-          </div>
         </div>
 
         {/* Right Column: Details and Sourcing */}
@@ -371,16 +288,6 @@ export function PartDetail() {
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-semibold text-slate-450 uppercase tracking-wider">Part Identification</span>
               <div className="flex items-center gap-2">
-                {loadingLive && (
-                  <span className="text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full animate-pulse">
-                    Live Scraping...
-                  </span>
-                )}
-                {liveData && (
-                  <span className="text-[10px] font-semibold text-blue-700 bg-blue-50 px-2.5 py-0.5 border border-blue-150 rounded-full flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span> Live Zoro Pricing
-                  </span>
-                )}
                 {isUnindexed ? (
                   <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 bg-amber-500 rounded-full"></span> Not Indexed
@@ -405,25 +312,6 @@ export function PartDetail() {
                 {' '}<a className="font-bold underline" href={`mailto:jayaram.h@afterconcept.com?subject=${encodeURIComponent('PartSource indexing request: ' + item.partNumber)}`}>Request this part</a>
               </div>
             )}
-            {isUnindexed && liveData?.zoro?.name && (
-              <div className="text-xs text-blue-900 bg-blue-50 border border-blue-200 p-4 rounded-lg leading-relaxed mb-3">
-                <div className="flex items-center gap-2 mb-1.5">
-                  <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
-                  <strong className="uppercase tracking-wider text-[10px]">Live cross-reference from Zoro</strong>
-                </div>
-                <div className="font-semibold">{liveData.zoro.name}</div>
-                <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-blue-800">
-                  {liveData.zoro.unitPrice > 0 && <span>${liveData.zoro.unitPrice.toFixed(2)}/unit{liveData.zoro.packSize > 1 ? ` (pack of ${liveData.zoro.packSize})` : ''}</span>}
-                  {liveData.zoro.stockStatus && <span>{liveData.zoro.stockStatus}</span>}
-                  <a href={liveData.zoro.url} target="_blank" rel="noreferrer" className="font-bold underline inline-flex items-center gap-1">
-                    View on Zoro <ExternalLink className="w-3 h-3" />
-                  </a>
-                </div>
-                <div className="mt-1.5 text-[10px] text-blue-700">
-                  Matched by Zoro's own cross-reference — verify specifications before ordering.
-                </div>
-              </div>
-            )}
             <div className="text-xs text-slate-650 bg-slate-50 border border-slate-150 p-4 rounded-lg leading-relaxed">
               <strong className="text-slate-800">Application Note:</strong> {item.appNote}
             </div>
@@ -446,26 +334,14 @@ export function PartDetail() {
                 </thead>
                 <tbody>
                   {(item.mcmaster
-                    ? [{ name: 'McMaster-Carr', discount: 1.0, isDfars: true, isIso: true, isUsa: true, shipDays: 1, urlTemplate: 'https://www.mcmaster.com/' }, ...suppliers]
+                    ? [{ name: 'McMaster-Carr', discount: 1.0, shipDays: 1, urlTemplate: 'https://www.mcmaster.com/' }, ...suppliers]
                     : suppliers
                   ).map((sup, index) => {
-                    const baseMcMasterPrice = liveData ? liveData.mcmasterEstimatedPrice : item.mcmasterPrice;
-
-                    let price = baseMcMasterPrice * sup.discount;
-                    let href = sup.name === 'McMaster-Carr'
+                    const price = item.mcmasterPrice * sup.discount;
+                    const href = sup.name === 'McMaster-Carr'
                       ? `https://www.mcmaster.com/${item.mcmaster}`
                       : getSupplierSearchUrl(sup.urlTemplate, item);
-                    // No fabricated stock: estimated rows just point at the
-                    // supplier; only a live Zoro read shows real availability.
-                    let stockLabel = 'Check site';
-                    let isLive = false;
-
-                    if (liveData && sup.name === 'Zoro') {
-                      price = liveData.zoro.unitPrice;
-                      stockLabel = liveData.zoro.stockStatus;
-                      href = liveData.zoro.url;
-                      isLive = true;
-                    }
+                    const stockLabel = 'Check site';
 
                     // Discount pill logic
                     const discountPct = Math.round((1 - sup.discount) * 100);
@@ -473,40 +349,19 @@ export function PartDetail() {
                     const queryStr = isMcMaster ? item.mcmaster! : buildSupplierQuery(item);
 
                     // Stock color logic
-                    const stockColor = isLive
-                      ? (stockLabel.toLowerCase().includes('in stock') ? '#166534' : '#92400e')
-                      : '#64748b';
-                    
-                    // Compliance logic
-                    const failsDfars = filterDfars && !sup.isDfars;
-                    const failsIso = filterIso && !sup.isIso;
-                    const failsUsa = filterUsa && !sup.isUsa;
-                    const isLocked = failsDfars || failsIso || failsUsa;
+                    const stockColor = '#64748b';
                     
                     return (
-                      <tr key={sup.name} className={`hover:bg-slate-50/50 border-b border-slate-100 last:border-0 transition-colors ${isLocked ? 'opacity-50 bg-slate-50/50' : ''}`}>
+                      <tr key={sup.name} className="hover:bg-slate-50/50 border-b border-slate-100 last:border-0 transition-colors">
                         <td className="py-4 px-4 pl-6 text-xs text-slate-800 font-semibold">
                           <div className="flex flex-col gap-1 text-left">
                             <div className="flex items-center gap-2">
                               {sup.name}
-                              {isLive ? (
-                                <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-semibold px-1.5 py-0.5 rounded uppercase tracking-wide" title="Price and stock read live from the supplier's published product data">Live</span>
-                              ) : (
-                                <span className="bg-slate-100 text-slate-500 border border-slate-200 text-[10px] font-medium px-1.5 py-0.5 rounded uppercase tracking-wide" title="Price estimated from the McMaster reference and simulated discount model">Estimated</span>
-                              )}
-                              {isLocked && <span className="bg-red-50 text-red-700 text-[10px] font-semibold px-2 py-0.5 border border-red-150 rounded">LOCKED</span>}
+                              <span className="bg-slate-100 text-slate-500 border border-slate-200 text-[10px] font-medium px-1.5 py-0.5 rounded uppercase tracking-wide" title="Catalog estimate; confirm price and availability with the supplier">Estimated</span>
                             </div>
                             <span className="text-[10px] font-mono text-slate-400 bg-slate-50 border border-slate-150 px-1.5 py-0.5 rounded w-fit select-all" title="Search query sent to this supplier's site">
                               {isMcMaster ? `PN: ${queryStr}` : `q: ${queryStr}`}
                             </span>
-                            {filterUsa && sup.isUsa && !isLocked && (
-                              <span className="text-[10px] text-blue-650 font-semibold">🇺🇸 Domestic origin</span>
-                            )}
-                            {isLocked && (
-                              <span className="text-[10px] text-red-650 font-medium">
-                                {failsDfars ? 'Non-DFARS' : failsIso ? 'ISO certificate missing' : 'Foreign origin'}
-                              </span>
-                            )}
                           </div>
                         </td>
                         <td className="py-4 px-4 text-right font-mono text-xs">
@@ -526,11 +381,10 @@ export function PartDetail() {
                         <td className="py-4 px-4 pr-6 text-right font-sans">
                           <div className="flex items-center justify-end gap-2.5">
                             <div className="flex items-center bg-white border border-slate-200 rounded-lg px-1 w-14 shadow-xs">
-                              <input type="number" id={`qty-${index}`} className="w-full py-1 text-center border-none bg-transparent font-mono text-xs font-bold outline-none" defaultValue="1" min="1" disabled={isLocked} />
+                              <input type="number" id={`qty-${index}`} className="w-full py-1 text-center border-none bg-transparent font-mono text-xs font-bold outline-none" defaultValue="1" min="1" />
                             </div>
                             <button 
                               className="bg-slate-50 border border-slate-200 hover:bg-slate-100 py-1.5 px-3.5 rounded-md text-xs font-semibold text-slate-700 cursor-pointer transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
-                              disabled={isLocked}
                               onClick={() => {
                                 const qtyInput = document.getElementById(`qty-${index}`) as HTMLInputElement;
                                 const qty = parseInt(qtyInput.value) || 1;

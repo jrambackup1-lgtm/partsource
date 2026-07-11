@@ -18,8 +18,6 @@ import {
 import { fuse, parseCustomPart, Part, suppliers, db } from '../lib/decoder';
 import { useBOM } from '../hooks/useBOM';
 import { useCurrency } from '../contexts/CurrencyContext';
-import { BrokerageModal } from '../components/BrokerageModal';
-import { OrderCard } from '../components/OrderCard';
 
 // ----------------------------------------------------
 // Cost Savings Chart component (Precision Blueprint style)
@@ -237,9 +235,8 @@ export function Home() {
   const searchParams = new URLSearchParams(location.search);
   const activeTab = searchParams.get('tab') || 'finder';
 
-  const [isBrokerageModalOpen, setIsBrokerageModalOpen] = useState(false);
   const navigate = useNavigate();
-  const { bomList, orders, updateBomQty, deleteBomItem, exportBOM, exportPDF, importCSV, placeOrder } = useBOM();
+  const { bomList, updateBomQty, deleteBomItem, exportBOM, exportPDF, importCSV } = useBOM();
 
   // Search states for the page-level center search bar
   const [query, setQuery] = useState('');
@@ -419,14 +416,14 @@ export function Home() {
               </div>
             </div>
 
-            {/* Card 4: Orders */}
+            {/* Card 4: Catalog */}
             <div className="bg-white border border-slate-200 rounded-xl p-6 flex flex-col justify-between hover:border-slate-350 transition-colors relative overflow-hidden shadow-xs">
               <div className="flex justify-between items-center text-slate-400">
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-450">Active Shipments</span>
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-450">Indexed Parts</span>
               </div>
               <div className="mt-4">
-                <span className="text-2xl font-semibold tracking-tight text-slate-900">{orders.length}</span>
-                <span className="block text-[10px] font-medium text-slate-400 mt-1 uppercase tracking-wider">Consolidated Sourcing batches</span>
+                <span className="text-2xl font-semibold tracking-tight text-slate-900">{db.length.toLocaleString()}</span>
+                <span className="block text-[10px] font-medium text-slate-400 mt-1 uppercase tracking-wider">Searchable catalog entries</span>
               </div>
             </div>
           </div>
@@ -478,11 +475,11 @@ export function Home() {
                         Manage BOM Specs
                       </button>
                     </Link>
-                    <button 
-                      onClick={() => setIsBrokerageModalOpen(true)}
+                    <button
+                      onClick={requestQuote}
                       className="flex-1 bg-slate-900 hover:bg-slate-800 text-white border-none py-2 px-4 rounded-md text-xs font-semibold cursor-pointer transition-all active:scale-[0.98] shadow-xs"
                     >
-                      Fulfill BOM Request
+                      Request BOM Quote
                     </button>
                   </div>
                 </div>
@@ -629,15 +626,15 @@ export function Home() {
           ---------------------------------------------------- */}
       {activeTab === 'bom' && (
         <div className="flex flex-col gap-8 w-full max-w-[1200px] mx-auto text-left">
-          {/* Fulfill Hero */}
+          {/* Quote Hero */}
           <div className="bg-slate-900 text-white rounded-xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden shadow-xs">
             <div className="z-10 text-left">
               <h3 className="m-0 text-white text-sm font-semibold uppercase tracking-wider flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                Consolidated Sourcing Fulfillment
+                BOM Quote & Export
               </h3>
               <p className="m-0 text-xs text-slate-300 mt-1.5 max-w-[500px] leading-relaxed">
-                Submit active BOM to consolidate orders, audit compliance certificates, and combine shipments in a single routing batch.
+                Send the active BOM for a manual sourcing quote, or export it for your own procurement workflow.
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-2 z-10">
@@ -647,12 +644,6 @@ export function Home() {
                 title="Opens an email with your BOM prefilled (also copied to clipboard)"
               >
                 {quoteCopied ? 'BOM copied — email opened' : 'Request Sourcing Quote'}
-              </button>
-              <button
-                className="bg-white hover:bg-slate-50 text-slate-900 border-none py-2.5 px-6 rounded-md text-xs font-semibold cursor-pointer transition-all active:scale-[0.98] whitespace-nowrap shadow-sm"
-                onClick={() => setIsBrokerageModalOpen(true)}
-              >
-                Execute Fulfillment
               </button>
             </div>
           </div>
@@ -785,40 +776,6 @@ export function Home() {
         </div>
       )}
 
-      {/* ----------------------------------------------------
-          TAB 4: ACTIVE SOURCING ORDERS
-          ---------------------------------------------------- */}
-      {activeTab === 'orders' && (
-        <div className="flex flex-col gap-8 w-full max-w-[800px] mx-auto text-left">
-          <div>
-            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 m-0">Sourcing Order History</h1>
-            <p className="text-slate-500 m-0 mt-1 font-semibold text-sm">Track shipments, quotes, and consolidation status here.</p>
-          </div>
-          
-          {orders.length > 0 ? (
-            <div className="flex flex-col gap-6 pb-20">
-              {orders.map(order => (
-                <OrderCard key={order.id} order={order} />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center p-12 bg-white border border-slate-200 rounded-2xl shadow-sm mt-4">
-              <Package className="w-12 h-12 mx-auto text-slate-300 mb-4" />
-              <h3 className="text-base font-bold text-slate-800 m-0 mb-2">No Sourcing Orders Found</h3>
-              <p className="text-xs text-slate-400 m-0 leading-relaxed max-w-[320px] mx-auto">You have no active or completed consolidated consignments. Compile a BOM and click "Fulfill" to launch a consolidated order.</p>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Brokerage modal fulfillment drawer */}
-      <BrokerageModal 
-        isOpen={isBrokerageModalOpen} 
-        onClose={() => setIsBrokerageModalOpen(false)}
-        bomList={bomList}
-        onPlaceOrder={placeOrder}
-        onSuccessNavigate={() => navigate('/?tab=orders')}
-      />
     </div>
   );
 }
