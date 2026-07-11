@@ -31,6 +31,7 @@ assert.match(html, /<script id="json-ld-product" type="application\/ld\+json">/)
 assert.match(html, /<meta name="robots" content="noindex,follow" \/>/);
 assert.match(html, /"sku":"DIN912-M3X10"/);
 assert.doesNotMatch(html, /AggregateOffer|"offers"|lowPrice|highPrice|offerCount/);
+assert.doesNotMatch(html, /price|equivalent|candidate/i);
 
 const distDir = fs.mkdtempSync(path.join(os.tmpdir(), 'partsource-static-'));
 try {

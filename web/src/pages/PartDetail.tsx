@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, ExternalLink, Search } from 'lucide-react';
-import { resolvePartIdentity, Part, PartResolution, suppliers, db, getSupplierSearchUrl, buildSupplierQuery } from '../lib/decoder';
+import { resolvePartIdentity, Part, PartResolution, suppliers, db, getSupplierSearchUrl } from '../lib/decoder';
 import { REF_PAGES } from '../lib/reference';
-import { useBOM } from '../hooks/useBOM';
 
 // ----------------------------------------------------
 // CAD dynamic fastener schematic viewer
@@ -114,7 +113,6 @@ function FastenerSchematic({ item }: { item: Part }) {
 export function PartDetail() {
   const { partNumber } = useParams();
   const navigate = useNavigate();
-  const { addToBOM } = useBOM();
   const [item, setItem] = useState<Part | null>(null);
   const [resolution, setResolution] = useState<PartResolution | null>(null);
   useEffect(() => {
@@ -126,7 +124,7 @@ export function PartDetail() {
       setItem(foundItem);
 
       // SEO Logic
-      const title = `${foundItem.thread !== 'Unknown' ? foundItem.thread + ' ' : ''}${foundItem.type} Equivalents & Sourcing | PartSource.io`;
+      const title = `${foundItem.thread !== 'Unknown' ? foundItem.thread + ' ' : ''}${foundItem.type} Specifications & Supplier Search | PartSource.io`;
       document.title = title;
 
       let metaDesc = document.querySelector('meta[name="description"]');
@@ -135,19 +133,17 @@ export function PartDetail() {
         metaDesc.setAttribute('name', 'description');
         document.head.appendChild(metaDesc);
       }
-      metaDesc.setAttribute('content', `Compare pricing and inventory for ${foundItem.partNumber} / ${foundItem.type}. ${foundItem.appNote}`);
+      metaDesc.setAttribute('content', `Configuration specifications and supplier search for ${foundItem.partNumber} / ${foundItem.type}. ${foundItem.appNote}`);
 
       // JSON-LD Structured Data — only for indexed catalog parts.
       if (foundItem.unindexed) {
         document.querySelector('#json-ld-product')?.remove();
-        return;
-      }
-      
+      } else {
       const jsonLd = {
         "@context": "https://schema.org",
         "@type": "Product",
-        "name": `${foundItem.partNumber} Equivalent Sourcing & Specifications`,
-        "description": `Compare prices and sourcing options for ${foundItem.type}, ${foundItem.length !== 'N/A' ? foundItem.length + ' length, ' : ''}${foundItem.material}.`,
+        "name": `${foundItem.partNumber} Configuration Specifications`,
+        "description": `Configuration specifications for ${foundItem.type}, ${foundItem.length !== 'N/A' ? foundItem.length + ' length, ' : ''}${foundItem.material}. Verify supplier results independently.`,
         "brand": "PartSource",
         "additionalProperty": [
           { "@type": "PropertyValue", "name": "Thread", "value": foundItem.thread },
@@ -188,8 +184,10 @@ export function PartDetail() {
       }
       console.log('Generated Schema:', jsonLd);
       console.groupEnd();
+      }
 
     }
+    return () => document.querySelector('#json-ld-product')?.remove();
   }, [partNumber]);  if (!item || !resolution) return <div className="p-8 text-xs font-medium text-slate-500">Loading specifications...</div>;
 
   const specs = [
@@ -206,9 +204,6 @@ export function PartDetail() {
   ];
 
   const isUnindexed = !!item.unindexed;
-  // A price estimate exists for catalog parts and well-decoded guesses; for
-  // everything else we show honest link-outs instead of a fabricated matrix.
-  const canPrice = item.mcmasterPrice > 0;
   const refChart = REF_PAGES.find(r => r.catalogStandard === item.standard);
 
   return (
@@ -278,15 +273,13 @@ export function PartDetail() {
             </h2>
             {resolution.state === 'suggested' && (
               <div className="text-xs text-amber-800 bg-amber-50 border border-amber-200 p-4 rounded-lg leading-relaxed mb-3">
-                Showing closest catalog match for <strong>{resolution.query}</strong>. Confirm the part number before use.
+                Showing a catalog configuration for <strong>{resolution.query}</strong>. Verify every specification before use.
               </div>
             )}
             {isUnindexed && (
               <div className="text-xs text-amber-800 bg-amber-50 border border-amber-200 p-4 rounded-lg leading-relaxed mb-3">
                 <strong>This part number is not in our indexed catalog.</strong>{' '}
-                {canPrice
-                  ? 'The specifications below were decoded from your input — verify them before ordering. Prices are rough estimates.'
-                  : 'We could not decode reliable specifications from it, so no specs or prices are shown. Use the supplier links below to search the raw number, or request indexing and we’ll source it.'}
+                The configuration shown may have been decoded from your input. Verify every specification before ordering, then use the supplier searches below.
                 {' '}<a className="font-bold underline" href={`mailto:jayaram.h@afterconcept.com?subject=${encodeURIComponent('PartSource indexing request: ' + item.partNumber)}`}>Request this part</a>
               </div>
             )}
@@ -295,116 +288,19 @@ export function PartDetail() {
             </div>
           </div>
 
-          {canPrice ? (
           <div className="bg-white border border-slate-200 rounded-xl flex flex-col shadow-xs overflow-hidden">
             <h2 className="m-0 py-3.5 px-4 text-xs font-semibold text-slate-800 border-b border-slate-150 bg-slate-50">
-              Supplier Pricing Matrix
-            </h2>
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse text-left m-0 min-w-[700px]">
-                <thead>
-                  <tr className="border-b border-slate-200 text-slate-450 text-[10px] font-semibold uppercase tracking-wider">
-                    <th className="p-3 px-4 pl-6">Vendor Name</th>
-                    <th className="p-3 px-4 text-right">Unit Price</th>
-                    <th className="p-3 px-4">Stock Status</th>
-                    <th className="p-3 px-4 text-right pr-6 w-1/3">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(item.mcmaster
-                    ? [{ name: 'McMaster-Carr', discount: 1.0, shipDays: 1, urlTemplate: 'https://www.mcmaster.com/' }, ...suppliers]
-                    : suppliers
-                  ).map((sup, index) => {
-                    const price = item.mcmasterPrice * sup.discount;
-                    const href = sup.name === 'McMaster-Carr'
-                      ? `https://www.mcmaster.com/${item.mcmaster}`
-                      : getSupplierSearchUrl(sup.urlTemplate, item);
-                    const stockLabel = 'Check site';
-
-                    // Discount pill logic
-                    const discountPct = Math.round((1 - sup.discount) * 100);
-                    const isMcMaster = sup.name === 'McMaster-Carr';
-                    const queryStr = isMcMaster ? item.mcmaster! : buildSupplierQuery(item);
-
-                    // Stock color logic
-                    const stockColor = '#64748b';
-                    
-                    return (
-                      <tr key={sup.name} className="hover:bg-slate-50/50 border-b border-slate-100 last:border-0 transition-colors">
-                        <td className="py-4 px-4 pl-6 text-xs text-slate-800 font-semibold">
-                          <div className="flex flex-col gap-1 text-left">
-                            <div className="flex items-center gap-2">
-                              {sup.name}
-                              <span className="bg-slate-100 text-slate-500 border border-slate-200 text-[10px] font-medium px-1.5 py-0.5 rounded uppercase tracking-wide" title="Catalog estimate; confirm price and availability with the supplier">Estimated</span>
-                            </div>
-                            <span className="text-[10px] font-mono text-slate-400 bg-slate-50 border border-slate-150 px-1.5 py-0.5 rounded w-fit select-all" title="Search query sent to this supplier's site">
-                              {isMcMaster ? `PN: ${queryStr}` : `q: ${queryStr}`}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="py-4 px-4 text-right font-mono text-xs">
-                          <div className="flex items-center justify-end gap-2">
-                            {!isMcMaster && discountPct > 0 && (
-                              <span className="bg-emerald-50 text-emerald-700 border border-emerald-150 text-[10px] font-semibold px-1.5 py-0.5 rounded">-{discountPct}%</span>
-                            )}
-                            <span className="font-bold text-slate-900">${price.toFixed(2)}</span>
-                          </div>
-                        </td>
-                        <td className="py-4 px-4 text-xs">
-                          <div className="flex items-center gap-1.5 text-left">
-                            <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: stockColor }}></div>
-                            <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: stockColor }}>{stockLabel}</span>
-                          </div>
-                        </td>
-                        <td className="py-4 px-4 pr-6 text-right font-sans">
-                          <div className="flex items-center justify-end gap-2.5">
-                            <div className="flex items-center bg-white border border-slate-200 rounded-lg px-1 w-14 shadow-xs">
-                              <input type="number" id={`qty-${index}`} className="w-full py-1 text-center border-none bg-transparent font-mono text-xs font-bold outline-none" defaultValue="1" min="1" />
-                            </div>
-                            <button 
-                              className="bg-slate-50 border border-slate-200 hover:bg-slate-100 py-1.5 px-3.5 rounded-md text-xs font-semibold text-slate-700 cursor-pointer transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
-                              onClick={() => {
-                                const qtyInput = document.getElementById(`qty-${index}`) as HTMLInputElement;
-                                const qty = parseInt(qtyInput.value) || 1;
-                                addToBOM({
-                                  partNumber: item.partNumber,
-                                  description: `${item.type} ${item.thread} x ${item.length !== 'N/A' ? item.length : ''}`,
-                                  material: item.material,
-                                  supplier: sup.name,
-                                  qty: qty,
-                                  unitCost: price
-                                });
-                              }}
-                            >
-                              Add
-                            </button>
-                            <a href={href} target="_blank" className="bg-slate-900 text-white hover:bg-slate-800 py-1.5 px-3.5 rounded-md no-underline font-semibold text-xs flex items-center gap-1.5 transition-all active:scale-[0.98] shadow-xs whitespace-nowrap" rel="noreferrer">
-                              <Search className="w-3.5 h-3.5" /> {sup.name.split(' ')[0]} <ExternalLink className="w-3 h-3.5" />
-                            </a>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </div>
-          ) : (
-          <div className="bg-white border border-slate-200 rounded-xl flex flex-col shadow-xs overflow-hidden">
-            <h2 className="m-0 py-3.5 px-4 text-xs font-semibold text-slate-800 border-b border-slate-150 bg-slate-50">
-              Search This Part Number at Suppliers
+              Search Suppliers
             </h2>
             <div className="p-5 flex flex-col gap-4">
               <p className="text-xs text-slate-500 m-0 leading-relaxed">
-                No indexed pricing for this part. These links search each supplier's
-                site for <span className="font-mono font-bold text-slate-700">{item.partNumber}</span> directly.
+                These links run a supplier-site search for this configuration. Verify the returned specifications, availability, and commercial terms directly with the supplier.
               </p>
               <div className="flex flex-wrap gap-2">
                 {suppliers.map(sup => (
                   <a
                     key={sup.name}
-                    href={sup.urlTemplate + encodeURIComponent(item.partNumber)}
+                    href={getSupplierSearchUrl(sup.urlTemplate, item)}
                     target="_blank"
                     rel="noreferrer"
                     className="bg-slate-900 text-white hover:bg-slate-800 py-1.5 px-3.5 rounded-md no-underline font-semibold text-xs flex items-center gap-1.5 transition-all active:scale-[0.98] shadow-xs"
@@ -415,11 +311,10 @@ export function PartDetail() {
               </div>
             </div>
           </div>
-          )}
 
           <div className="bg-white border border-slate-200 rounded-xl flex flex-col shadow-xs overflow-hidden">
             <h2 className="m-0 py-3.5 px-4 text-xs font-semibold text-slate-800 border-b border-slate-150 bg-slate-50">
-              Related Parts & Equivalents
+              Related Configurations
             </h2>
             <div className="flex flex-col">
               {db.filter(p => p.partNumber !== item.partNumber && (p.thread === item.thread || p.type === item.type)).slice(0, 5).map((related, idx) => (

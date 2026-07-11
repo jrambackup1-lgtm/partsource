@@ -50,4 +50,22 @@ test('canonical and robots metadata follow SPA navigation', async ({ page }) => 
 
   const schema = await page.locator('#json-ld-product').textContent();
   expect(schema).not.toMatch(/AggregateOffer|"offers"|lowPrice|highPrice|offerCount/);
+  expect(schema).not.toMatch(/price|equivalent|candidate/i);
+
+  await page.getByRole('link', { name: 'Reference', exact: true }).click();
+  await expect(page.locator('#json-ld-product')).toHaveCount(0);
+});
+
+test('embed provides supplier searches without synthetic claims', async ({ page }) => {
+  await page.goto(`${base}/embed/DIN912-M3X10`);
+  await expect(page.getByText('Search Suppliers', { exact: true })).toBeVisible();
+  await expect(page.getByRole('link').first()).toHaveAttribute('target', '_blank');
+  await expect(page.getByText(/\$\d|estimated price|equivalent|candidate/i)).toHaveCount(0);
+});
+
+test('product schema is removed after leaving a part route', async ({ page }) => {
+  await page.goto(`${base}/parts/DIN912-M3X10`);
+  await expect(page.locator('#json-ld-product')).toHaveCount(1);
+  await page.getByRole('link', { name: 'Reference', exact: true }).click();
+  await expect(page.locator('#json-ld-product')).toHaveCount(0);
 });

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Search, ExternalLink } from 'lucide-react';
-import { findCatalogPart, parseCustomPart, Part, suppliers, buildSupplierQuery, getSupplierSearchUrl } from '../lib/decoder';
+import { findCatalogPart, parseCustomPart, Part, suppliers, getSupplierSearchUrl } from '../lib/decoder';
 
 export function WidgetEmbed() {
   const { partNumber } = useParams();
@@ -115,7 +115,7 @@ export function WidgetEmbed() {
           </div>
         </div>
 
-        {/* Dynamic Pricing & Sourcing Grid */}
+        {/* Supplier search handoffs */}
         {showGrid && (
           <div 
             className="border rounded-lg overflow-hidden text-xs flex flex-col shadow-xs" 
@@ -129,19 +129,12 @@ export function WidgetEmbed() {
                 borderColor: borderColor 
               }}
             >
-              Equivalents Pricing Grid
+              Search Suppliers
             </div>
             
             <div className="flex flex-col division-y" style={{ color: textPrimary }}>
-              {(item.mcmaster
-                ? [{ name: 'McMaster-Carr', discount: 1.0, urlTemplate: 'https://www.mcmaster.com/' }, ...suppliers]
-                : suppliers
-              ).slice(0, 3).map((sup) => {
-                const price = item.mcmasterPrice * sup.discount;
-                const isMcMaster = sup.name === 'McMaster-Carr';
-                const href = isMcMaster
-                  ? `https://www.mcmaster.com/${item.mcmaster}`
-                  : getSupplierSearchUrl(sup.urlTemplate, item);
+              {suppliers.slice(0, 3).map((sup) => {
+                const href = getSupplierSearchUrl(sup.urlTemplate, item);
 
                 return (
                   <div 
@@ -162,27 +155,19 @@ export function WidgetEmbed() {
                       <span className="font-semibold text-[11px]" style={{ color: textPrimary }}>
                         {sup.name}
                       </span>
-                      <span className="text-[9px] font-mono opacity-50" style={{ color: textSecondary }}>
-                        {isMcMaster ? `PN: ${item.mcmaster}` : `q: ${buildSupplierQuery(item)}`}
+                      <span className="text-[9px] opacity-60" style={{ color: textSecondary }}>
+                        Verify results on supplier site
                       </span>
-                      <div className="flex items-center gap-1 mt-0.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
-                        <span className="text-[8.5px] font-medium opacity-75" style={{ color: textSecondary }}>
-                          Est. price · check site for stock
-                        </span>
-                      </div>
                     </div>
                     
                     <div className="flex items-center gap-2">
-                      <span className="font-bold font-mono text-[11px]" style={{ color: textPrimary }}>
-                        ${price.toFixed(2)}
-                      </span>
                       <a 
                         href={href} 
                         target="_blank" 
                         rel="noopener noreferrer"
                         className="p-1 rounded hover:bg-slate-200/20 transition-colors"
                         style={{ color: accent }}
+                        aria-label={`Search ${sup.name}`}
                       >
                         <ExternalLink className="w-3 h-3" />
                       </a>
