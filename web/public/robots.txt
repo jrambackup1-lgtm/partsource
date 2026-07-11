@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://jrambackup1-lgtm.github.io/partsource/sitemap.xml

@@ -85,8 +85,9 @@ export function ReferenceArticle() {
 
   if (!page) {
     return (
-      <div className="p-8 text-xs font-medium text-slate-500">
-        Reference page not found. <Link to="/reference" className="underline">Browse the reference library</Link>.
+      <div className="p-8 text-sm font-medium text-slate-500">
+        <h1 className="text-2xl font-bold text-slate-900">Not Found</h1>
+        <p className="mt-2">Reference page not found. <Link to="/reference" className="underline">Browse the reference library</Link>.</p>
       </div>
     );
   }

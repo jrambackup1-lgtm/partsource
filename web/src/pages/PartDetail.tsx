@@ -4,7 +4,6 @@ import { ArrowLeft, ExternalLink, Search } from 'lucide-react';
 import { resolvePartIdentity, Part, PartResolution, suppliers, db, getSupplierSearchUrl, buildSupplierQuery } from '../lib/decoder';
 import { REF_PAGES } from '../lib/reference';
 import { useBOM } from '../hooks/useBOM';
-import { useCurrency, rates } from '../contexts/CurrencyContext';
 
 // ----------------------------------------------------
 // CAD dynamic fastener schematic viewer
@@ -116,7 +115,6 @@ export function PartDetail() {
   const { partNumber } = useParams();
   const navigate = useNavigate();
   const { addToBOM } = useBOM();
-  const { currency } = useCurrency();
   const [item, setItem] = useState<Part | null>(null);
   const [resolution, setResolution] = useState<PartResolution | null>(null);
   useEffect(() => {
@@ -139,30 +137,11 @@ export function PartDetail() {
       }
       metaDesc.setAttribute('content', `Compare pricing and inventory for ${foundItem.partNumber} / ${foundItem.type}. ${foundItem.appNote}`);
 
-      let metaRobots = document.querySelector('meta[name="robots"]');
-      if (foundItem.unindexed || foundItem.standard === 'Unknown' || foundItem.thread === 'Unknown') {
-        if (!metaRobots) {
-          metaRobots = document.createElement('meta');
-          metaRobots.setAttribute('name', 'robots');
-          document.head.appendChild(metaRobots);
-        }
-        metaRobots.setAttribute('content', 'noindex');
-      } else {
-        if (metaRobots) {
-          metaRobots.remove();
-        }
-      }
-
-      // JSON-LD Structured Data — only for indexed catalog parts; guessed
-      // parts are noindexed and must not emit structured offers.
+      // JSON-LD Structured Data — only for indexed catalog parts.
       if (foundItem.unindexed) {
         document.querySelector('#json-ld-product')?.remove();
         return;
       }
-      const curRate = rates[currency];
-      const allPrices = suppliers.map(s => foundItem.mcmasterPrice * s.discount * curRate);
-      const lowPriceStr = Math.min(...allPrices).toFixed(2);
-      const highPriceStr = (foundItem.mcmasterPrice * curRate).toFixed(2);
       
       const jsonLd = {
         "@context": "https://schema.org",
@@ -177,14 +156,7 @@ export function PartDetail() {
           { "@type": "PropertyValue", "name": "Material", "value": foundItem.material },
           { "@type": "PropertyValue", "name": "Finish", "value": foundItem.finish },
           { "@type": "PropertyValue", "name": "Standard", "value": foundItem.standard }
-        ],
-        "offers": {
-          "@type": "AggregateOffer",
-          "priceCurrency": currency,
-          "lowPrice": lowPriceStr,
-          "highPrice": highPriceStr,
-          "offerCount": suppliers.length
-        }
+        ]
       };
 
       let script = document.querySelector('#json-ld-product') as HTMLScriptElement;
@@ -218,7 +190,7 @@ export function PartDetail() {
       console.groupEnd();
 
     }
-  }, [partNumber, currency]);  if (!item || !resolution) return <div className="p-8 text-xs font-medium text-slate-500">Loading specifications...</div>;
+  }, [partNumber]);  if (!item || !resolution) return <div className="p-8 text-xs font-medium text-slate-500">Loading specifications...</div>;
 
   const specs = [
     ['Part Number', item.partNumber],

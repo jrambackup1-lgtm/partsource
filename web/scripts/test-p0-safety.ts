@@ -4,6 +4,7 @@ import path from 'node:path';
 
 const root = path.resolve(import.meta.dirname, '..');
 const read = (file: string) => fs.readFileSync(path.join(root, file), 'utf8');
+const readIfPresent = (file: string) => fs.existsSync(path.join(root, file)) ? read(file) : '';
 
 const app = read('src/App.tsx');
 const sidebar = read('src/components/Sidebar.tsx');
@@ -14,6 +15,8 @@ const widget = read('src/pages/WidgetEmbed.tsx');
 const decoder = read('src/lib/decoder.ts');
 const vite = read('vite.config.ts');
 const sitemapGenerator = read('scripts/generate-sitemap.ts');
+const sitemap = read('public/sitemap.xml');
+const robots = readIfPresent('public/robots.txt');
 
 assert.doesNotMatch(app, /AdminDashboard|path="\/admin"/);
 assert.doesNotMatch(sidebar, /Admin Portal|tab=orders|Sourcing Orders/);
@@ -25,5 +28,16 @@ assert.doesNotMatch(widget, /Verified Match/);
 assert.match(widget, /import\.meta\.env\.BASE_URL/);
 assert.match(vite, /https:\/\/jrambackup1-lgtm\.github\.io\/partsource\//);
 assert.match(sitemapGenerator, /https:\/\/jrambackup1-lgtm\.github\.io\/partsource/);
+assert.match(app, /path="\*"/);
+assert.match(app, /Not Found/);
+assert.match(app, /rel="canonical"/);
+assert.match(app, /noindex,follow/);
+assert.doesNotMatch(partDetail, /AggregateOffer|"offers"|lowPrice|highPrice|offerCount/);
+assert.equal((sitemap.match(/<loc>/g) ?? []).length, 1);
+assert.match(sitemap, /<loc>https:\/\/jrambackup1-lgtm\.github\.io\/partsource\/<\/loc>/);
+assert.doesNotMatch(sitemap, /\/parts\//);
+assert.match(robots, /User-agent: \*/);
+assert.match(robots, /Allow: \//);
+assert.match(robots, /Sitemap: https:\/\/jrambackup1-lgtm\.github\.io\/partsource\/sitemap\.xml/);
 
 console.log('P0 production-safety checks passed.');
