@@ -1,7 +1,7 @@
 import React, { useState, useRef, ChangeEvent } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { Search, ArrowRight, Bell, HelpCircle } from 'lucide-react';
-import { fuse, parseCustomPart, Part } from '../lib/decoder';
+import { fuse, resolvePartIdentity, Part } from '../lib/decoder';
 import { useCurrency } from '../contexts/CurrencyContext';
 
 export function Header() {
@@ -44,15 +44,8 @@ export function Header() {
     setShowDropdown(false);
     setQuery('');
     
-    let results = fuse.search(searchQuery);
-    let item: Part;
-    if (results.length > 0 && results[0].score! < 0.5) {
-      item = results[0].item;
-    } else {
-      item = parseCustomPart(searchQuery);
-    }
-    
-    navigate(`/parts/${encodeURIComponent(item.partNumber)}`);
+    const resolution = resolvePartIdentity(searchQuery);
+    navigate(`/parts/${encodeURIComponent(resolution.part.partNumber)}`);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

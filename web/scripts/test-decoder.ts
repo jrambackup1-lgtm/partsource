@@ -16,6 +16,7 @@ import {
   getSupplierSearchUrl,
   parseCustomPart,
   findCatalogPart,
+  resolvePartIdentity,
   MCMASTER_CROSSES,
   type Part,
 } from '../src/lib/decoder';
@@ -199,6 +200,14 @@ test('findCatalogPart: verified cross and own PN resolve; unknown MPNs do not', 
   assertEqual(findCatalogPart('din912-m4x12')?.partNumber, 'DIN912-M4X12', 'own PN, case-insensitive');
   assertEqual(findCatalogPart('99136A101'), null, 'unknown MPN must not fuzzy-match a wrong part');
   assertEqual(findCatalogPart('91251A242'), null, 'purged fabricated cross must no longer resolve');
+});
+
+test('resolvePartIdentity: exposes exact, suggested, decoded, and unknown states', () => {
+  assertEqual(resolvePartIdentity('din912-m4x12').state, 'exact', 'own PN is exact');
+  assertEqual(resolvePartIdentity('91290A115').state, 'exact', 'verified cross is exact');
+  assertEqual(resolvePartIdentity('DIN912-M4X13').state, 'suggested', 'close catalog typo is suggested');
+  assertEqual(resolvePartIdentity('M5 socket head cap screw x 16mm').state, 'decoded', 'usable specs are decoded');
+  assertEqual(resolvePartIdentity('99136A101').state, 'unknown', 'unrecognized MPN is unknown');
 });
 
 test('parseCustomPart: unknown McMaster number is honestly unindexed', () => {

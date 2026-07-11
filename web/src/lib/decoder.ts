@@ -451,6 +451,30 @@ export const fuse = new Fuse(db, {
   includeScore: true
 });
 
+export type PartResolution = {
+  state: 'exact' | 'suggested' | 'decoded' | 'unknown';
+  query: string;
+  part: Part;
+};
+
+export function resolvePartIdentity(query: string): PartResolution {
+  const normalized = query.trim();
+  const upper = normalized.toUpperCase();
+  const exact = db.find(
+    p => p.partNumber.toUpperCase() === upper || p.mcmaster?.toUpperCase() === upper
+  );
+  if (exact) return { state: 'exact', query: normalized, part: exact };
+
+  const suggestion = normalized ? fuse.search(normalized)[0] : undefined;
+  if (suggestion?.score !== undefined && suggestion.score < 0.15) {
+    return { state: 'suggested', query: normalized, part: suggestion.item };
+  }
+
+  const part = parseCustomPart(normalized);
+  const decoded = part.thread !== 'Unknown' || part.standard !== 'Unknown' || part.type !== 'Custom Fastener';
+  return { state: decoded ? 'decoded' : 'unknown', query: normalized, part };
+}
+
 /**
  * Resolve a user-supplied part query to a catalog entry, or null.
  * Exact PN / McMaster-cross matches win; otherwise only a very close fuzzy
@@ -458,15 +482,8 @@ export const fuse = new Fuse(db, {
  * instead of rendering a wrong part.
  */
 export function findCatalogPart(query: string): Part | null {
-  const norm = query.trim().toUpperCase();
-  if (!norm) return null;
-  const exact = db.find(
-    p => p.partNumber.toUpperCase() === norm || p.mcmaster?.toUpperCase() === norm
-  );
-  if (exact) return exact;
-  const res = fuse.search(query);
-  if (res.length > 0 && res[0].score! < 0.15) return res[0].item;
-  return null;
+  const resolution = resolvePartIdentity(query);
+  return resolution.state === 'exact' || resolution.state === 'suggested' ? resolution.part : null;
 }
 
 // --- Small hash helper retained (legacy callers may still import it) -------

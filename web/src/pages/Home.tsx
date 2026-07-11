@@ -15,7 +15,7 @@ import {
   X,
   Search
 } from 'lucide-react';
-import { fuse, parseCustomPart, Part, suppliers, db } from '../lib/decoder';
+import { fuse, parseCustomPart, resolvePartIdentity, Part, suppliers, db } from '../lib/decoder';
 import { useBOM } from '../hooks/useBOM';
 import { useCurrency } from '../contexts/CurrencyContext';
 
@@ -269,15 +269,8 @@ export function Home() {
     if (!searchQuery.trim()) return;
     setShowDropdown(false);
     
-    let results = fuse.search(searchQuery);
-    let item: Part;
-    if (results.length > 0 && results[0].score! < 0.5) {
-      item = results[0].item;
-    } else {
-      item = parseCustomPart(searchQuery);
-    }
-    
-    navigate(`/parts/${encodeURIComponent(item.partNumber)}`);
+    const resolution = resolvePartIdentity(searchQuery);
+    navigate(`/parts/${encodeURIComponent(resolution.part.partNumber)}`);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

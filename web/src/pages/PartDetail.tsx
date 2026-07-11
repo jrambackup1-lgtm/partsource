@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, ExternalLink, Search } from 'lucide-react';
-import { findCatalogPart, parseCustomPart, Part, suppliers, db, getSupplierSearchUrl, buildSupplierQuery } from '../lib/decoder';
+import { resolvePartIdentity, Part, PartResolution, suppliers, db, getSupplierSearchUrl, buildSupplierQuery } from '../lib/decoder';
 import { REF_PAGES } from '../lib/reference';
 import { useBOM } from '../hooks/useBOM';
 import { useCurrency, rates } from '../contexts/CurrencyContext';
@@ -118,12 +118,13 @@ export function PartDetail() {
   const { addToBOM } = useBOM();
   const { currency } = useCurrency();
   const [item, setItem] = useState<Part | null>(null);
+  const [resolution, setResolution] = useState<PartResolution | null>(null);
   useEffect(() => {
     if (partNumber) {
       const decoded = decodeURIComponent(partNumber);
-      // Exact catalog / McMaster-cross match wins; unknown numbers fall through
-      // to the honest decoder instead of fuzzy-matching onto a wrong part.
-      const foundItem: Part = findCatalogPart(decoded) ?? parseCustomPart(decoded);
+      const resolved = resolvePartIdentity(decoded);
+      const foundItem = resolved.part;
+      setResolution(resolved);
       setItem(foundItem);
 
       // SEO Logic
@@ -217,7 +218,7 @@ export function PartDetail() {
       console.groupEnd();
 
     }
-  }, [partNumber, currency]);  if (!item) return <div className="p-8 text-xs font-medium text-slate-500">Loading specifications...</div>;
+  }, [partNumber, currency]);  if (!item || !resolution) return <div className="p-8 text-xs font-medium text-slate-500">Loading specifications...</div>;
 
   const specs = [
     ['Part Number', item.partNumber],
@@ -303,6 +304,11 @@ export function PartDetail() {
             <h2 className="text-sm font-semibold text-slate-500 mt-1 mb-5">
               {item.type} &middot; {item.thread} {item.length !== 'N/A' ? `x ${item.length}` : ''}
             </h2>
+            {resolution.state === 'suggested' && (
+              <div className="text-xs text-amber-800 bg-amber-50 border border-amber-200 p-4 rounded-lg leading-relaxed mb-3">
+                Showing closest catalog match for <strong>{resolution.query}</strong>. Confirm the part number before use.
+              </div>
+            )}
             {isUnindexed && (
               <div className="text-xs text-amber-800 bg-amber-50 border border-amber-200 p-4 rounded-lg leading-relaxed mb-3">
                 <strong>This part number is not in our indexed catalog.</strong>{' '}
