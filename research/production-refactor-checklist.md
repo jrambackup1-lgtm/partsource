@@ -106,8 +106,10 @@ Do not ship fake commerce, fake admin, fake tracking, fake compliance, or unveri
 
 ## P2 Checklist: Publishing And Operations
 
-- [ ] Choose canonical deployment target.
+- [x] Choose canonical deployment target.
   - Success: GitHub Pages/custom domain/config/docs agree.
+  - Decision: GitHub Pages at `https://jrambackup1-lgtm.github.io/partsource/`
+    remains canonical. `partsource.io` is deferred until purchased and configured.
 
 - [ ] Generate static metadata per part page where possible.
   - Success: crawlers receive canonical title/description/schema without relying only on client runtime.
