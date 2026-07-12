@@ -262,14 +262,6 @@ export function useBOM() {
               }
             }
 
-            // Autofill price if missing
-            if (!unitCost) {
-              const decoded = parseCustomPart(cleanPartNumber);
-              if (decoded && decoded.mcmasterPrice) {
-                unitCost = decoded.mcmasterPrice * 0.85;
-              }
-            }
-
             // Construct description
             let description = row.description || '';
             if (!description) {
@@ -329,9 +321,9 @@ export function useBOM() {
                   partNumber: item.partNumber,
                   description,
                   material: item.material,
-                  supplier: 'Zoro (Auto)',
+                  supplier: 'Unselected',
                   qty: 10,
-                  unitCost: item.mcmasterPrice * 0.85
+                  unitCost: 0
                 };
 
                 const existingIndex = currentList.findIndex(b => b.partNumber === bomItem.partNumber && b.supplier === bomItem.supplier);

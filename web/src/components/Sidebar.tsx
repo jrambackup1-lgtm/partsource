@@ -1,17 +1,15 @@
 import React from 'react';
-import { useLocation, Link, useNavigate } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import {
   LayoutDashboard,
   Search,
   Layers,
   BookOpen,
-  HelpCircle,
-  LogOut
+  HelpCircle
 } from 'lucide-react';
 
 export function Sidebar() {
   const location = useLocation();
-  const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
   const activeTab = searchParams.get('tab') || 'finder';
   const path = location.pathname;
@@ -22,10 +20,6 @@ export function Sidebar() {
     { id: 'bom', label: 'BOM Manager', icon: Layers, path: '/?tab=bom' },
     { id: 'reference', label: 'Reference', icon: BookOpen, path: '/reference' },
   ];
-
-  const handleLogout = () => {
-    alert('No accounts yet — your BOM and orders live in this browser\'s local storage.');
-  };
 
   const handleSupport = () => {
     window.location.href = 'mailto:jayaram.h@afterconcept.com?subject=PartSource%20support';
@@ -80,14 +74,6 @@ export function Sidebar() {
         >
           <HelpCircle className="w-5 h-5 text-slate-400" />
           Support
-        </button>
-
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-semibold text-slate-500 hover:text-red-600 hover:bg-red-50 border-none bg-transparent text-left cursor-pointer w-full mt-2"
-        >
-          <LogOut className="w-5 h-5 text-slate-400 group-hover:text-red-500" />
-          Log out
         </button>
       </div>
     </aside>

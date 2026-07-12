@@ -1,11 +1,10 @@
 # PartSource — Web App
 
-Industrial hardware sourcing tool. Search standard fasteners, compare vendor pricing, build BOMs, and consolidate orders across distributors.
+Industrial hardware research tool. Review standard-fastener specifications, build BOMs, export, and open supplier searches for independent verification.
 
 ## Prerequisites
 
 - **Node.js** >= 18 (tested with 22.x)
-- **Python** >= 3.10 with `venv` support (only needed for the optional live-pricing scraper)
 
 ## Quick Start
 
@@ -13,30 +12,22 @@ Industrial hardware sourcing tool. Search standard fasteners, compare vendor pri
 
 ```bash
 # From the web/ directory
-bash scripts/setup.sh        # Git Bash / WSL
-powershell scripts/setup.ps1 # PowerShell
+npm ci
 ```
 
-This installs Node dependencies, creates a Python venv, and installs the scraper's Python packages.
+This installs the frontend and test dependencies.
 
-### Run everything
+### Run locally
 
 ```bash
-npm run dev:all
+npm run dev
 ```
 
-Starts both the Vite dev server (http://localhost:3000) and the optional Zoro pricing scraper (http://localhost:3001) together.
+Starts the Vite app at http://localhost:3000.
 
-### Run individually
+## Supplier searches
 
-```bash
-npm run dev       # Frontend only (port 3000)
-npm run scraper   # Scraper only (port 3001)
-```
-
-## How Pricing Works
-
-The app is **fully functional without the scraper**. Prices are computed client-side from a seeded parts database and heuristic estimation. The scraper is an enhancement: when it's running and Zoro responds, the part detail page shows a "Live Zoro Pricing" badge with real-time prices. When the scraper is off or blocked, the app silently uses computed fallback prices.
+Supplier links are search handoffs, not offers, listings, or confirmed matches. Verify identity, price, availability, and specifications on the supplier site. Catalog items enter the BOM with no selected supplier and no invented cost; imported costs are preserved.
 
 ## Project Structure
 
@@ -63,24 +54,16 @@ web/
 
 | Command              | Description                                    |
 | -------------------- | ---------------------------------------------- |
-| `npm run dev:all`    | Start frontend + scraper together               |
 | `npm run dev`        | Frontend only                                  |
-| `npm run scraper`    | Scraper only                                   |
 | `npm run build`      | Production build                               |
 | `npm run lint`       | TypeScript type-check (`tsc --noEmit`)         |
+| `npm test`           | Unit/integration and production-contract tests |
+| `npm run test:browser` | Launch-critical Playwright flows             |
 | `npm run sitemap`    | Generate sitemap XML for SEO                   |
 | `npm run clean`      | Remove build artifacts                         |
-
-## Environment Variables
-
-| Variable            | Default                      | Description                         |
-| ------------------- | ---------------------------- | ----------------------------------- |
-| `VITE_SCRAPER_URL`  | `http://localhost:3001`       | Scraper API base URL                |
-| `SCRAPER_PORT`      | `3001`                       | Port the scraper listens on         |
 
 ## Tech Stack
 
 - **Frontend**: React 19, TypeScript, Vite, Tailwind CSS 4, Radix UI
 - **Search**: Fuse.js (client-side fuzzy search)
 - **BOM**: localStorage persistence, PapaParse CSV, jsPDF PDF export
-- **Scraper** (optional): Python, Scrapling for Zoro live pricing

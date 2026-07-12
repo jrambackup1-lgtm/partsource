@@ -1,6 +1,6 @@
 import React, { useState, useRef, ChangeEvent } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { Search, ArrowRight, Bell, HelpCircle } from 'lucide-react';
+import { Search, ArrowRight } from 'lucide-react';
 import { fuse, resolvePartIdentity, Part } from '../lib/decoder';
 import { useCurrency } from '../contexts/CurrencyContext';
 
@@ -129,8 +129,7 @@ export function Header() {
         <div className="flex-1"></div>
       )}
 
-      {/* User Controls and Profile Mockup */}
-      <div className="flex items-center gap-6">
+      <div className="flex items-center">
         {/* Currency Picker */}
         <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-700">
           <select 
@@ -143,26 +142,6 @@ export function Header() {
             <option value="GBP">🇬🇧 GBP (£)</option>
             <option value="CAD">🇨🇦 CAD (C$)</option>
           </select>
-        </div>
-
-        {/* Notifications Icon */}
-        <button className="bg-transparent border-none cursor-pointer text-slate-400 hover:text-slate-700 relative p-1.5 rounded-lg hover:bg-slate-50 transition-colors">
-          <Bell className="w-5 h-5" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-slate-900 border border-white"></span>
-        </button>
-
-        {/* Divider */}
-        <div className="w-[1px] h-6 bg-slate-200"></div>
-
-        {/* User Card */}
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs font-bold border border-slate-100 shadow-sm select-none">
-            JS
-          </div>
-          <div className="hidden md:flex flex-col text-left">
-            <span className="text-xs font-bold text-slate-900 leading-tight">Jay Sourcing</span>
-            <span className="text-[10px] font-semibold text-slate-400">@jay_sourcing</span>
-          </div>
         </div>
       </div>
     </header>

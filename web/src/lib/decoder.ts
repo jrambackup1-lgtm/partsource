@@ -45,11 +45,11 @@ export const MCMASTER_CROSSES: McMasterCross[] = [
 ];
 
 export const suppliers = [
-  { name: "Zoro", discount: 0.85, urlTemplate: "https://www.zoro.com/search?q=", shipDays: 2 },
-  { name: "Bolt Depot", discount: 0.70, urlTemplate: "https://www.boltdepot.com/Product-Search.aspx?txt=", shipDays: 3 },
-  { name: "MSC Industrial", discount: 0.95, urlTemplate: "https://www.mscdirect.com/browse/tn?searchterm=", shipDays: 1 },
-  { name: "Fastenal", discount: 1.00, urlTemplate: "https://www.fastenal.com/products/search?term=", shipDays: 1 },
-  { name: "Misumi", discount: 0.90, urlTemplate: "https://us.misumi-ec.com/vona2/result/?Keyword=", shipDays: 5 }
+  { name: "Zoro", urlTemplate: "https://www.zoro.com/search?q=" },
+  { name: "Bolt Depot", urlTemplate: "https://www.boltdepot.com/Product-Search.aspx?txt=" },
+  { name: "MSC Industrial", urlTemplate: "https://www.mscdirect.com/browse/tn?searchterm=" },
+  { name: "Fastenal", urlTemplate: "https://www.fastenal.com/products/search?term=" },
+  { name: "Misumi", urlTemplate: "https://us.misumi-ec.com/vona2/result/?Keyword=" }
 ];
 
 // ---------------------------------------------------------------------------

@@ -9,9 +9,7 @@ These are the finalized requirements and configuration options decided during th
 
 ## 2. Supplier & Data Strategy
 - **Data Aggregation**: Hybrid Decoder Engine. A static lookup table of ~30-40 common McMaster fasteners is used for instant high-fidelity specs, combined with a fallback regex engine to dynamically "guess-spec" and generate query links for other fastener part numbers.
-- **Supplier Grid UI**: Realistic simulated/mocked stock levels and price breaks for aesthetics, coupled with fully active and functional "Buy/Search" deep-links to Zoro, MSC, Fastenal, Misumi, and Bolt Depot.
-  - *Pricing Simulation*: Dynamic markup model. Base simulated price on McMaster price, applying realistic discounts (e.g., Zoro -15%, Bolt Depot -30%, MSC -5%).
-  - *Stock Simulation*: Randomized but realistic levels (e.g., "In stock: 450", "2-3 days: 2000").
+- **Supplier Search UI**: Specification-led search handoffs to Zoro, MSC, Fastenal, Misumi, and Bolt Depot. They are not offers, listings, or confirmed matches; users verify identity, price, availability, and specifications on the supplier site.
 - **Link Generation**: Pure Search Query URLs. Generate search query deep-links (e.g., `zoro.com/search?q=...`) for all parts (both static and guessed) to keep the URL generation logic uniform, robust, and maintainable. No live scrapers or central database initially.
 
 

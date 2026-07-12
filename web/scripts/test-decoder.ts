@@ -263,7 +263,6 @@ test('suppliers: all templates are https search URLs', () => {
     assert(s.urlTemplate.startsWith('https://'), `non-https template: ${s.name}`);
     assert(/[?&](q|txt|searchterm|term|keyword)=$/i.test(s.urlTemplate),
       `template does not end in a query param: ${s.name} -> ${s.urlTemplate}`);
-    assert(s.discount > 0 && s.discount <= 1, `bad discount: ${s.name}`);
   }
 });
 

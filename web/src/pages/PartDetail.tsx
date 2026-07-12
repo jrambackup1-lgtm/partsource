@@ -294,7 +294,7 @@ export function PartDetail() {
             </h2>
             <div className="p-5 flex flex-col gap-4">
               <p className="text-xs text-slate-500 m-0 leading-relaxed">
-                These links run a supplier-site search for this configuration. Verify the returned specifications, availability, and commercial terms directly with the supplier.
+                These links run supplier-site searches, not offers or listings. Verify identity, price, availability, and specifications directly on the supplier site.
               </p>
               <div className="flex flex-wrap gap-2">
                 {suppliers.map(sup => (

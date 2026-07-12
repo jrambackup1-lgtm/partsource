@@ -4,7 +4,7 @@
 
 ## 1. Product Sourcing & Vision (The Three Pillars)
 
-**partsource.io** is a lightweight, high-performance, single-page client-side web utility ("Octopart for mechanical hardware") that lets mechanical engineers decode McMaster-Carr part numbers, instantly compare equivalent hardware search links from top distributors with simulated prices, and accumulate parts into a local Bill of Materials (BOM).
+**partsource.io** is a lightweight, high-performance, single-page client-side web utility that helps mechanical engineers inspect candidate fastener configurations, open supplier searches, and accumulate parts into a local Bill of Materials (BOM). Supplier results require independent verification.
 
 ### Pillar 1: Sourcing Gateway & Monetization
 1. **Affiliate/Referrals (V1 Hook)**: Generate commissions through open MRO/B2B affiliate networks (e.g., Zoro).
@@ -37,7 +37,7 @@ Targeting low-competition, high-intent queries (e.g., *"McMaster 91251A242 equiv
 - **Fastener Categories**: Screws, bolts, nuts, washers, pins.
 - **Tabs**: Double-tab structure: **Part Finder** and **BOM Manager**.
 - **Fuzzy Matching**: Fuse.js client-side matching against the static fastener catalog.
-- **Distributor Table**: Real-time simulated stock and discounted prices comparing Zoro, MSC, Fastenal, Misumi, and Bolt Depot.
+- **Supplier Searches**: Specification-led search handoffs to Zoro, MSC, Fastenal, Misumi, and Bolt Depot, with identity, price, availability, and specifications verified on the supplier site.
 - **Deep Search Links**: Clean search query redirect links (uniform query generation).
 - **Persistent Storage**: Client-side storage (LocalStorage/IndexedDB) to persist the active BOM without user accounts.
 - **CSV Handling**: PapaParse integration for importing McMaster lists and exporting BOMs.
@@ -77,7 +77,7 @@ Comparative matrix containing:
   - MSC Industrial: **-5%**
   - Fastenal: **+0%**
   - Misumi: **-10%**
-- **Stock Simulation**: Randomized, realistic quantities (e.g., "In stock: 450", "2-3 days: 2000").
+- **Commercial Data Boundary**: No invented pricing, inventory, availability, lead time, approval, or match status.
 - **Deep Search Query Links**:
   - **Zoro**: `https://www.zoro.com/search?q=[URL_ENCODED_QUERY]`
   - **MSC**: `https://www.mscdirect.com/browse/tn?searchterm=[URL_ENCODED_QUERY]`
@@ -102,8 +102,8 @@ Every part page must render at least **5 out of these 7 components**:
 1. **Decoded Spec Table**: Mechanical properties.
 2. **Standards Reference**: DIN, ISO, ANSI, or ASME standard alignments (e.g., "DIN 912 equivalent").
 3. **Active Search Deep-Links**: Dynamic search query URLs to at least 3 major distributors.
-4. **Estimated Price Grid**: Simulated discount ranges and wholesale price breaks.
-5. **Availability Status**: Dynamic mock stock levels.
+4. **Supplier Searches**: Search handoffs labeled as candidates, not offers or listings.
+5. **Verification Warning**: Verify identity, price, availability, and specifications on the supplier site.
 6. **Internal Links Grid**: Links to similar sizes/threads (e.g., M4x10, M4x12, M4x16).
 7. **Application Note**: A contextual description of typical engineering use cases for that fastener category.
 

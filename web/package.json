@@ -12,7 +12,7 @@
     "clean": "rm -rf dist server.js",
     "sitemap": "tsx scripts/generate-sitemap.ts",
     "lint": "tsc --noEmit",
-    "test": "tsx scripts/test-decoder.ts && tsx scripts/test-p0-safety.ts && tsx scripts/test-static-metadata.ts",
+    "test": "tsx scripts/test-decoder.ts && tsx scripts/test-p0-safety.ts && tsx scripts/test-product-truth.ts && tsx scripts/test-static-metadata.ts",
     "test:browser": "playwright test"
   },
   "dependencies": {

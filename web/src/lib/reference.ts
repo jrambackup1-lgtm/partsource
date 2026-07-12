@@ -424,14 +424,14 @@ export const REF_PAGES: RefPage[] = [
           ],
         },
         body: [
-          'Series facts are family-level only, verifiable from public listings. When you search a part number here, the tool tells you the family honestly and — where a supplier publishes its own cross-reference — shows that supplier\'s live match for the exact size.',
+          'Series facts are family-level only and come from public listings. A recognized prefix identifies a candidate family, not an exact supplier item; verify the size and specifications independently.',
         ],
       },
       {
         heading: 'Cross-referencing safely',
         body: [
-          'The reliable path from an MPN to an equivalent is: identify the family from the prefix, get the exact size from your drawing/BOM or the part in your hand, then match against the governing standard (DIN 912, DIN 934, …) using the size charts in this reference section.',
-          'Distributors like Zoro index McMaster numbers in their own search engines; this tool surfaces that live match when available, labeled as the supplier\'s cross-reference — verify the specs before ordering.',
+          'The reliable path from an MPN to a candidate is: identify the family from the prefix, get the exact size from your drawing/BOM or the part in your hand, then compare it with the governing standard (DIN 912, DIN 934, …) using the size charts in this reference section.',
+          'Supplier links run searches only. Verify identity, price, availability, and specifications on the supplier site before ordering.',
         ],
       },
     ],

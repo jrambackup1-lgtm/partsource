@@ -7,7 +7,7 @@ export function Footer() {
         <span>Catalog: <span className="mono">{db.length.toLocaleString()} parts</span></span>
       </div>
       <div className="text-center md:text-right flex flex-col md:items-end gap-0.5">
-        <span>Not affiliated with, endorsed by, or sponsored by McMaster-Carr or any listed supplier. Estimated prices are our own approximations.</span>
+        <span>Not affiliated with, endorsed by, or sponsored by McMaster-Carr or any listed supplier. Verify supplier-search results independently.</span>
         <span>Built by Jay. Need custom machinery or mechanical design consulting? <a href="https://jayar.co" target="_blank" rel="noreferrer" className="text-[var(--accent)] hover:underline font-bold">Visit jayar.co</a></span>
       </div>
     </footer>

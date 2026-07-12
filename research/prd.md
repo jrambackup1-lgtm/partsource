@@ -17,8 +17,8 @@ Mechanical engineers face significant friction when sourcing fasteners and hardw
 
 **partsource.io** is a high-performance, single-page, client-side utility ("Octopart for mechanical hardware") that allows engineers to:
 1. Decode McMaster-Carr part numbers instantly to view precise specifications using a local regex/lookup engine.
-2. Compare simulated prices and availability across five major distributors (Zoro, MSC, Fastenal, Misumi, Bolt Depot) in a clean table format.
-3. Access functional deep links that launch search queries for equivalents on those distributor websites.
+2. Open specification-led searches across five major distributors (Zoro, MSC, Fastenal, Misumi, Bolt Depot).
+3. Verify candidate identity, price, availability, and specifications on those distributor websites.
 4. Accumulate parts into a persistent local Bill of Materials (BOM) with options to adjust quantities, view total estimates, and import/export CSV files.
 5. Provide a Programmatic SEO (pSEO) foundation on a separate domain (`partsource.io`) that funnels users to consulting services at `jayar.co`.
 6. Run a premium **SmartCart Optimization Engine** that automatically splits bulk BOM orders across distributors to find the cheapest overall cart combination, factoring in unit prices, bulk tier discount thresholds, shipping costs, and PO administrative overhead.
@@ -35,10 +35,10 @@ Mechanical engineers face significant friction when sourcing fasteners and hardw
 5. As an engineer, I want standard alignments (like DIN, ISO, ANSI, or ASME standard numbers) to be shown for the part, so that I can easily look up standard engineering specifications.
 
 ### Supplier Comparison
-6. As a procurement manager, I want to see a comparative table of alternative distributors (Zoro, MSC, Fastenal, Misumi, Bolt Depot) for the decoded part, so that I can quickly compare prices and stock levels.
-7. As a cost-conscious engineer, I want the supplier table to display simulated discount prices (Zoro -15%, Bolt Depot -30%, MSC -5%, Fastenal +0%, Misumi -10%), so that I can get a realistic estimate of bulk savings.
-8. As a buyer, I want to see simulated stock levels and lead times for each supplier, so that I can determine if parts will arrive in time for my assembly deadline.
-9. As an engineer, I want a clickable deep link for each supplier that directs me to their search results page for that specific part's query, so that I can easily purchase the equivalent part.
+6. As a procurement manager, I want supplier-site search links for the decoded configuration, so that I can investigate candidates without treating them as confirmed listings.
+7. As a buyer, I want a clear warning to verify identity, price, availability, and specifications on the supplier site.
+8. As an engineer, I want technical configuration details to remain separate from commercial supplier information.
+9. As an engineer, I want a clickable supplier search for the part's specifications, so that I can continue research on the supplier site.
 
 ### BOM Management
 10. As an engineer, I want to click an "Add to BOM" button from the search result, so that I can save the decoded part into my current working Bill of Materials.
@@ -58,7 +58,7 @@ Mechanical engineers face significant friction when sourcing fasteners and hardw
 ### Branding & pSEO
 21. As a visitor on `partsource.io`, I want to see a footer link and attribution to Jay, so that I can learn about the developer who built the tool.
 22. As an engineer with custom or bulk procurement needs, I want an option to submit my BOM for custom sourcing consulting, so that I can offload complex procurement to `jayar.co`.
-23. As a search engine bot, I want every part page to render at least 5 out of 7 critical content elements (spec table, standard reference, search deep-links, price grid, stock status, internal related links, application notes), so that the page is categorized as high-quality helpful content.
+23. As a search engine bot, I want every part page to render useful technical content (spec table, standard reference, supplier searches, internal related links, and application notes), so that the page is categorized as high-quality helpful content.
 
 ---
 
@@ -80,17 +80,11 @@ Mechanical engineers face significant friction when sourcing fasteners and hardw
 ### 2. Sourcing & Decoding Engines
 - **Hybrid Rules Engine**: Combines a static JSON catalog of 30-40 common McMaster parts (verified for high fidelity) with a fallback regex engine to parse and "guess-spec" other fasteners.
 - **Uniform URL Generation**: Generate clean query search URLs redirecting to suppliers based on part specifications rather than maintaining live scrapers or real APIs.
-- **Distributor Simulation Logic**:
-  - Zoro: `-15%` of McMaster price
-  - Bolt Depot: `-30%` of McMaster price
-  - MSC Industrial: `-5%` of McMaster price
-  - Fastenal: `+0%` of McMaster price
-  - Misumi: `-10%` of McMaster price
-  - *Stock levels*: Simulated randomized ranges based on standard box quantities (e.g., "In stock: 450", "2-3 days: 2000").
+- **Supplier Search Boundary**: Generate specification-led search URLs only. Do not invent pricing, inventory, lead time, approval, or match status.
 
 ### 3. Programmatic SEO (pSEO) Page Constraints
 To ensure crawl eligibility and combat search engine penalties, all generated part pages must implement:
-- **Strict Content Floor (5 of 7 Rule)**: Every part page must render a Decoded Spec Table, Standard Reference (DIN/ISO/ASME), active Search Links to 3+ distributors, Estimated Price Grid, Availability Status, Internal Links Grid, and a short Application Note.
+- **Strict Content Floor**: Every part page must render a decoded spec table, standard reference (DIN/ISO/ASME), active supplier-search links, internal links, and a short application note.
 - **Index Gate**: Prevent indexing (omit from `sitemap.xml` and apply `noindex`) unless:
   - Root domain has accumulated **20+ organic backlinks**.
   - The regex engine successfully decodes the part (no "unknown" attributes).
@@ -100,7 +94,7 @@ To ensure crawl eligibility and combat search engine penalties, all generated pa
 - **Client-Side Optimization Engine**: For rapid UI updates and low operational cost, run the optimization algorithm client-side in JS (heuristic or dynamic programming approach).
 - **Optimization Strategy**: Use a greedy heuristic with local search improvement to find the optimal split combination under 100ms for up to 100 BOM line items.
 - **Variables & Inputs**:
-  - Unit pricing per line item (simulated based on base McMaster reference price).
+  - User-entered or imported unit pricing per line item; missing prices remain blank/zero.
   - Bulk discount tiers (e.g. 100+, 500+ packs).
   - Shipping fees (e.g. Zoro: $0 if order $\ge$ $75, else $10 flat fee; Bolt Depot: $6.95 flat fee; MSC: $15 flat fee).
   - Administrative friction penalty ($C_{admin}$): Configurable cost added per additional supplier (default $15/supplier) to balance shipping vs. purchasing effort.
@@ -140,7 +134,7 @@ To maintain high coverage with minimal complexity, we will implement testing at 
 
 ## Out of Scope
 
-- **Real-Time Live Sourcing APIs**: The MVP will not connect to live API feeds of Grainger, Zoro, or Fastenal. Pricing and availability will remain simulated.
+- **Supplier Commercial Data**: The MVP does not provide live or synthetic pricing, inventory, availability, or confirmed supplier listings.
 - **Non-Fastener Products**: Bearings, pneumatics, raw stock, and electrical parts are out of scope for the MVP.
 - **Server Databases & Auth**: No registration, login, cloud sync, or server database storage will be implemented.
 - **Multi-currency**: Only USD prices will be handled.

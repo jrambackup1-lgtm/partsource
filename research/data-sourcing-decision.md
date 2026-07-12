@@ -49,14 +49,14 @@ So even if individual spec facts are uncopyrightable, the *operational act of ob
 
 ---
 
-## 4. The Path We Will Take — Real Data From Sources We're Allowed To Use
+## 4. Current Data Boundary
 
-The PRD's "Option 1" was not a compromise — it was the correct legal read. The genuinely-missing "real data" win is **deploying and hardening the Zoro layer we already wrote**, plus **expanding the static catalog from public standards**, plus a **better regex decoder**. None of these touch McMaster's servers.
+The production MVP uses public technical standards and a static catalog. Supplier destinations are search handoffs; commercial data is verified on the supplier site.
 
-### 4.1 Zoro published JSON-LD product data (the one live source)
+### 4.1 Legacy Zoro scraper
 - Zoro publishes `schema.org/Product` JSON-LD microdata on its product pages, emitted **for search-engine consumption** (Google Shopping). Reading machine-readable metadata a publisher deliberately emits is a far stronger position than scraping HTML.
-- The scraper at `web/scripts/scraper_server.py` already does this. Its only problem: it has **nowhere to run in production** (the site deploys static to GitHub Pages), so every live visitor silently falls back to simulated prices.
-- **Action:** Containerize + deploy the scraper to a free always-on host (Fly.io / Render). Cache, circuit-break, and surface Live vs. Estimated honestly in the UI.
+- The legacy scraper at `web/scripts/scraper_server.py` is not used by the production UI. Production exposes supplier searches without rendering prices or availability.
+- The scraper is isolated from the production buyer flow. Reintroducing supplier data requires a sanctioned source and provenance controls in a later phase.
 
 ### 4.2 Public fastener standards (freely redistributable facts)
 ISO / ASME / DIN dimensional standards (e.g. DIN 912, ISO 4762, ASME B18.3) define thread, pitch, head, and length parameters for standard fasteners. **These dimensions are facts.** We can build and redistribute a catalog derived from them and from supplier-published spec sheets without any TOS exposure.
@@ -67,9 +67,9 @@ For part numbers not in the catalog, decode as much as possible from the number 
 - **Action:** Improve `parseCustomPart` to reduce "Unknown" fields.
 
 ### 4.4 Honest UI labelling
-- Zoro row: badge **"Live"** when a scrape succeeded.
-- All other rows (and Zoro when scrape failed): badge **"Estimated"**.
-- This preserves the PRD's simulated-discount model for non-Zoro suppliers while being truthful about provenance.
+- Supplier rows are labeled as searches, not offers, listings, or confirmed matches.
+- Users verify identity, price, availability, and specifications on the supplier site.
+- No supplier price, inventory, availability, or match is invented.
 
 ---
 

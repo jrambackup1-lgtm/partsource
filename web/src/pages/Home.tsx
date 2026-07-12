@@ -6,139 +6,15 @@ import {
   ArrowRight, 
   Package, 
   Layers, 
-  Percent, 
-  DollarSign, 
-  CheckCircle,
   FileSpreadsheet,
   Download,
   AlertTriangle,
   X,
   Search
 } from 'lucide-react';
-import { fuse, parseCustomPart, resolvePartIdentity, Part, suppliers, db } from '../lib/decoder';
+import { fuse, resolvePartIdentity, Part, db } from '../lib/decoder';
 import { useBOM } from '../hooks/useBOM';
 import { useCurrency } from '../contexts/CurrencyContext';
-
-// ----------------------------------------------------
-// Cost Savings Chart component (Precision Blueprint style)
-// ----------------------------------------------------
-// ----------------------------------------------------
-// Cost Savings Chart component (Clean Modern style)
-// ----------------------------------------------------
-function CostSavingsChart({ data, referenceCost }: { data: { name: string, totalCost: number, shipDays: number }[], referenceCost: number }) {
-  const { formatPrice } = useCurrency();
-  if (!data || data.length === 0) return null;
-
-  const maxCost = Math.max(...data.map(d => d.totalCost));
-  const bestSupplier = data[0]; // Sorted lowest cost first
-  const savings = referenceCost - bestSupplier.totalCost;
-
-  return (
-    <div className="bg-white border border-slate-200 rounded-xl p-6 flex flex-col h-full justify-between relative overflow-hidden shadow-xs">
-      <div className="relative z-10 text-left">
-        <div className="flex items-center justify-between">
-          <h3 className="m-0 text-xs font-semibold text-slate-800 uppercase tracking-wider flex items-center gap-2">
-            <span className="w-1.5 h-1.5 bg-blue-600 rounded-full"></span>
-            Consolidated Cost Simulation
-          </h3>
-          <span className="text-[10px] font-medium text-slate-500 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded">V2.0</span>
-        </div>
-        <p className="text-xs text-slate-500 mt-1.5 leading-normal">Comparative analysis of active BOM across approved supplier channels</p>
-        
-        {savings > 0 && (
-          <div className="bg-emerald-50 border border-emerald-100 p-3 rounded-lg flex items-center gap-2.5 mt-4">
-            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></div>
-            <span className="text-xs font-medium text-emerald-800">
-              Optimal consolidator: <strong className="font-semibold">{bestSupplier.name}</strong> (saves {formatPrice(savings)})
-            </span>
-          </div>
-        )}
-      </div>
-
-      <div className="w-full h-[150px] relative mt-6 z-10">
-        <svg viewBox="0 0 1000 150" preserveAspectRatio="none" className="w-full h-full overflow-visible">
-          {/* Grid lines */}
-          {[0, 0.5, 1].map((tick, i) => {
-            const y = 120 - (tick * 120);
-            const val = maxCost * tick;
-            return (
-              <g key={i}>
-                <line x1="60" y1={y} x2="1000" y2={y} stroke="#f1f5f9" strokeWidth="1" strokeDasharray="4 4" />
-                <text x="50" y={y + 3} textAnchor="end" className="text-[10px] fill-slate-400 font-sans font-medium">
-                  ${val.toFixed(0)}
-                </text>
-              </g>
-            );
-          })}
-
-          {/* Bars */}
-          {data.map((d, i) => {
-            const barWidth = 64;
-            const spacing = (940 - (data.length * barWidth)) / (data.length + 1);
-            const x = 60 + spacing + i * (barWidth + spacing);
-            const height = Math.max(8, (d.totalCost / maxCost) * 120);
-            const y = 120 - height;
-            const isBest = i === 0;
-            const isRef = d.name === 'McMaster-Carr';
-            
-            return (
-              <g key={d.name} className="group/bar cursor-pointer">
-                {/* Visual bar backdrop */}
-                <rect 
-                  x={x} 
-                  y={0} 
-                  width={barWidth} 
-                  height={120} 
-                  className="fill-transparent group-hover/bar:fill-slate-50 transition-colors"
-                />
-                
-                {/* SVG Bar */}
-                <rect 
-                  x={x} 
-                  y={y} 
-                  width={barWidth} 
-                  height={height} 
-                  rx="4"
-                  className={`transition-all duration-300 ${
-                    isBest 
-                      ? 'fill-emerald-500/20 stroke-emerald-500 stroke-2' 
-                      : isRef 
-                        ? 'fill-slate-100 stroke-slate-350 stroke-1' 
-                        : 'fill-blue-500/10 stroke-blue-500 stroke-1.5'
-                  }`}
-                />
-                
-                {/* Supplier name labels */}
-                <text 
-                  x={x + barWidth / 2} 
-                  y="138" 
-                  textAnchor="middle" 
-                  className={`text-[10px] font-sans font-semibold tracking-wide ${
-                    isBest ? 'fill-emerald-700' : isRef ? 'fill-slate-400' : 'fill-slate-650'
-                  }`}
-                >
-                  {d.name.substring(0, 9)}
-                </text>
-
-                {/* Price indicators on top of the bars on hover */}
-                <text 
-                  x={x + barWidth / 2} 
-                  y={y - 8} 
-                  textAnchor="middle" 
-                  className={`text-[10px] font-sans font-bold ${
-                    isBest ? 'fill-emerald-600' : 'fill-slate-500'
-                  } opacity-0 group-hover/bar:opacity-100 transition-opacity`}
-                >
-                  ${d.totalCost.toFixed(0)}
-                </text>
-              </g>
-            );
-          })}
-        </svg>
-      </div>
-    </div>
-  );
-}
 
 // ----------------------------------------------------
 // Category glyph — simple line-art per fastener family
@@ -192,25 +68,9 @@ function HardwareCard({ part }: { part: Part; key?: string }) {
         <div className="flex-1 min-w-0 flex flex-col gap-0.5">
           <div className="flex items-center justify-between gap-2">
             <span className="font-mono font-bold text-slate-900 text-xs tracking-wider truncate">{part.partNumber}</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
           </div>
           <span className="text-[10px] font-sans uppercase tracking-wider text-slate-400 font-bold truncate">{part.type}</span>
           <span className="text-xs font-sans font-semibold text-slate-700 mt-1">{part.thread} {part.length !== 'N/A' ? `x ${part.length}` : ''}</span>
-        </div>
-      </div>
-
-      {/* Progress Metric details */}
-      <div className="mt-5 flex flex-col gap-1.5 relative z-10">
-        <div className="flex items-center justify-between text-[10px] font-sans font-bold uppercase tracking-wider">
-          <span className="text-slate-450">Approved Suppliers</span>
-          <span className="text-slate-750">5 Channels</span>
-        </div>
-        <div className="w-full h-1 bg-slate-100 rounded-full overflow-hidden">
-          <div className="h-full bg-slate-900 rounded-full" style={{ width: '85%' }}></div>
-        </div>
-        <div className="flex items-center justify-between text-[10px] font-sans font-semibold mt-0.5">
-          <span className="text-slate-450">Est. list ${part.mcmasterPrice.toFixed(2)}</span>
-          {part.mcmaster && <span className="text-slate-500 font-bold" title="Verified McMaster-Carr cross-reference">MC cross ✓</span>}
         </div>
       </div>
 
@@ -335,30 +195,6 @@ export function Home() {
     window.location.href = `mailto:jayaram.h@afterconcept.com?subject=${encodeURIComponent(`BOM quote request (${totalItems} lines)`)}&body=${encodeURIComponent(mailBody)}`;
   };
 
-  // Compute simulated costs for all suppliers
-  const supplierCosts = useMemo(() => {
-    if (bomList.length === 0) return [];
-    const allSuppliers = [{ name: 'McMaster-Carr', discount: 1.0, shipDays: 1 }, ...suppliers];
-    
-    return allSuppliers.map(sup => {
-      let total = 0;
-      bomList.forEach(item => {
-        const searchRes = fuse.search(item.partNumber);
-        let basePrice = 1.00;
-        if (searchRes.length > 0 && searchRes[0].score! < 0.5) {
-          basePrice = searchRes[0].item.mcmasterPrice;
-        } else {
-          basePrice = parseCustomPart(item.partNumber).mcmasterPrice;
-        }
-        total += (basePrice * sup.discount) * item.qty;
-      });
-      return { name: sup.name, totalCost: total, shipDays: sup.shipDays || 1 };
-    }).sort((a, b) => a.totalCost - b.totalCost);
-  }, [bomList]);
-
-  const mcmasterCost = supplierCosts.find(s => s.name === 'McMaster-Carr')?.totalCost || 0;
-  const estSavings = mcmasterCost > totalBomCost ? mcmasterCost - totalBomCost : 0;
-
   return (
     <div className="flex-1 flex flex-col h-full bg-[#f8fafc] p-8 overflow-y-auto">
       {/* ----------------------------------------------------
@@ -369,11 +205,11 @@ export function Home() {
           {/* Heading */}
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-slate-900 m-0">Sourcing Overview</h1>
-            <p className="text-slate-500 m-0 mt-1 text-sm">Consolidated analytics and routing optimization for queued bills of materials.</p>
+            <p className="text-slate-500 m-0 mt-1 text-sm">Review the parts and costs entered in your local bill of materials.</p>
           </div>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {/* Card 1: BOM Cost */}
             <div className="bg-white border border-slate-200 rounded-xl p-6 flex flex-col justify-between hover:border-slate-350 transition-colors relative overflow-hidden shadow-xs">
               <div className="flex justify-between items-center text-slate-400">
@@ -381,7 +217,7 @@ export function Home() {
               </div>
               <div className="mt-4">
                 <span className="text-2xl font-semibold tracking-tight text-slate-900">{formatPrice(totalBomCost)}</span>
-                <span className="block text-[10px] font-medium text-slate-400 mt-1 uppercase tracking-wider">Across 5 vendor routes</span>
+                <span className="block text-[10px] font-medium text-slate-400 mt-1 uppercase tracking-wider">From entered or imported costs</span>
               </div>
             </div>
 
@@ -396,20 +232,7 @@ export function Home() {
               </div>
             </div>
 
-            {/* Card 3: Est Savings */}
-            <div className="bg-white border border-slate-200 rounded-xl p-6 flex flex-col justify-between hover:border-slate-350 transition-colors relative overflow-hidden shadow-xs">
-              <div className="absolute top-0 left-0 w-full h-0.5 bg-emerald-500"></div>
-              <div className="flex justify-between items-center text-emerald-600">
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-emerald-600">Estimated Savings</span>
-                <span className="text-[10px] font-semibold bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded">BOM-OPT</span>
-              </div>
-              <div className="mt-4">
-                <span className="text-2xl font-semibold tracking-tight text-emerald-600">{formatPrice(estSavings)}</span>
-                <span className="block text-[10px] font-medium text-emerald-500 mt-1 uppercase tracking-wider">vs McMaster catalog list</span>
-              </div>
-            </div>
-
-            {/* Card 4: Catalog */}
+            {/* Card 3: Catalog */}
             <div className="bg-white border border-slate-200 rounded-xl p-6 flex flex-col justify-between hover:border-slate-350 transition-colors relative overflow-hidden shadow-xs">
               <div className="flex justify-between items-center text-slate-400">
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-450">Indexed Parts</span>
@@ -422,15 +245,15 @@ export function Home() {
           </div>
 
           {/* Bento grid layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-1 gap-6">
             {/* Left section: Active BOM panel */}
-            <div className="lg:col-span-3 bg-white border border-slate-200 rounded-xl p-6 shadow-xs flex flex-col justify-between relative">
+            <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-xs flex flex-col justify-between relative">
               <div>
                 <h3 className="m-0 text-sm font-semibold text-slate-900 uppercase tracking-wider flex items-center gap-2">
                   <span className="w-1.5 h-1.5 bg-slate-900 rounded-full"></span>
                   Active Bill of Materials
                 </h3>
-                <p className="text-xs text-slate-450 mt-1">Consolidated specifications pending fulfillment</p>
+                <p className="text-xs text-slate-450 mt-1">Locally stored parts and user-provided costs</p>
               </div>
 
               {bomList.length > 0 ? (
@@ -441,7 +264,7 @@ export function Home() {
                         <tr className="border-b border-slate-100 text-slate-450 text-[10px] font-semibold uppercase tracking-wider">
                           <th className="pb-3">Part Identification</th>
                           <th className="pb-3 text-right">Units</th>
-                          <th className="pb-3 text-right">Est. Cost</th>
+                          <th className="pb-3 text-right">Entered Cost</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -482,7 +305,7 @@ export function Home() {
                     <Layers className="w-5 h-5" />
                   </div>
                   <h4 className="m-0 text-sm font-semibold text-slate-800">Workspace BOM is empty</h4>
-                  <p className="text-xs text-slate-400 mt-1 max-w-[280px] leading-relaxed">Add components to run vendor-equivalent cost simulations</p>
+                  <p className="text-xs text-slate-400 mt-1 max-w-[280px] leading-relaxed">Add components to build and export a local BOM.</p>
                   <Link to="/?tab=finder" className="no-underline mt-5">
                     <button className="bg-slate-900 hover:bg-slate-800 text-white border-none py-2 px-5 rounded-md text-xs font-semibold cursor-pointer transition-all active:scale-[0.98] shadow-xs">
                       Browse catalog
@@ -492,20 +315,6 @@ export function Home() {
               )}
             </div>
 
-            {/* Right section: SVG chart */}
-            <div className="lg:col-span-2 shadow-xs rounded-xl bg-white border border-slate-200 relative">
-              {bomList.length > 0 ? (
-                <CostSavingsChart data={supplierCosts} referenceCost={mcmasterCost} />
-              ) : (
-                <div className="p-6 flex flex-col items-center justify-center text-center h-full min-h-[220px]">
-                  <div className="w-10 h-10 bg-slate-50 border border-slate-150 flex items-center justify-center text-slate-450 mb-3 rounded-lg">
-                    <Percent className="w-5 h-5" />
-                  </div>
-                  <h4 className="m-0 text-sm font-semibold text-slate-800">No Simulation Data</h4>
-                  <p className="text-xs text-slate-450 mt-1.5 max-w-[200px]">Simulations require at least 1 item in workspace</p>
-                </div>
-              )}
-            </div>
           </div>
         </div>
       )}
@@ -519,7 +328,7 @@ export function Home() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <h1 className="text-2xl font-bold tracking-tight text-slate-900 m-0">Part Finder</h1>
-              <p className="text-slate-500 m-0 mt-1 text-sm">Configure approved standard fasteners and compare vendor equivalents.</p>
+              <p className="text-slate-500 m-0 mt-1 text-sm">Review standard fastener configurations and supplier search links.</p>
             </div>
             
             <div className="bg-slate-900 text-white px-4 py-2.5 rounded-lg text-xs font-semibold flex items-center gap-2 self-start md:self-auto shadow-sm">
@@ -736,7 +545,7 @@ export function Home() {
                           <Layers className="w-5 h-5" />
                         </div>
                         <h4 className="m-0 text-slate-800 font-semibold text-xs">No active queued BOM items</h4>
-                        <p className="text-xs text-slate-400 mt-1 max-w-[280px] mx-auto leading-relaxed">Search components and add them to compare pricing equivalents.</p>
+                        <p className="text-xs text-slate-400 mt-1 max-w-[280px] mx-auto leading-relaxed">Search components and add them to build a local BOM.</p>
                       </td>
                     </tr>
                   )}
@@ -747,7 +556,7 @@ export function Home() {
 
           {/* BOM Totals summary row */}
           {bomList.length > 0 && (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-2">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mt-2">
               <div className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col justify-between shadow-xs relative">
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-450">Unique Items</span>
                 <span className="text-xl font-bold text-slate-900 mt-1.5">{totalItems}</span>
@@ -756,12 +565,8 @@ export function Home() {
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-450">Total Quantity</span>
                 <span className="text-xl font-bold text-slate-900 mt-1.5">{totalQty}</span>
               </div>
-              <div className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col justify-between shadow-xs relative">
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-emerald-600">Simulated Savings</span>
-                <span className="text-xl font-bold text-emerald-600 mt-1.5">${estSavings.toFixed(2)}</span>
-              </div>
               <div className="bg-slate-900 border-none rounded-xl p-5 flex flex-col justify-between shadow-sm relative text-white">
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Consolidated Cost</span>
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Entered Cost Total</span>
                 <span className="text-xl font-bold text-white mt-1.5">${totalBomCost.toFixed(2)}</span>
               </div>
             </div>

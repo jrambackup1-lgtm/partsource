@@ -1,13 +1,13 @@
 # PartSource.io
 
-Industrial hardware sourcing tool. Search standard fasteners, compare vendor pricing across 5 distributors, build Bills of Materials, and consolidate orders.
+Industrial hardware research tool. Review standard-fastener specifications, build Bills of Materials, export, and hand off searches to supplier sites for independent verification.
 
 ## Quick Start
 
 ```bash
 cd web
-bash scripts/setup.sh        # one-time bootstrap (Git Bash)
-npm run dev:all              # start frontend + scraper
+npm ci                       # one-time bootstrap
+npm run dev                  # start frontend
 ```
 
 Open [http://localhost:3000](http://localhost:3000).

@@ -29,8 +29,8 @@ To prevent search engines from flagging auto-generated pages as "thin affiliate 
 1. **Decoded Spec Table**: Complete mechanical properties (e.g., thread size, length, material, grade, drive type, finish).
 2. **Standard Numbers**: Mapping to standard ISO, DIN, ANSI, or ASME specifications (e.g., "DIN 912 equivalent").
 3. **Active Search Deep-Links**: Direct search links to at least 3 major distributors (Zoro, MSC, Fastenal, Misumi, Bolt Depot) built using precise keyword query strings.
-4. **Estimated Price Grid**: Realistic price breaks and ranges (e.g., "$0.12 - $0.18 each" or price tiers like "<$1 / $1-$5 / $5+") calculated from McMaster's reference price.
-5. **Availability Status**: Dynamic mock stock estimates to show product sourcing status.
+4. **Supplier Searches**: Clearly labeled search handoffs, never offers, listings, or confirmed matches.
+5. **Verification Boundary**: Identity, price, availability, and specifications must be verified on the supplier site.
 6. **Internal Links Grid**: Links to at least 3 related part sizes (e.g., "Engineers also searched for: M4 x 16mm, M4 x 25mm").
 7. **Technical/Application Note**: A brief functional note describing typical applications for that specific category of fastener (e.g., "M4 socket head screws are typically used in electronics enclosures and precision machinery assemblies").
 

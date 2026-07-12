@@ -156,7 +156,7 @@ export function WidgetEmbed() {
                         {sup.name}
                       </span>
                       <span className="text-[9px] opacity-60" style={{ color: textSecondary }}>
-                        Verify results on supplier site
+                        Verify identity, price, availability, and specifications on the supplier site
                       </span>
                     </div>
                     
