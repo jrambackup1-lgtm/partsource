@@ -7,12 +7,12 @@
     "dev": "vite --port=3000 --host=0.0.0.0",
     "scraper": "node scripts/run-scraper.mjs",
     "dev:all": "concurrently -n \"SCRAPER,WEB\" -c \"magenta,cyan\" \"npm:scraper\" \"npm:dev\"",
-    "build": "vite build && tsx scripts/generate-static-part-pages.ts",
+    "build": "vite build && tsx scripts/generate-static-part-pages.ts && tsx scripts/test-product-truth-bundle.ts",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
     "sitemap": "tsx scripts/generate-sitemap.ts",
     "lint": "tsc --noEmit",
-    "test": "tsx scripts/test-decoder.ts && tsx scripts/test-p0-safety.ts && tsx scripts/test-product-truth.ts && tsx scripts/test-static-metadata.ts",
+    "test": "tsx scripts/test-decoder.ts && tsx scripts/test-p0-safety.ts && tsx scripts/test-product-truth.ts && tsx scripts/test-product-truth-behavior.ts && tsx scripts/test-static-metadata.ts",
     "test:browser": "playwright test"
   },
   "dependencies": {

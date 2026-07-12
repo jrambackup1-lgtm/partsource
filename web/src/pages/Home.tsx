@@ -183,7 +183,7 @@ export function Home() {
     const body = [
       'Hi Jay,', '', 'Please quote the following BOM:', '',
       ...lines, '',
-      `Tool-estimated total: $${totalBomCost.toFixed(2)}`, '',
+      `Entered-cost total: $${totalBomCost.toFixed(2)}`, '',
       'Name:', 'Company:', 'Ship-to (city/country):', 'Target date:', '',
     ].join('\n');
     navigator.clipboard?.writeText(body).catch(() => {});

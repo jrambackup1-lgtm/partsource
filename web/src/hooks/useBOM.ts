@@ -11,6 +11,18 @@ export interface BOMItem {
   unitCost: number;
 }
 
+export function createCatalogCommercialFields() {
+  return { supplier: 'Unselected', unitCost: 0 } as const;
+}
+
+export function parseImportedUnitCost(value: unknown): number {
+  if (value === undefined || value === null || value === '') return 0;
+  const parsed = typeof value === 'number'
+    ? value
+    : Number.parseFloat(String(value).replace(/[^0-9.]/g, ''));
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
+}
+
 export function useBOM() {
   const [bomList, setBomList] = useState<BOMItem[]>([]);
 
@@ -254,13 +266,7 @@ export function useBOM() {
               }
             }
 
-            let unitCost = 0;
-            if (row.unitCost !== undefined && row.unitCost !== null && row.unitCost !== '') {
-              const parsedCost = parseFloat(String(row.unitCost).replace(/[^0-9.]/g, ''));
-              if (!isNaN(parsedCost)) {
-                unitCost = parsedCost;
-              }
-            }
+            const unitCost = parseImportedUnitCost(row.unitCost);
 
             // Construct description
             let description = row.description || '';
@@ -321,9 +327,8 @@ export function useBOM() {
                   partNumber: item.partNumber,
                   description,
                   material: item.material,
-                  supplier: 'Unselected',
                   qty: 10,
-                  unitCost: 0
+                  ...createCatalogCommercialFields()
                 };
 
                 const existingIndex = currentList.findIndex(b => b.partNumber === bomItem.partNumber && b.supplier === bomItem.supplier);

@@ -21,7 +21,6 @@ Mechanical engineers face significant friction when sourcing fasteners and hardw
 3. Verify candidate identity, price, availability, and specifications on those distributor websites.
 4. Accumulate parts into a persistent local Bill of Materials (BOM) with options to adjust quantities, view total estimates, and import/export CSV files.
 5. Provide a Programmatic SEO (pSEO) foundation on a separate domain (`partsource.io`) that funnels users to consulting services at `jayar.co`.
-6. Run a premium **SmartCart Optimization Engine** that automatically splits bulk BOM orders across distributors to find the cheapest overall cart combination, factoring in unit prices, bulk tier discount thresholds, shipping costs, and PO administrative overhead.
 
 ---
 
@@ -50,6 +49,7 @@ Mechanical engineers face significant friction when sourcing fasteners and hardw
 16. As a buyer, I want to upload a CSV list of McMaster part numbers, so that the tool parses and loads them into my BOM in bulk.
 
 ### SmartCart BOM Optimization (Paid Features)
+Future-only concept, not current MVP behavior. It remains blocked until PartSource has sanctioned supplier data with price and availability provenance.
 17. As a purchasing manager, I want the system to calculate the optimal split-order routing of my BOM across Zoro, Bolt Depot, MSC, etc., so that I get the lowest total price including shipping.
 18. As a buyer, I want to define an "Administrative Friction Cost" per supplier (e.g., $15 per PO), so that the algorithm doesn't split a tiny item to a new supplier unless the savings exceed the overhead.
 19. As an engineer, I want to specify a "Maximum Number of Suppliers" constraint, so that my parts list isn't split across more than my preferred number of packages.
@@ -91,6 +91,7 @@ To ensure crawl eligibility and combat search engine penalties, all generated pa
   - Title tags avoid trademarked name violations (e.g., "M4 Socket Cap Screw Equivalents & Sourcing" instead of "McMaster-Carr 91251A242").
 
 ### 4. SmartCart Optimization Engine
+Future-only concept, not current MVP behavior. Do not expose optimization or cheapest-supplier claims until sanctioned supplier data is available.
 - **Client-Side Optimization Engine**: For rapid UI updates and low operational cost, run the optimization algorithm client-side in JS (heuristic or dynamic programming approach).
 - **Optimization Strategy**: Use a greedy heuristic with local search improvement to find the optimal split combination under 100ms for up to 100 BOM line items.
 - **Variables & Inputs**:

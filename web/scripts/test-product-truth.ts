@@ -16,9 +16,22 @@ const partDetail = readWeb('src/pages/PartDetail.tsx');
 const widget = readWeb('src/pages/WidgetEmbed.tsx');
 const reference = readWeb('src/lib/reference.ts');
 const decoder = readWeb('src/lib/decoder.ts');
+const packageJson = JSON.parse(readWeb('package.json')) as { scripts?: Record<string, string> };
+
+const uiSourceFiles = [
+  'src/App.tsx',
+  ...['src/components', 'src/hooks', 'src/pages'].flatMap(directory =>
+    fs.readdirSync(path.join(webRoot, directory), { recursive: true, encoding: 'utf8' })
+      .filter(file => /\.(?:ts|tsx)$/.test(file))
+      .map(file => path.join(directory, file))),
+];
 
 assert.doesNotMatch(home, /CostSavingsChart|calculateSupplierTotal|Approved Suppliers|Est\. list|Estimated Savings|Simulated Savings|vendor-equivalent cost simulations|compare (?:pricing )?equivalents/i);
 assert.doesNotMatch(home, /mcmasterPrice|discount|shipDays/);
+assert.match(home, /Entered-cost total:/);
+for (const file of uiSourceFiles) {
+  assert.doesNotMatch(readWeb(file), /mcmasterPrice/, `${file} must not consume or render decoder price heuristics`);
+}
 assert.doesNotMatch(bom, /Autofill price if missing|mcmasterPrice\s*\*|Zoro \(Auto\)/i);
 assert.match(bom, /supplier:\s*'Unselected'[\s\S]{0,80}unitCost:\s*0/);
 assert.doesNotMatch(header, /Bell|Notifications Icon|Profile Mockup|Jay Sourcing|@jay_sourcing/);
@@ -44,15 +57,9 @@ const activeDocs = [
   readRepo('research/data-sourcing-decision.md'),
 ];
 for (const doc of activeDocs) {
-  assert.doesNotMatch(doc, /review estimated catalog pricing|prices are catalog estimates|simulated (?:prices|discount|stock)|dynamic mock stock|real-time simulated stock|estimated price grid|availability status|live match/i);
+  assert.doesNotMatch(doc, /review estimated catalog pricing|prices are catalog estimates|simulated (?:prices|discount|stock)|pricing simulation|mock discounts?|dynamic mock stock|real-time simulated stock|estimated price grid|availability status|live match/i);
 }
-
-const bundleDir = path.join(webRoot, 'dist', 'assets');
-assert.ok(fs.existsSync(bundleDir), 'production bundle missing; run npm run build first');
-const bundle = fs.readdirSync(bundleDir)
-  .filter(file => file.endsWith('.js'))
-  .map(file => fs.readFileSync(path.join(bundleDir, file), 'utf8'))
-  .join('\n');
-assert.doesNotMatch(bundle, /Consolidated Cost Simulation|Approved Suppliers|Est\. list|Estimated Savings|Simulated Savings|Zoro \(Auto\)|Jay Sourcing|live match/i);
+assert.doesNotMatch(readRepo('research/prd.md'), /SmartCart Optimization Engine[\s\S]{0,220}cheapest overall cart/i);
+assert.match(packageJson.scripts?.build ?? '', /test-product-truth-bundle\.ts/);
 
 console.log('Product Truth Contract checks passed.');

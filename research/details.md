@@ -68,15 +68,9 @@ Targeting low-competition, high-intent queries (e.g., *"McMaster 91251A242 equiv
   - Finish (e.g., Black-Oxide, Zinc-Plated, Plain)
   - Head Style & Drive Type
 
-### 3.2 Supplier Grid UI
-Comparative matrix containing:
+### 3.2 Supplier Search UI
+Search handoffs containing:
 - **Suppliers**: Zoro, MSC Industrial, Fastenal, Misumi, Bolt Depot.
-- **Pricing Simulation**: Base price derived from McMaster reference price, applying mock discounts:
-  - Zoro: **-15%**
-  - Bolt Depot: **-30%**
-  - MSC Industrial: **-5%**
-  - Fastenal: **+0%**
-  - Misumi: **-10%**
 - **Commercial Data Boundary**: No invented pricing, inventory, availability, lead time, approval, or match status.
 - **Deep Search Query Links**:
   - **Zoro**: `https://www.zoro.com/search?q=[URL_ENCODED_QUERY]`
