@@ -4,6 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { generateStaticPartPages, renderPartPage } from './generate-static-part-pages';
 import type { Part } from '../src/lib/decoder';
+import { REF_PAGES } from '../src/lib/reference';
 
 const template = `<!doctype html><html><head><title>PartSource.io | Hardware Sourcing</title><link rel="canonical" href="https://jrambackup1-lgtm.github.io/partsource/" /></head><body></body></html>`;
 const part: Part = {
@@ -42,6 +43,27 @@ try {
   const fallback = fs.readFileSync(fallbackPath, 'utf8');
   assert.match(fallback, /<meta name="robots" content="noindex,follow" \/>/);
   assert.doesNotMatch(fallback, /rel="canonical"/);
+
+  const referenceIndex = fs.readFileSync(path.join(distDir, 'reference', 'index.html'), 'utf8');
+  assert.match(referenceIndex, /<title>Engineering Reference \| PartSource<\/title>/);
+  assert.match(referenceIndex, /rel="canonical" href="https:\/\/jrambackup1-lgtm\.github\.io\/partsource\/reference"/);
+
+  const referencePage = REF_PAGES[0];
+  assert.ok(referencePage);
+  const referenceHtml = fs.readFileSync(path.join(distDir, 'reference', referencePage.slug, 'index.html'), 'utf8');
+  assert.match(referenceHtml, new RegExp(`rel="canonical" href="https://jrambackup1-lgtm\\.github\\.io/partsource/reference/${referencePage.slug}"`));
+
+  const embedHtml = fs.readFileSync(path.join(distDir, 'embed', part.partNumber, 'index.html'), 'utf8');
+  assert.match(embedHtml, /<meta name="robots" content="noindex,follow" \/>/);
+  assert.match(embedHtml, /rel="canonical" href="https:\/\/jrambackup1-lgtm\.github\.io\/partsource\/embed\/DIN912-M3X10"/);
+
+  assert.equal(fs.existsSync(path.join(distDir, 'reference', 'does-not-exist', 'index.html')), false);
+  assert.equal(fs.existsSync(path.join(distDir, 'embed', 'does-not-exist', 'index.html')), false);
+
+  const sitemap = fs.readFileSync(path.resolve(import.meta.dirname, '../public/sitemap.xml'), 'utf8');
+  assert.deepEqual([...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map(match => match[1]), [
+    'https://jrambackup1-lgtm.github.io/partsource/',
+  ]);
 } finally {
   fs.rmSync(distDir, { recursive: true, force: true });
 }

@@ -17,17 +17,17 @@ Repository branch protection and the `github-pages` environment policy are exter
 
 ## Production Smoke and Monitoring
 
-`.github/workflows/production-monitoring.yml` runs after a deploy, twice hourly, and manually. It asserts both HTTP status and body content for:
+`.github/workflows/production-monitoring.yml` runs after a deploy, twice hourly, and manually. It asserts HTTP status/body markers, then runs browser assertions against the rendered production UI for:
 
 - canonical root: `200`, PartSource shell;
 - representative direct part route: `200`, `DIN912-M3X10` metadata;
 - BOM URL `?tab=bom`: `200`, PartSource shell;
-- `/reference`: GitHub Pages transport `404`, PartSource SPA fallback shell (the client then renders the known route);
+- `/reference`: `200`, rendered **Engineering Reference** state;
 - `sitemap.xml`: `200`, sitemap content;
 - `robots.txt`: `200`, crawler directives;
-- deliberately unknown route: `404`, PartSource fallback shell (the client renders the explicit **Not Found** state).
+- deliberately unknown route: transport `404`, rendered **Not Found** state.
 
-For failures, record the workflow run URL, failed URL, expected/actual status, expected content marker, commit SHA, and UTC time. A transport `404` for `/reference` is the current GitHub Pages SPA behavior; changing that expectation requires generating a static entry for that route.
+The browser probe also verifies the root, representative part, empty BOM client state, sitemap, and robots content. For failures, record the workflow run URL, failed URL, expected/actual status, rendered-state assertion, commit SHA, and UTC time.
 
 ## Roll Back Production
 
@@ -41,12 +41,12 @@ If GitHub Pages or Actions is experiencing an outage, record the incident and re
 
 ## Safe Rollback Rehearsal (No Deploy)
 
-Use a revision previously proven good in production:
+Use the candidate revision you want to validate. Prefer a production-proven SHA when rehearsing an actual rollback choice:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .github/scripts/rehearse-rollback.ps1 -Revision <known-good-sha>
 ```
 
-The script exports the selected revision into an isolated temporary checkout, then runs deterministic install, typecheck, tests, production build, and browser tests. It does not switch branches, modify a worktree, rewrite history, push, or deploy. It removes the temporary checkout and writes timestamped evidence under `.superpowers/evidence/`.
+The script exports the selected candidate revision into an isolated temporary checkout, then runs deterministic install, typecheck, tests, production build, and browser tests. It does not switch branches, modify a worktree, rewrite history, push, or deploy. It removes the temporary checkout and writes a UTF-8 timestamped evidence log under `.superpowers/evidence/`.
 
-Evidence: retain the generated log with the chosen known-good SHA and result. Do not claim a rollback rehearsal was performed unless that log exists and ends in `PASS`.
+Evidence: retain the generated log with the candidate SHA and result. A passing candidate-revision rehearsal is not evidence that the SHA was ever production-proven. Record the production deploy/run URL when that provenance exists. Do not claim a successful rehearsal unless the log's final line starts with `PASS`.

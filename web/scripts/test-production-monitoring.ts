@@ -1,60 +1,106 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
+import { parse } from 'yaml';
 
 const repoRoot = path.resolve(import.meta.dirname, '../..');
 const read = (file: string) => fs.readFileSync(path.join(repoRoot, file), 'utf8');
-
-const workflow = read('.github/workflows/production-monitoring.yml');
-const deploy = read('.github/workflows/deploy.yml');
-const runbook = read('research/production-runbook.md');
-const readme = read('README.md');
-
-const assertInOrder = (source: string, snippets: string[]) => {
-  let cursor = -1;
-  for (const snippet of snippets) {
-    const next = source.indexOf(snippet, cursor + 1);
-    assert.notEqual(next, -1, `missing required workflow step: ${snippet}`);
-    assert.ok(next > cursor, `workflow step is out of order: ${snippet}`);
-    cursor = next;
-  }
+const parseWorkflow = (file: string) => {
+  const workflow = parse(read(file));
+  assert.equal(typeof workflow, 'object', `${file} must parse as YAML`);
+  return workflow;
 };
+const runCommands = (job: any) => job.steps.filter((step: any) => step.run).map((step: any) => step.run.trim());
 
-assert.match(workflow, /schedule:/);
-assert.match(workflow, /workflow_dispatch:/);
-assert.match(workflow, /https:\/\/jrambackup1-lgtm\.github\.io\/partsource\//);
-assert.match(workflow, /partsource\/parts\/DIN912-M3X10/);
-assert.match(workflow, /partsource\/\?tab=bom/);
-assert.match(workflow, /partsource\/reference/);
-assert.match(workflow, /partsource\/sitemap\.xml/);
-assert.match(workflow, /partsource\/robots\.txt/);
-assert.match(workflow, /partsource\/definitely-not-a-real-route/);
-assert.match(workflow, /curl[^\n]*--fail/);
-assert.match(workflow, /expected_status/);
-assert.match(workflow, /expected_content/);
-assert.match(workflow, /workflow_call:/);
-
-assert.match(deploy, /branches:\s*\["master"\]/);
-assert.match(deploy, /workflow_dispatch:/);
-assertInOrder(deploy, [
+const ci = parseWorkflow('.github/workflows/ci.yml');
+assert.deepEqual(Object.keys(ci.on).sort(), ['pull_request', 'push']);
+assert.equal(ci.on.push, null);
+assert.equal(ci.on.pull_request, null);
+assert.deepEqual(Object.keys(ci.jobs), ['verify']);
+assert.equal('if' in ci.jobs.verify, false);
+assert.deepEqual(runCommands(ci.jobs.verify).slice(0, 7), [
   'npm ci',
   'npm run lint',
   'npm test',
+  'npx tsx scripts/test-production-monitoring.ts',
   'npm run build',
+  'npx playwright install --with-deps chromium',
   'npm run test:browser',
-  'actions/upload-pages-artifact@',
 ]);
-assert.match(deploy, /name:\s*pages-\$\{\{ github\.sha \}\}/);
-assert.match(deploy, /needs:\s*verify/);
-assert.match(deploy, /artifact_name:\s*pages-\$\{\{ github\.sha \}\}/);
-assert.match(deploy, /uses:\s*\.\/\.github\/workflows\/production-monitoring\.yml/);
 
+const deploy = parseWorkflow('.github/workflows/deploy.yml');
+assert.deepEqual(Object.keys(deploy.on).sort(), ['push', 'workflow_dispatch']);
+assert.deepEqual(deploy.on.push.branches, ['master']);
+assert.equal(deploy.on.workflow_dispatch, null);
+assert.deepEqual(Object.keys(deploy.jobs), ['verify', 'deploy', 'smoke']);
+assert.equal('needs' in deploy.jobs.verify, false);
+assert.equal(deploy.jobs.deploy.needs, 'verify');
+assert.equal(deploy.jobs.smoke.needs, 'deploy');
+assert.equal(deploy.jobs.smoke.uses, './.github/workflows/production-monitoring.yml');
+assert.equal('if' in deploy.jobs.deploy, false);
+assert.equal('if' in deploy.jobs.smoke, false);
+assert.equal('if' in deploy.jobs.verify, false);
+assert.deepEqual(runCommands(deploy.jobs.verify).slice(0, 7), [
+  'npm ci',
+  'npm run lint',
+  'npm test',
+  'npx tsx scripts/test-production-monitoring.ts',
+  'npm run build',
+  'npx playwright install --with-deps chromium',
+  'npm run test:browser',
+]);
+const pagesArtifact = deploy.jobs.verify.steps.find((step: any) => step.uses === 'actions/upload-pages-artifact@v3');
+assert.deepEqual(pagesArtifact.with, {
+  name: 'pages-${{ github.sha }}',
+  path: 'web/dist',
+  'retention-days': 1,
+});
+const deployPages = deploy.jobs.deploy.steps.find((step: any) => step.uses === 'actions/deploy-pages@v4');
+assert.equal(deployPages.with.artifact_name, 'pages-${{ github.sha }}');
+
+const monitoring = parseWorkflow('.github/workflows/production-monitoring.yml');
+assert.deepEqual(Object.keys(monitoring.on).sort(), ['schedule', 'workflow_call', 'workflow_dispatch']);
+assert.deepEqual(monitoring.on.schedule, [{ cron: '17,47 * * * *' }]);
+assert.equal(monitoring.on.workflow_call, null);
+assert.equal(monitoring.on.workflow_dispatch, null);
+assert.deepEqual(Object.keys(monitoring.jobs), ['check-production-routes', 'check-rendered-production']);
+assert.equal('if' in monitoring.jobs['check-production-routes'], false);
+assert.equal('if' in monitoring.jobs['check-rendered-production'], false);
+const curlProbe = monitoring.jobs['check-production-routes'].steps.find((step: any) => step.run).run;
+const expectedTuples = [
+  'https://jrambackup1-lgtm.github.io/partsource/|200|PartSource.io',
+  'https://jrambackup1-lgtm.github.io/partsource/parts/DIN912-M3X10|200|DIN912-M3X10',
+  'https://jrambackup1-lgtm.github.io/partsource/?tab=bom|200|PartSource.io',
+  'https://jrambackup1-lgtm.github.io/partsource/reference|200|Engineering Reference',
+  'https://jrambackup1-lgtm.github.io/partsource/sitemap.xml|200|<urlset',
+  'https://jrambackup1-lgtm.github.io/partsource/robots.txt|200|User-agent: *',
+  'https://jrambackup1-lgtm.github.io/partsource/definitely-not-a-real-route|404|PartSource.io',
+];
+for (const tuple of expectedTuples) assert.match(curlProbe, new RegExp(tuple.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+const rendered = monitoring.jobs['check-rendered-production'];
+assert.equal(rendered.needs, 'check-production-routes');
+assert.equal(rendered.env.PRODUCTION_BASE_URL, 'https://jrambackup1-lgtm.github.io/partsource/');
+assert.deepEqual(rendered.steps.map((step: any) => step.uses ?? step.run), [
+  'actions/checkout@v4',
+  'actions/setup-node@v4',
+  'npm ci',
+  'npx playwright install --with-deps chromium',
+  'npx playwright test tests/browser/production-smoke.spec.ts',
+]);
+assert.deepEqual(rendered.steps.slice(2).map((step: any) => step['working-directory']), ['web', 'web', 'web']);
+
+const rehearsal = read('.github/scripts/rehearse-rollback.ps1');
+const runbook = read('research/production-runbook.md');
+assert.match(rehearsal, /UTF8/);
+assert.match(rehearsal, /PASS: candidate revision/);
+assert.match(runbook, /candidate revision/i);
+assert.match(runbook, /production-proven SHA/i);
 assert.match(runbook, /Owner:/);
 assert.match(runbook, /Evidence:/);
-assert.match(runbook, /rehears/i);
-assert.match(runbook, /non-production|temporary checkout/i);
 assert.match(runbook, /Do not claim.*rehears/i);
+
+const readme = read('README.md');
 assert.match(readme, /actions\/workflows\/ci\.yml\/badge\.svg/);
 assert.match(readme, /actions\/workflows\/production-monitoring\.yml\/badge\.svg/);
 
-console.log('Production monitoring checks passed.');
+console.log('Production workflow contract checks passed.');

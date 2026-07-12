@@ -17,24 +17,31 @@ $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
 $evidencePath = Join-Path $evidenceRoot "rollback-rehearsal-$($resolvedRevision.Substring(0, 12))-$timestamp.log"
 $temporaryRoot = Join-Path ([System.IO.Path]::GetTempPath()) "partsource-rollback-$timestamp"
 $archivePath = "$temporaryRoot.zip"
+$utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+
+function Write-Evidence {
+  param([string]$Text)
+  Write-Host $Text
+  [System.IO.File]::AppendAllText($evidencePath, "$Text`r`n", $utf8NoBom)
+}
 
 function Invoke-Checked {
   param([string]$Label, [scriptblock]$Command)
-  "`n== $Label ==" | Tee-Object -FilePath $evidencePath -Append
-  & $Command 2>&1 | Tee-Object -FilePath $evidencePath -Append
+  Write-Evidence ""
+  Write-Evidence "== $Label =="
+  & $Command 2>&1 | ForEach-Object { Write-Evidence $_.ToString() }
   if ($LASTEXITCODE -ne 0) { throw "$Label failed with exit code $LASTEXITCODE" }
 }
 
+[System.IO.File]::WriteAllText($evidencePath, "", $utf8NoBom)
 try {
-  @(
-    "PartSource rollback rehearsal (non-production)",
-    "Revision: $resolvedRevision",
-    "Started UTC: $([DateTime]::UtcNow.ToString('o'))",
-    "Temporary checkout: $temporaryRoot",
-    "No deploy or history rewrite is performed."
-  ) | Set-Content $evidencePath
+  Write-Evidence "PartSource rollback rehearsal (non-production)"
+  Write-Evidence "Candidate revision: $resolvedRevision"
+  Write-Evidence "Started UTC: $([DateTime]::UtcNow.ToString('o'))"
+  Write-Evidence "Temporary checkout: $temporaryRoot"
+  Write-Evidence "No deploy or history rewrite is performed."
 
-  Invoke-Checked "Archive known-good revision" { git archive --format=zip --output=$archivePath $resolvedRevision }
+  Invoke-Checked "Archive candidate revision" { git archive --format=zip --output=$archivePath $resolvedRevision }
   Expand-Archive -LiteralPath $archivePath -DestinationPath $temporaryRoot
   Push-Location (Join-Path $temporaryRoot "web")
   Invoke-Checked "Deterministic install" { npm ci }
@@ -42,11 +49,13 @@ try {
   Invoke-Checked "Tests" { npm test }
   Invoke-Checked "Production build" { npm run build }
   Invoke-Checked "Browser tests" { npm run test:browser }
-  "`nPASS: known-good revision verified without deploying.`nCompleted UTC: $([DateTime]::UtcNow.ToString('o'))" |
-    Tee-Object -FilePath $evidencePath -Append
+  Write-Evidence ""
+  Write-Evidence "Completed UTC: $([DateTime]::UtcNow.ToString('o'))"
+  Write-Evidence "PASS: candidate revision verified without deploying."
 } catch {
-  "`nFAIL: $($_.Exception.Message)`nCompleted UTC: $([DateTime]::UtcNow.ToString('o'))" |
-    Tee-Object -FilePath $evidencePath -Append
+  Write-Evidence ""
+  Write-Evidence "Completed UTC: $([DateTime]::UtcNow.ToString('o'))"
+  Write-Evidence "FAIL: $($_.Exception.Message)"
   throw
 } finally {
   Pop-Location -ErrorAction SilentlyContinue

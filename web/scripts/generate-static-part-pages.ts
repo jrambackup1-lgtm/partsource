@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { db, type Part } from '../src/lib/decoder';
+import { REF_PAGES } from '../src/lib/reference';
 
 const BASE_URL = 'https://jrambackup1-lgtm.github.io/partsource';
 
@@ -52,6 +53,26 @@ export function renderPartPage(template: string, part: Part): string {
     .replace('</head>', `${metadata}\n  </head>`);
 }
 
+function renderRouteShell(template: string, title: string, canonical: string, noIndex = false): string {
+  const metadata = [
+    `    <title>${escapeHtml(title)}</title>`,
+    noIndex ? '    <meta name="robots" content="noindex,follow" />' : '',
+    `    <link rel="canonical" href="${canonical}" />`,
+  ].filter(Boolean).join('\n');
+
+  return template
+    .replace(/\s*<title>.*?<\/title>/s, '')
+    .replace(/\s*<meta name="robots"[^>]*>/s, '')
+    .replace(/\s*<link rel="canonical"[^>]*>/s, '')
+    .replace('</head>', `${metadata}\n  </head>`);
+}
+
+function writeRouteShell(distDir: string, route: string[], html: string): void {
+  const outputDir = path.join(distDir, ...route.map(encodeURIComponent));
+  fs.mkdirSync(outputDir, { recursive: true });
+  fs.writeFileSync(path.join(outputDir, 'index.html'), html);
+}
+
 export function generateStaticPartPages(distDir: string): number {
   const indexPath = path.join(distDir, 'index.html');
   const template = fs.readFileSync(indexPath, 'utf8');
@@ -62,10 +83,32 @@ export function generateStaticPartPages(distDir: string): number {
     .replace('</head>', '    <meta name="robots" content="noindex,follow" />\n  </head>');
   fs.writeFileSync(path.join(distDir, '404.html'), fallback);
 
+  writeRouteShell(
+    distDir,
+    ['reference'],
+    renderRouteShell(template, 'Engineering Reference | PartSource', `${BASE_URL}/reference`),
+  );
+
+  for (const reference of REF_PAGES) {
+    writeRouteShell(
+      distDir,
+      ['reference', reference.slug],
+      renderRouteShell(template, `${reference.title} | PartSource`, `${BASE_URL}/reference/${reference.slug}`),
+    );
+  }
+
   for (const part of parts) {
-    const outputDir = path.join(distDir, 'parts', encodeURIComponent(part.partNumber));
-    fs.mkdirSync(outputDir, { recursive: true });
-    fs.writeFileSync(path.join(outputDir, 'index.html'), renderPartPage(template, part));
+    writeRouteShell(distDir, ['parts', part.partNumber], renderPartPage(template, part));
+    writeRouteShell(
+      distDir,
+      ['embed', part.partNumber],
+      renderRouteShell(
+        template,
+        `${part.partNumber} Supplier Search | PartSource`,
+        `${BASE_URL}/embed/${encodeURIComponent(part.partNumber)}`,
+        true,
+      ),
+    );
   }
 
   return parts.length;
