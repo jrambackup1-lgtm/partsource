@@ -6,8 +6,8 @@ This file is the cross-session source of truth. Agents must update it only after
 
 | Phase | Status | Started | Completed | Evidence |
 |---|---|---|---|---|
-| 0 — Contain Current Production Risk | in_progress | 2026-07-11 | — | — |
-| 1 — Product, Users, Business Boundaries | blocked | — | — | — |
+| 0 — Contain Current Production Risk | complete | 2026-07-11 | 2026-07-12 | commits through `ec4a003`; CI `29203431947`; deploy/smoke `29203432018`; clean rehearsal + independent review pass |
+| 1 — Product, Users, Business Boundaries | ready | — | — | Phase 0 exit gate passed; entry dependencies satisfied |
 | 2 — Mechanical Domain Foundation | blocked | — | — | — |
 | 3 — UI Foundation | blocked | — | — | — |
 | 4 — Search and Catalog Discovery | blocked | — | — | — |
@@ -24,15 +24,15 @@ Valid phase statuses: `blocked`, `ready`, `in_progress`, `verification`, `comple
 
 ## Phase 0
 
-- [ ] MP-0.1 Release truth
+- [x] MP-0.1 Release truth
 - [x] MP-0.2 Routing and canonical URLs
 - [x] MP-0.3 SEO containment
 - [x] MP-0.4 Structured-data containment
 - [x] MP-0.5 Unsupported-claim removal
 - [x] MP-0.6 CI, deployment, smoke, rollback
 - [x] MP-0.7 Legacy ingestion isolation
-- [ ] Phase 0 independent review
-- [ ] Phase 0 exit gate passed
+- [x] Phase 0 independent review
+- [x] Phase 0 exit gate passed
 
 ## Phase 1
 
@@ -210,8 +210,12 @@ Append one row per completed packet.
 | MP-0.5 | 2026-07-12 | implement_claims + resume_claims | review_claims | `598833c`, `936b6a0` | clean-dist tests; lint; build + bundle truth; browser 8/8 | Product Truth source/docs/bundle guards; BOM no-fabrication behavior | pass |
 | MP-0.6 | 2026-07-12 | implement_ci_deploy | review_ci_deploy | `6fb17e3`, `4343d30` | clean rehearsal: lint, tests, build, browser 9/9; YAML/PowerShell contracts | `.superpowers/evidence/rollback-rehearsal-4343d300fa2b-20260712-094840.log` | pass; deployment and live smoke pending exit gate |
 | MP-0.7 | 2026-07-12 | implement_legacy_isolation + resume_legacy_isolation | review_legacy_isolation | `86046c5`, `ecfa44b` | exact isolated lint, tests, build, browser 9/9; runtime guard matrix | repo-wide active-path scanner; archived configs/tools/plans; exact opt-in guards | pass |
+| MP-0.1 | 2026-07-12 | implement_release_truth | review_release_truth | `ee89bf0`, `ec4a003`; deploy run `29203432018` | CI success; deploy + transport/rendered smoke success; clean rehearsal lint/tests/build/browser 9/9 | live `release.json` = local HEAD = `origin/master` = `ec4a0032d140ad627c52a8e74778bbd124e8934d` | pass |
+| Phase 0 exit gate | 2026-07-12 | root | review_phase0_exit | commits `adc1977` through `ec4a003` | production SHA/routes/schema/sitemap; clean rehearsal; full 13-commit review | zero P0/P1; final reviewer approved completion and Phase 1 unlock | pass |
 
 ## Open Risks and Blockers
 
 | ID | Phase | Risk/blocker | Owner | Resolution condition | Status |
 |---|---|---|---|---|---|
+| P2-0-1 | 1 | `research/master-plan.md` Current Readiness still describes the pre-Phase-0 audit snapshot | Phase 1 | Reconcile into the authoritative product source without erasing historical audit context | open |
+| P2-0-2 | 1 | `research/prd.md` still names obsolete Next.js/Vanilla CSS architecture | Phase 1 | Update authoritative architecture description to match the shipped Vite/React/Tailwind runtime | open |
