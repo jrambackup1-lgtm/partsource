@@ -22,7 +22,7 @@ assert.deepEqual(runCommands(ci.jobs.verify).slice(0, 7), [
   'npm ci',
   'npm run lint',
   'npm test',
-  'npx tsx scripts/test-production-monitoring.ts',
+  'npx tsx scripts/test-production-monitoring.ts\nnpx tsx scripts/test-release-truth.ts',
   'npm run build',
   'npx playwright install --with-deps chromium',
   'npm run test:browser',
@@ -39,13 +39,14 @@ assert.equal(deploy.jobs.smoke.needs, 'deploy');
 assert.equal(deploy.jobs.smoke.uses, './.github/workflows/production-monitoring.yml');
 assert.equal('if' in deploy.jobs.deploy, false);
 assert.equal('if' in deploy.jobs.smoke, false);
-assert.equal('if' in deploy.jobs.verify, false);
-assert.deepEqual(runCommands(deploy.jobs.verify).slice(0, 7), [
+assert.equal(deploy.jobs.verify.if, "github.ref == 'refs/heads/master'");
+assert.deepEqual(runCommands(deploy.jobs.verify).slice(0, 8), [
   'npm ci',
   'npm run lint',
   'npm test',
-  'npx tsx scripts/test-production-monitoring.ts',
+  'npx tsx scripts/test-production-monitoring.ts\nnpx tsx scripts/test-release-truth.ts',
   'npm run build',
+  'npx tsx scripts/generate-release-metadata.ts',
   'npx playwright install --with-deps chromium',
   'npm run test:browser',
 ]);
@@ -61,7 +62,12 @@ assert.equal(deployPages.with.artifact_name, 'pages-${{ github.sha }}');
 const monitoring = parseWorkflow('.github/workflows/production-monitoring.yml');
 assert.deepEqual(Object.keys(monitoring.on).sort(), ['schedule', 'workflow_call', 'workflow_dispatch']);
 assert.deepEqual(monitoring.on.schedule, [{ cron: '17,47 * * * *' }]);
-assert.equal(monitoring.on.workflow_call, null);
+assert.deepEqual(monitoring.on.workflow_call.inputs.expected_sha, {
+  description: 'Full commit SHA expected after a deployment',
+  required: false,
+  type: 'string',
+  default: '',
+});
 assert.equal(monitoring.on.workflow_dispatch, null);
 assert.deepEqual(Object.keys(monitoring.jobs), ['check-production-routes', 'check-rendered-production']);
 assert.equal('if' in monitoring.jobs['check-production-routes'], false);

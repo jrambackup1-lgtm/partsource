@@ -2,6 +2,12 @@ name: Production monitoring
 
 on:
   workflow_call:
+    inputs:
+      expected_sha:
+        description: Full commit SHA expected after a deployment
+        required: false
+        type: string
+        default: ""
   schedule:
     - cron: "17,47 * * * *"
   workflow_dispatch:
@@ -12,11 +18,38 @@ permissions:
 jobs:
   check-production-routes:
     runs-on: ubuntu-latest
+    env:
+      EXPECTED_SHA: ${{ inputs.expected_sha }}
     steps:
       - name: Check production status and content
         shell: bash
         run: |
           set -euo pipefail
+
+          release_body="$(mktemp)"
+          curl --fail --silent --show-error --location --retry 2 --max-time 30 \
+            --output "$release_body" \
+            "https://jrambackup1-lgtm.github.io/partsource/release.json?check=${EXPECTED_SHA:-scheduled}"
+          RELEASE_FILE="$release_body" node <<'NODE'
+          const fs = require('node:fs');
+          const metadata = JSON.parse(fs.readFileSync(process.env.RELEASE_FILE, 'utf8'));
+          const expectedSha = process.env.EXPECTED_SHA.trim();
+          if (JSON.stringify(Object.keys(metadata).sort()) !== JSON.stringify(['builtAt', 'sha'])) {
+            throw new Error('release.json must contain only builtAt and sha');
+          }
+          if (typeof metadata.sha !== 'string' || !/^[0-9a-fA-F]{40}$/.test(metadata.sha)) {
+            throw new Error('release.json sha must be a full 40-character hexadecimal Git SHA');
+          }
+          if (typeof metadata.builtAt !== 'string' || Number.isNaN(Date.parse(metadata.builtAt)) || new Date(metadata.builtAt).toISOString() !== metadata.builtAt) {
+            throw new Error('release.json builtAt must be an ISO 8601 UTC timestamp');
+          }
+          if (expectedSha && metadata.sha !== expectedSha) {
+            throw new Error(`production SHA ${metadata.sha} does not match deploy SHA ${expectedSha}`);
+          }
+          console.log(`OK release ${metadata.sha} built ${metadata.builtAt}`);
+          NODE
+          rm -f "$release_body"
+
           checks=(
             "https://jrambackup1-lgtm.github.io/partsource/|200|PartSource.io"
             "https://jrambackup1-lgtm.github.io/partsource/parts/DIN912-M3X10|200|DIN912-M3X10"

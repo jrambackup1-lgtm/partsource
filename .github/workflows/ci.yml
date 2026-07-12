@@ -35,7 +35,9 @@ jobs:
         run: npm test
 
       - name: Workflow contracts
-        run: npx tsx scripts/test-production-monitoring.ts
+        run: |
+          npx tsx scripts/test-production-monitoring.ts
+          npx tsx scripts/test-release-truth.ts
 
       - name: Build
         run: npm run build

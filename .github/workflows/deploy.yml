@@ -16,6 +16,7 @@ concurrency:
 
 jobs:
   verify:
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -41,10 +42,17 @@ jobs:
         run: npm test
 
       - name: Workflow contracts
-        run: npx tsx scripts/test-production-monitoring.ts
+        run: |
+          npx tsx scripts/test-production-monitoring.ts
+          npx tsx scripts/test-release-truth.ts
 
       - name: Build
         run: npm run build
+
+      - name: Generate release metadata
+        env:
+          RELEASE_SHA: ${{ github.sha }}
+        run: npx tsx scripts/generate-release-metadata.ts
 
       - name: Install browser
         run: npx playwright install --with-deps chromium
@@ -84,3 +92,5 @@ jobs:
   smoke:
     needs: deploy
     uses: ./.github/workflows/production-monitoring.yml
+    with:
+      expected_sha: ${{ github.sha }}
