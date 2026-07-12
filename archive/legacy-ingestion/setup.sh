@@ -6,6 +6,9 @@
 #   3. Installs the scraper's Python dependencies
 #
 # Usage:  bash scripts/setup.sh
+echo "HISTORICAL_ONLY: archived legacy-ingestion setup is intentionally non-runnable." >&2
+exit 1
+
 set -euo pipefail
 
 cd "$(dirname "$0")/.."   # -> web/

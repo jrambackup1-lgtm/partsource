@@ -11,7 +11,7 @@
  * posture as research/data-sourcing-decision.md §4.1). Throttled ~1.3s/request,
  * resumable: re-running skips parts already resolved in the output file.
  *
- * Usage:  npx tsx scripts/resolve-zoro-links.ts [--limit N] [--force]
+ * Usage:  PARTSOURCE_ENABLE_LEGACY_INGESTION=1 npx tsx scripts/legacy-ingestion/resolve-zoro-links.ts [--limit N] [--force]
  */
 import fs from 'fs';
 import path from 'path';

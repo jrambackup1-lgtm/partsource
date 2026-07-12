@@ -1,12 +1,64 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 
 const root = path.resolve(import.meta.dirname, '..');
 const repoRoot = path.resolve(root, '..');
 const read = (file: string) => fs.readFileSync(path.join(root, file), 'utf8');
 const readIfPresent = (file: string) => fs.existsSync(path.join(root, file)) ? read(file) : '';
+
+const legacyActivationPattern = /VITE_SCRAPER_URL|SCRAPER_PORT|npm\s+run\s+(?:scraper|dev:all)|\brun-scraper\.mjs\b|\bscraper_server\.py\b|\bresolve-zoro-links\.ts\b|\/api\/scrape|partsource-scraper\.(?:onrender\.com|fly\.dev)|PARTSOURCE_ENABLE_LEGACY_INGESTION\s*(?:=|:)\s*["']?1\b/i;
+const excludedScanPrefixes = [
+  '.git/',
+  '.superpowers/',
+  'archive/',
+  'research/archive/',
+  'web/dist/',
+  'web/node_modules/',
+  'web/scripts/legacy-ingestion/',
+];
+const excludedScanFiles = new Set(['web/scripts/test-p0-safety.ts']);
+const textExtensions = new Set([
+  '', '.cjs', '.env', '.example', '.js', '.json', '.md', '.mjs', '.ps1', '.py',
+  '.sh', '.toml', '.ts', '.tsx', '.txt', '.yaml', '.yml',
+]);
+
+function recursivelyListFiles(scanRoot: string, current = scanRoot): string[] {
+  return fs.readdirSync(current, { withFileTypes: true }).flatMap((entry) => {
+    const absolute = path.join(current, entry.name);
+    if (entry.isDirectory()) {
+      if (entry.name === '.git' || entry.name === 'node_modules' || entry.name === 'dist') return [];
+      return recursivelyListFiles(scanRoot, absolute);
+    }
+    return [path.relative(scanRoot, absolute).replaceAll('\\', '/')];
+  });
+}
+
+function trackedOrFixtureFiles(scanRoot: string): string[] {
+  const tracked = spawnSync('git', ['-C', scanRoot, 'ls-files', '-z'], { encoding: 'utf8' });
+  if (tracked.status === 0 && tracked.stdout) return tracked.stdout.split('\0').filter(Boolean);
+  return recursivelyListFiles(scanRoot);
+}
+
+function findActiveLegacyActivationViolations(scanRoot: string): string[] {
+  const violations: string[] = [];
+  for (const relativeFile of trackedOrFixtureFiles(scanRoot)) {
+    const normalized = relativeFile.replaceAll('\\', '/');
+    if (excludedScanFiles.has(normalized) || excludedScanPrefixes.some((prefix) => normalized.startsWith(prefix))) continue;
+    if (!textExtensions.has(path.extname(normalized).toLowerCase()) && path.basename(normalized) !== 'Dockerfile') continue;
+
+    const absoluteFile = path.join(scanRoot, relativeFile);
+    if (!fs.statSync(absoluteFile).isFile()) continue;
+
+    const activeLines = fs.readFileSync(absoluteFile, 'utf8')
+      .split(/\r?\n/)
+      .filter((line) => !(normalized === 'research/aistudio_checklist.md' && /^\|\s*\d{4}-\d{2}-\d{2}\s*\|/.test(line)));
+    if (activeLines.some((line) => legacyActivationPattern.test(line))) violations.push(normalized);
+  }
+  return violations.sort();
+}
 
 const app = read('src/App.tsx');
 const sidebar = read('src/components/Sidebar.tsx');
@@ -47,6 +99,28 @@ assert.match(robots, /Sitemap: https:\/\/jrambackup1-lgtm\.github\.io\/partsourc
 
 // MP-0.7: legacy ingestion is retained only as a fail-closed historical tool.
 const isolationViolations: string[] = [];
+const fixtureRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'partsource-legacy-activation-'));
+try {
+  const activeFixtures = {
+    '.github/workflows/legacy.yml': 'run: node web/scripts/legacy-ingestion/run-scraper.mjs\n',
+    'README.md': 'Set VITE_SCRAPER_URL=https://partsource-scraper.onrender.com\n',
+    'build.ps1': '$env:PARTSOURCE_ENABLE_LEGACY_INGESTION = 1\n',
+    'docker-compose.yml': 'command: python web/scripts/legacy-ingestion/scraper_server.py\n',
+    'fly.toml': 'cmd = "npx tsx web/scripts/legacy-ingestion/resolve-zoro-links.ts"\n',
+    'setup.sh': 'npm run scraper\n',
+  };
+  for (const [file, content] of Object.entries(activeFixtures)) {
+    fs.mkdirSync(path.dirname(path.join(fixtureRoot, file)), { recursive: true });
+    fs.writeFileSync(path.join(fixtureRoot, file), content);
+  }
+  assert.deepEqual(
+    findActiveLegacyActivationViolations(fixtureRoot),
+    Object.keys(activeFixtures).sort(),
+    'repo-wide scanner must catch synthetic workflow, deploy, setup, build, and docs paths',
+  );
+} finally {
+  fs.rmSync(fixtureRoot, { recursive: true, force: true });
+}
 const packageJson = JSON.parse(read('package.json')) as { scripts: Record<string, string> };
 for (const [name, command] of Object.entries(packageJson.scripts)) {
   if (/scraper|resolver|resolve-zoro|legacy.ingestion/i.test(`${name} ${command}`)) {
@@ -54,32 +128,8 @@ for (const [name, command] of Object.entries(packageJson.scripts)) {
   }
 }
 
-for (const file of ['render.yaml', 'web/scripts/fly.toml']) {
-  if (fs.existsSync(path.join(repoRoot, file))) {
-    isolationViolations.push(`automatic legacy deploy config remains active: ${file}`);
-  }
-}
-
-for (const file of ['README.md', 'web/README.md', 'web/.env.example']) {
-  const content = fs.readFileSync(path.join(repoRoot, file), 'utf8');
-  if (/npm run scraper|VITE_SCRAPER_URL|SCRAPER_PORT|onrender\.com|fly\.dev/i.test(content)) {
-    isolationViolations.push(`normal documentation activates legacy ingestion: ${file}`);
-  }
-}
-
-for (const file of ['.github/workflows/ci.yml', '.github/workflows/deploy.yml']) {
-  const content = fs.readFileSync(path.join(repoRoot, file), 'utf8');
-  if (/scraper_server|run-scraper|resolve-zoro|VITE_SCRAPER_URL|PARTSOURCE_ENABLE_LEGACY_INGESTION/i.test(content)) {
-    isolationViolations.push(`production workflow references legacy ingestion: ${file}`);
-  }
-}
-
-const productionSource = fs.readdirSync(path.join(root, 'src'), { recursive: true })
-  .filter((entry) => entry.toString().match(/\.(ts|tsx)$/))
-  .map((entry) => fs.readFileSync(path.join(root, 'src', entry.toString()), 'utf8'))
-  .join('\n');
-if (/scraper_server|run-scraper|resolve-zoro|VITE_SCRAPER_URL|\/api\/scrape|PARTSOURCE_ENABLE_LEGACY_INGESTION/i.test(productionSource)) {
-  isolationViolations.push('production source imports or calls legacy ingestion');
+for (const file of findActiveLegacyActivationViolations(repoRoot)) {
+  isolationViolations.push(`active path references legacy ingestion: ${file}`);
 }
 
 for (const file of ['archive/legacy-ingestion/render.yaml', 'archive/legacy-ingestion/fly.toml']) {
@@ -87,6 +137,13 @@ for (const file of ['archive/legacy-ingestion/render.yaml', 'archive/legacy-inge
   if (/autoDeploy:\s*true|auto_start_machines\s*=\s*true/i.test(content)) {
     isolationViolations.push(`archived deploy config can start automatically: ${file}`);
   }
+}
+
+for (const file of ['archive/legacy-ingestion/setup.ps1', 'archive/legacy-ingestion/setup.sh']) {
+  const content = fs.readFileSync(path.join(repoRoot, file), 'utf8');
+  const stopIndex = content.indexOf('HISTORICAL_ONLY');
+  assert.notEqual(stopIndex, -1, `${file} must be explicitly non-runnable`);
+  assert.ok(stopIndex < content.indexOf('npm install'), `${file} must stop before executing setup`);
 }
 
 const legacyExecutables = [
@@ -114,18 +171,21 @@ if (/Zoro JSON-LD \(deploy \+ harden\)[^\n]*âœ…/i.test(sourcingDecision)) {
 
 assert.deepEqual(isolationViolations, [], isolationViolations.join('\n'));
 
-for (const [command, args] of [
-  [process.execPath, ['scripts/legacy-ingestion/run-scraper.mjs']],
-  [process.execPath, ['--import', 'tsx', 'scripts/legacy-ingestion/resolve-zoro-links.ts']],
-] as const) {
-  const result = spawnSync(command, args, {
-    cwd: root,
-    encoding: 'utf8',
-    env: { ...process.env, PARTSOURCE_ENABLE_LEGACY_INGESTION: '' },
-    timeout: 10_000,
-  });
-  assert.notEqual(result.status, 0, `${args.at(-1)} must fail closed without opt-in`);
-  assert.match(`${result.stdout}${result.stderr}`, /non-production.*sanctioned.source/is);
+const rejectedOptIns = ['', 'true', 'yes', '01'];
+for (const optIn of rejectedOptIns) {
+  for (const [command, args] of [
+    [process.execPath, ['scripts/legacy-ingestion/run-scraper.mjs']],
+    [process.execPath, ['--import', 'tsx', 'scripts/legacy-ingestion/resolve-zoro-links.ts']],
+  ] as const) {
+    const result = spawnSync(command, args, {
+      cwd: root,
+      encoding: 'utf8',
+      env: { ...process.env, PARTSOURCE_ENABLE_LEGACY_INGESTION: optIn },
+      timeout: 10_000,
+    });
+    assert.notEqual(result.status, 0, `${args.at(-1)} must reject opt-in ${JSON.stringify(optIn)}`);
+    assert.match(`${result.stdout}${result.stderr}`, /non-production.*sanctioned.source/is);
+  }
 }
 
 const pythonCandidates: ReadonlyArray<readonly [string, readonly string[]]> = process.platform === 'win32'
@@ -136,17 +196,19 @@ const python = pythonCandidates.find(([command, args]) =>
 );
 assert.ok(python, 'Python is required to verify the retained scraper fails closed');
 const [pythonCommand, pythonArgs] = python;
-const scraperResult = spawnSync(
-  pythonCommand,
-  [...pythonArgs, 'scripts/legacy-ingestion/scraper_server.py'],
-  {
-    cwd: root,
-    encoding: 'utf8',
-    env: { ...process.env, PARTSOURCE_ENABLE_LEGACY_INGESTION: '' },
-    timeout: 10_000,
-  },
-);
-assert.notEqual(scraperResult.status, 0, 'scraper_server.py must fail closed without opt-in');
-assert.match(`${scraperResult.stdout}${scraperResult.stderr}`, /non-production.*sanctioned.source/is);
+for (const optIn of rejectedOptIns) {
+  const scraperResult = spawnSync(
+    pythonCommand,
+    [...pythonArgs, 'scripts/legacy-ingestion/scraper_server.py'],
+    {
+      cwd: root,
+      encoding: 'utf8',
+      env: { ...process.env, PARTSOURCE_ENABLE_LEGACY_INGESTION: optIn },
+      timeout: 10_000,
+    },
+  );
+  assert.notEqual(scraperResult.status, 0, `scraper_server.py must reject opt-in ${JSON.stringify(optIn)}`);
+  assert.match(`${scraperResult.stdout}${scraperResult.stderr}`, /non-production.*sanctioned.source/is);
+}
 
 console.log('P0 production-safety checks passed.');

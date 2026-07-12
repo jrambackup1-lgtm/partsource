@@ -5,6 +5,9 @@
 #   3. Installs the scraper's Python dependencies
 #
 # Usage (from web/):  powershell -ExecutionPolicy Bypass -File scripts/setup.ps1
+Write-Error "HISTORICAL_ONLY: archived legacy-ingestion setup is intentionally non-runnable."
+exit 1
+
 $ErrorActionPreference = "Stop"
 Set-Location -Path (Join-Path $PSScriptRoot "..")
 
