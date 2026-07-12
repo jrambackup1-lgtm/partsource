@@ -1,23 +1,22 @@
-# Fly.io deployment for the PartSource Zoro pricing scraper.
+# ARCHIVED legacy-ingestion Fly.io config. Not a production deployment path.
 #
-# One-time setup:
+# Historical setup notes (not a supported production path):
 #   flyctl launch --no-deploy   # creates the app + this file's [app] name
 #   flyctl deploy                # builds + deploys
 #
-# The Dockerfile lives at web/scripts/Dockerfile (build context = repo root).
-# fly.toml must sit at repo root for `flyctl deploy` to find it.
+# The archived service remains fail-closed unless its explicit opt-in is set.
 
 app = "partsource-scraper"
 primary_region = "iad"
 
 [build]
-  dockerfile = "web/scripts/Dockerfile"
+  dockerfile = "archive/legacy-ingestion/Dockerfile"
 
 [http_service]
   internal_port = 3001
   force_https = true
   auto_stop_machines = true
-  auto_start_machines = true
+  auto_start_machines = false
   min_machines_running = 0
 
   [http_service.concurrency]

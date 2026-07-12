@@ -4,7 +4,7 @@ Living checklist for partsource.io. Supersedes the old AI Studio export checklis
 (that era is done — the app is exported, rebuilt on Vite/React, and live).
 
 **Live site:** https://jrambackup1-lgtm.github.io/partsource/
-**Scraper:** https://partsource-scraper.onrender.com (Render free tier, auto-deploys on push)
+**Current production state (2026-07-11):** Technical catalog plus supplier-search handoffs only; no catalog pricing, inventory, scraper, admin, orders, auth, or compliance claims in the production UI. Historical entries below describe superseded builds.
 
 ---
 
@@ -14,8 +14,7 @@ Living checklist for partsource.io. Supersedes the old AI Studio export checklis
 - [x] Fixed router basename vs `/partsource/` base path (blank-page bug, dev + prod)
 - [x] SPA `404.html` fallback so deep links work on GitHub Pages
 - [x] CI: decoder tests + build + deploy on every push; `workflow_dispatch` for manual rebuilds
-- [x] Zoro pricing scraper deployed to Render; `VITE_SCRAPER_URL` baked into the Pages build
-- [x] End-to-end verified: live Zoro badge works from residential IPs; honest estimated fallback in prod
+- [x] Historical: Zoro scraper deployed to Render. Superseded on 2026-07-11; production scraper usage is disabled.
 
 ### 2026-07-10 — Real catalog & honesty pass (audit-doc pivot)
 - [x] 585-part catalog: 60 hand-verified McMaster crosses + ~525 generated from public
@@ -27,7 +26,7 @@ Living checklist for partsource.io. Supersedes the old AI Studio export checklis
 - [x] Exact-match catalog lookup (unknown numbers can no longer fuzzy-match a wrong part)
 - [x] Images fixed: per-category CAD schematic + SVG glyphs; Photo toggle & stock photos removed
 - [x] "Not affiliated with McMaster-Carr" disclaimer in footer; unindexed pages noindexed, no JSON-LD offers
-- [x] Scraper accepts spec-derived `q` query for generated parts
+- [x] Historical scraper accepted spec-derived `q`; it is not part of the production buyer flow.
 - [x] 17 decoder tests + 19-check Playwright smoke, green locally and on production
 - [x] Data sourcing locked: NO McMaster/skdin/Source-Search/distributor bulk scraping
       (see `research/data-sourcing-decision.md` + audit-doc guardrails); Fastener Superstore
@@ -38,7 +37,7 @@ Living checklist for partsource.io. Supersedes the old AI Studio export checklis
       live Zoro data disproved them (91251A242 claimed M4×12, actually #10-24 × 1/2").
       All purged. Crosses now live in `MCMASTER_CROSSES` (hand-verified, provenance-noted,
       grown one real part at a time per the audit doc).
-- [x] MPN coverage now scales via the **live Zoro cross-reference card** on unknown-MPN pages
+- [x] Historical: unknown-MPN pages used a live Zoro cross-reference card. Superseded; current pages provide supplier-search handoffs only.
       (supplier's own match: name/price/link, honestly labeled) + family-level series decoding
       for 9 real McMaster series — no fabricated size claims anywhere
 - [x] Imperial length regex fix (TPI digits no longer misread as length)
@@ -57,15 +56,13 @@ Living checklist for partsource.io. Supersedes the old AI Studio export checklis
 
 - [ ] **Buy partsource.io** → GitHub Pages custom domain + CNAME → flip vite build `base` to `/`
       (sitemap + embed snippets already resolve correctly once on the domain)
-- [ ] **Decide on prod live pricing**: Zoro 403s Render's datacenter IP, so prod shows estimates.
-      Options: (a) accept estimates for launch, (b) paid residential proxy (~$1–5/GB),
-      (c) home-PC scraper + Cloudflare tunnel. Recommendation: (a) for launch.
+- [x] **Remove production pricing claims**: supplier destinations are searches; users verify commercial data on supplier sites.
 
 ## 3. Remaining — V1 Plan (per `mcmaster-tool-audit-and-v1-plan`)
 
 - [ ] Grow `MCMASTER_CROSSES` by hand: verify each MPN against a part in hand or the
-      supplier's own listing before adding (2 entries seeded; the live Zoro card covers
-      unknown MPNs honestly in the meantime). NEVER bulk-generate crosses again.
+      supplier's own listing before adding (2 entries seeded; unknown MPNs remain
+      unindexed unless supported by verified evidence). NEVER bulk-generate crosses again.
 - [ ] Email eProcurement@mcmaster.com about the cross-reference API use case (expect "no", closes ambiguity)
 - [ ] Ask Zoro/Fastenal/Grainger partnerships about affiliate/data-feed programs
 - [ ] Outreach in Eng-Tips / r/engineering threads where the demand quotes came from

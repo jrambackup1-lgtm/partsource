@@ -1,9 +1,9 @@
-# PartSource Zoro pricing micro-service.
-# Runs the Python scraper as a long-lived service on Fly.io / Render / any
-# container host. The static frontend (GitHub Pages) calls this via CORS.
+# ARCHIVED PartSource legacy-ingestion experiment. Fail-closed by default.
+# Historically ran the Python scraper as a long-lived service. The production
+# frontend no longer calls it.
 #
 # Build context = repo root. Build with:
-#   docker build -f web/scripts/Dockerfile -t partsource-scraper .
+#   docker build -f archive/legacy-ingestion/Dockerfile -t partsource-scraper .
 FROM python:3.12-slim
 
 # Playwright (scrapling runtime dep) needs system browser libraries.
@@ -18,15 +18,16 @@ RUN apt-get update \
 WORKDIR /app
 
 # Install Python deps first for layer caching.
-COPY web/requirements.txt ./requirements.txt
+COPY archive/legacy-ingestion/requirements.txt ./requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt \
     && scrapling install \
     && playwright install chromium
 
-COPY web/scripts/scraper_server.py ./scraper_server.py
+COPY web/scripts/legacy-ingestion/scraper_server.py ./scraper_server.py
 
 # Render / Fly inject PORT. Default keeps localhost parity.
 ENV PORT=3001
+ENV PARTSOURCE_ENABLE_LEGACY_INGESTION=0
 EXPOSE 3001
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \

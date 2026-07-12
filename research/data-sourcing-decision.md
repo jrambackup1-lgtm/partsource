@@ -2,7 +2,7 @@
 
 This document records the legal and technical investigation into obtaining **real product data** for partsource.io, the dead-ends evaluated, and the chosen path. It supersedes any earlier ambiguity about whether to scrape McMaster-Carr or use a third-party scraper.
 
-**Status:** Final (Phase 3 planning, 2026-07-07).
+**Status:** Superseded where it proposed Zoro ingestion (2026-07-12). Current policy permits only sanctioned sources; the historical implementation remains fail-closed and outside production.
 **Risk posture:** Fully clean / PRD-compliant. No McMaster-Carr scraping, no gray-area third-party scrapers.
 
 ---
@@ -55,7 +55,7 @@ The production MVP uses public technical standards and a static catalog. Supplie
 
 ### 4.1 Legacy Zoro scraper
 - Zoro publishes `schema.org/Product` JSON-LD microdata on its product pages, emitted **for search-engine consumption** (Google Shopping). Reading machine-readable metadata a publisher deliberately emits is a far stronger position than scraping HTML.
-- The legacy scraper at `web/scripts/scraper_server.py` is not used by the production UI. Production exposes supplier searches without rendering prices or availability.
+- The legacy scraper under `web/scripts/legacy-ingestion/` is not used by the production UI. Production exposes supplier searches without rendering prices or availability.
 - The scraper is isolated from the production buyer flow. Reintroducing supplier data requires a sanctioned source and provenance controls in a later phase.
 
 ### 4.2 Public fastener standards (freely redistributable facts)
@@ -89,7 +89,7 @@ For part numbers not in the catalog, decode as much as possible from the number 
 | Apify McMaster scraper | ✅ | ⚠️ Gray→red (TOS) | ⚠️ Paid | ❌ |
 | McMaster official API | ✅ | ✅ | ❌ (gated) | ❌ (future) |
 | `part-number.info` | ❌ (unrelated NSN data) | — | — | ❌ |
-| **Zoro JSON-LD (deploy + harden)** | ✅ | ✅ Published metadata | ✅ | ✅ |
+| Zoro JSON-LD scraper | Historical experiment only | Not sanctioned for current use | — | ❌ |
 | **Public fastener standards (catalog)** | ✅ (facts) | ✅ Redistributable | ✅ | ✅ |
 | **Regex decoder** | ⚠️ Inferred | ✅ | ✅ | ✅ (fallback) |
 

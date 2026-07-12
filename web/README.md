@@ -41,12 +41,9 @@ web/
 │   ├── pages/         # Route pages (Home, PartDetail, Admin, WidgetEmbed)
 │   └── App.tsx        # Root app with routing
 ├── scripts/
-│   ├── scraper_server.py   # Zoro live-pricing scraper (Python)
-│   ├── run-scraper.mjs      # Node launcher for the scraper
-│   ├── setup.sh / setup.ps1 # Environment bootstrap
+│   ├── legacy-ingestion/   # Fail-closed historical experiments
 │   └── generate-sitemap.ts # Sitemap generator
-├── requirements.txt  # Python deps for the scraper
-├── .env.example      # Config template
+├── .env.example      # Reserved config template
 └── package.json
 ```
 

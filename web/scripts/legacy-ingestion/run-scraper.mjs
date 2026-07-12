@@ -1,16 +1,22 @@
 #!/usr/bin/env node
 /**
- * Launches the Zoro pricing scraper using the project venv if present, falling
- * back to a system Python. This lets `npm run scraper` work without the user
- * having to manually activate the venv.
+ * Historical launcher for the isolated Zoro pricing experiment. It uses the
+ * project venv when present and otherwise probes system Python installations.
  */
 import { spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+const safetyWarning = '[legacy ingestion] NON-PRODUCTION experiment; sanctioned-source use only.';
+if (process.env.PARTSOURCE_ENABLE_LEGACY_INGESTION !== '1') {
+  console.error(`${safetyWarning} Set PARTSOURCE_ENABLE_LEGACY_INGESTION=1 to opt in.`);
+  process.exit(1);
+}
+console.warn(safetyWarning);
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const webRoot = resolve(__dirname, '..');
+const webRoot = resolve(__dirname, '..', '..');
 const script = resolve(__dirname, 'scraper_server.py');
 
 // Candidate Python interpreters in priority order.
@@ -44,8 +50,8 @@ function trySpawn(python) {
 
   if (!chosen) {
     console.error('\n[scraper] No Python with `scrapling` available.');
-    console.error('[scraper] Run "bash scripts/setup.sh" (or setup.ps1) first.');
-    console.error('[scraper] The app will still run with computed fallback prices.\n');
+    console.error('[scraper] See archive/legacy-ingestion for the historical setup files.');
+    console.error('[scraper] Legacy ingestion was not started.\n');
     process.exit(1);
   }
 

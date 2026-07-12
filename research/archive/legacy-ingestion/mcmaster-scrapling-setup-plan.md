@@ -1,4 +1,7 @@
-# Local Scrapling Scraper Setup Plan
+# ARCHIVED: Local Scrapling Scraper Setup Plan
+
+> Superseded 2026-07-12. Historical experiment only. McMaster scraping is not
+> sanctioned and must not be used for development, production, or deployment.
 
 This plan outlines how to configure a local Scrapling-based McMaster-Carr scraper on a home/residential IP (e.g., Raspberry Pi or local PC) to bypass cloud firewall blocks.
 

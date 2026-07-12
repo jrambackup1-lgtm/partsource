@@ -5,8 +5,6 @@
   "type": "module",
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
-    "scraper": "node scripts/run-scraper.mjs",
-    "dev:all": "concurrently -n \"SCRAPER,WEB\" -c \"magenta,cyan\" \"npm:scraper\" \"npm:dev\"",
     "build": "vite build && tsx scripts/generate-static-part-pages.ts && tsx scripts/test-product-truth-bundle.ts",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",

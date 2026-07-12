@@ -1,12 +1,12 @@
 """
-PartSource live-pricing micro-service.
+Archived PartSource legacy-ingestion micro-service.
 
 Provides real Zoro pricing/stock for a McMaster part number by reading the
 schema.org/Product JSON-LD microdata Zoro publishes on its product pages
 (metadata emitted for search-engine consumption — not HTML scraping of gated
 content). McMaster-Carr is never contacted (see research/data-sourcing-decision.md).
 
-Contract (unchanged):
+Historical contract (not used by production):
     GET /api/scrape?partNumber=91251A242
         -> 200 { partNumber, success, source, zoro?, mcmasterEstimatedPrice, ... }
     GET /health
@@ -20,10 +20,22 @@ Contract (unchanged):
 import json
 import os
 import re
+import sys
 import threading
 import time
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs, quote_plus
+
+SAFETY_WARNING = (
+    "[legacy ingestion] NON-PRODUCTION experiment; sanctioned-source use only."
+)
+if os.environ.get("PARTSOURCE_ENABLE_LEGACY_INGESTION") != "1":
+    print(
+        f"{SAFETY_WARNING} Set PARTSOURCE_ENABLE_LEGACY_INGESTION=1 to opt in.",
+        file=sys.stderr,
+    )
+    raise SystemExit(1)
+print(SAFETY_WARNING, file=sys.stderr)
 
 from scrapling import Fetcher
 
@@ -35,6 +47,19 @@ CB_FAILURE_THRESHOLD = int(os.environ.get("CB_FAILURE_THRESHOLD", 8))
 CB_WINDOW_SECONDS = int(os.environ.get("CB_WINDOW_SECONDS", 5 * 60))     # 5 min
 CB_COOLDOWN_SECONDS = int(os.environ.get("CB_COOLDOWN_SECONDS", 2 * 60))  # 2 min
 
+# CORS: only the frontend origins may call this service. Comma-separated env
+# override; defaults cover the GitHub Pages site + local dev.
+ALLOWED_ORIGINS = {
+    o.strip() for o in os.environ.get(
+        "ALLOWED_ORIGINS",
+        "https://jrambackup1-lgtm.github.io,http://localhost:3000,http://localhost:5173",
+    ).split(",") if o.strip()
+}
+
+# Per-IP rate limit (fixed window) on /api/scrape to cap compute abuse.
+RATE_LIMIT_MAX = int(os.environ.get("RATE_LIMIT_MAX", 30))
+RATE_LIMIT_WINDOW_SECONDS = int(os.environ.get("RATE_LIMIT_WINDOW_SECONDS", 60))
+
 # Zoro's published price is ~15% below McMaster list. Invert to estimate list.
 ZORO_DISCOUNT_FACTOR = 0.85
 
@@ -45,6 +70,20 @@ _cache: dict[str, dict] = {}  # partNumber -> {"at": epoch, "payload": {...}}
 _cb_lock = threading.Lock()
 _cb_failures: list[float] = []  # timestamps of recent failures
 _cb_open_until: float = 0.0     # epoch until which the breaker stays open
+
+_rl_lock = threading.Lock()
+_rl_hits: dict[str, list[float]] = {}  # client ip -> request timestamps in window
+
+
+def _rate_limited(client_ip: str) -> bool:
+    """True once a client exceeds RATE_LIMIT_MAX requests within the window."""
+    now = time.time()
+    cutoff = now - RATE_LIMIT_WINDOW_SECONDS
+    with _rl_lock:
+        hits = [t for t in _rl_hits.get(client_ip, []) if t > cutoff]
+        hits.append(now)
+        _rl_hits[client_ip] = hits
+        return len(hits) > RATE_LIMIT_MAX
 
 
 def _circuit_open() -> bool:
@@ -91,13 +130,25 @@ class ScraperHandler(BaseHTTPRequestHandler):
     def log_message(self, fmt, *args):  # noqa: A003 - matches stdlib signature
         print(f"[{self.log_date_time_string()}] {fmt % args}")
 
+    def _client_ip(self) -> str:
+        # Behind Cloudflare/Render; trust the left-most forwarded address.
+        fwd = self.headers.get("X-Forwarded-For", "")
+        return fwd.split(",")[0].strip() if fwd else self.client_address[0]
+
+    def _cors_headers(self):
+        origin = self.headers.get("Origin")
+        allow = origin if origin in ALLOWED_ORIGINS else None
+        if allow:
+            self.send_header("Access-Control-Allow-Origin", allow)
+            self.send_header("Vary", "Origin")
+            self.send_header("Access-Control-Allow-Methods", "GET, OPTIONS")
+            self.send_header("Access-Control-Allow-Headers", "Content-Type")
+
     def _send_json(self, status: int, payload: dict):
         body = json.dumps(payload).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "application/json")
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self._cors_headers()
         self.send_header("Cache-Control", "public, max-age=300")
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
@@ -105,9 +156,7 @@ class ScraperHandler(BaseHTTPRequestHandler):
 
     def do_OPTIONS(self):
         self.send_response(204)
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self._cors_headers()
         self.end_headers()
 
     def do_GET(self):
@@ -118,6 +167,9 @@ class ScraperHandler(BaseHTTPRequestHandler):
             return
 
         if parsed.path == "/api/scrape":
+            if _rate_limited(self._client_ip()):
+                self._send_json(429, {"error": "Too Many Requests"})
+                return
             params = parse_qs(parsed.query)
             part_number = params.get("partNumber", [None])[0]
             if not part_number:

@@ -30,7 +30,8 @@ purchased and configured.
 
 ```
 partsource/
-├── web/              # React app + Python scraper
+├── web/              # React app
+├── archive/          # Superseded, non-production experiments
 ├── research/         # Product research, PRD, market analysis
 ├── AGENTS.md         # Agent workspace reference
 ├── DESIGN.md         # Design system tokens
