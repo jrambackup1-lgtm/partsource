@@ -1,5 +1,8 @@
 # PartSource.io
 
+[![CI](https://github.com/jrambackup1-lgtm/partsource/actions/workflows/ci.yml/badge.svg)](https://github.com/jrambackup1-lgtm/partsource/actions/workflows/ci.yml)
+[![Production monitoring](https://github.com/jrambackup1-lgtm/partsource/actions/workflows/production-monitoring.yml/badge.svg)](https://github.com/jrambackup1-lgtm/partsource/actions/workflows/production-monitoring.yml)
+
 Industrial hardware research tool. Review standard-fastener specifications, build Bills of Materials, export, and hand off searches to supplier sites for independent verification.
 
 ## Quick Start

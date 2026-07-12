@@ -5,59 +5,82 @@ on:
     branches: ["master"]
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow one concurrent deployment
 concurrency:
   group: "pages"
   cancel-in-progress: true
 
 jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run lint
+
+      - name: Test
+        run: npm test
+
+      - name: Workflow contracts
+        run: npx tsx scripts/test-production-monitoring.ts
+
+      - name: Build
+        run: npm run build
+
+      - name: Install browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Browser smoke
+        run: npm run test:browser
+
+      - name: Upload commit-tied Pages artifact
+        id: pages-artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          name: pages-${{ github.sha }}
+          path: web/dist
+          retention-days: 1
+
+      - name: Record artifact identity
+        shell: bash
+        run: |
+          echo "Commit: $GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
+          echo "Artifact: pages-$GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
+          echo "Artifact ID: ${{ steps.pages-artifact.outputs.artifact_id }}" >> "$GITHUB_STEP_SUMMARY"
+        working-directory: .
+
   deploy:
+    needs: verify
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-          cache-dependency-path: web/package-lock.json
-          
-      - name: Install dependencies
-        run: npm ci
-        working-directory: web
-
-      - name: Test
-        run: npm run test
-        working-directory: web
-
-      - name: Build
-        run: npm run build
-        working-directory: web
-
-      - name: Add SPA fallback
-        # GitHub Pages serves 404.html for unknown paths; copying index.html
-        # lets deep links like /partsource/parts/91251A242 boot the router.
-        run: cp web/dist/index.html web/dist/404.html
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-        
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: 'web/dist'
-          
-      - name: Deploy to GitHub Pages
+      - name: Deploy tested artifact to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          artifact_name: pages-${{ github.sha }}
+
+  smoke:
+    needs: deploy
+    uses: ./.github/workflows/production-monitoring.yml

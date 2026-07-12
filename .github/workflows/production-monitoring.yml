@@ -1,0 +1,42 @@
+name: Production monitoring
+
+on:
+  workflow_call:
+  schedule:
+    - cron: "17,47 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-production-routes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check production status and content
+        shell: bash
+        run: |
+          set -euo pipefail
+          checks=(
+            "https://jrambackup1-lgtm.github.io/partsource/|200|PartSource.io"
+            "https://jrambackup1-lgtm.github.io/partsource/parts/DIN912-M3X10|200|DIN912-M3X10"
+            "https://jrambackup1-lgtm.github.io/partsource/?tab=bom|200|PartSource.io"
+            "https://jrambackup1-lgtm.github.io/partsource/reference|404|PartSource.io"
+            "https://jrambackup1-lgtm.github.io/partsource/sitemap.xml|200|<urlset"
+            "https://jrambackup1-lgtm.github.io/partsource/robots.txt|200|User-agent: *"
+            "https://jrambackup1-lgtm.github.io/partsource/definitely-not-a-real-route|404|PartSource.io"
+          )
+
+          for check in "${checks[@]}"; do
+            IFS='|' read -r url expected_status expected_content <<< "$check"
+            body="$(mktemp)"
+            if [[ "$expected_status" == "200" ]]; then
+              actual_status="$(curl --fail --silent --show-error --location --retry 2 --max-time 30 --output "$body" --write-out '%{http_code}' "$url")"
+            else
+              actual_status="$(curl --silent --show-error --location --retry 2 --max-time 30 --output "$body" --write-out '%{http_code}' "$url")"
+            fi
+            test "$actual_status" = "$expected_status"
+            grep --fixed-strings --quiet "$expected_content" "$body"
+            echo "OK $actual_status $url ($expected_content)"
+            rm -f "$body"
+          done
