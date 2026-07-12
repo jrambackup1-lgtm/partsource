@@ -67,7 +67,12 @@ assert.equal(deploy.jobs.verify.if, "github.ref == 'refs/heads/master'");
 const generateStep = deploy.jobs.verify.steps.find((step: any) => step.name === 'Generate release metadata');
 assert.equal(generateStep.env.RELEASE_SHA, '${{ github.sha }}');
 assert.equal(generateStep.run, 'npx tsx scripts/generate-release-metadata.ts');
-assert.ok(deploy.jobs.verify.steps.indexOf(generateStep) < deploy.jobs.verify.steps.findIndex((step: any) => step.uses === 'actions/upload-pages-artifact@v3'));
+const generateIndex = deploy.jobs.verify.steps.indexOf(generateStep);
+const uploadIndex = deploy.jobs.verify.steps.findIndex((step: any) => step.uses === 'actions/upload-pages-artifact@v3');
+const finalBuildOrBrowserIndex = Math.max(...deploy.jobs.verify.steps.map((step: any, index: number) =>
+  /npm run (build|test:browser)/.test(step.run ?? '') ? index : -1));
+assert.ok(generateIndex > finalBuildOrBrowserIndex, 'release metadata must be generated after every build/browser step');
+assert.equal(generateIndex, uploadIndex - 1, 'release metadata must be generated immediately before artifact upload');
 assert.equal(deploy.jobs.smoke.with.expected_sha, '${{ github.sha }}');
 
 const monitoring = parseWorkflow('.github/workflows/production-monitoring.yml');
@@ -78,7 +83,11 @@ assert.deepEqual(monitoring.on.workflow_call.inputs.expected_sha, {
   default: '',
 });
 const routeProbe = monitoring.jobs['check-production-routes'].steps.find((step: any) => step.run).run;
+assert.equal(monitoring.jobs['check-production-routes'].env.RELEASE_CHECK_NONCE, '${{ github.run_id }}-${{ github.run_attempt }}');
 assert.match(routeProbe, /partsource\/release\.json/);
+assert.match(routeProbe, /release\.json\?check=\$\{RELEASE_CHECK_NONCE\}/);
+assert.match(routeProbe, /Cache-Control: no-cache, no-store, max-age=0, must-revalidate/);
+assert.match(routeProbe, /Pragma: no-cache/);
 assert.match(routeProbe, /\^\[0-9a-fA-F\]\{40\}\$/);
 assert.match(routeProbe, /EXPECTED_SHA/);
 assert.match(routeProbe, /metadata\.sha !== expectedSha/);

@@ -46,9 +46,9 @@ assert.deepEqual(runCommands(deploy.jobs.verify).slice(0, 8), [
   'npm test',
   'npx tsx scripts/test-production-monitoring.ts\nnpx tsx scripts/test-release-truth.ts',
   'npm run build',
-  'npx tsx scripts/generate-release-metadata.ts',
   'npx playwright install --with-deps chromium',
   'npm run test:browser',
+  'npx tsx scripts/generate-release-metadata.ts',
 ]);
 const pagesArtifact = deploy.jobs.verify.steps.find((step: any) => step.uses === 'actions/upload-pages-artifact@v3');
 assert.deepEqual(pagesArtifact.with, {
@@ -72,7 +72,11 @@ assert.equal(monitoring.on.workflow_dispatch, null);
 assert.deepEqual(Object.keys(monitoring.jobs), ['check-production-routes', 'check-rendered-production']);
 assert.equal('if' in monitoring.jobs['check-production-routes'], false);
 assert.equal('if' in monitoring.jobs['check-rendered-production'], false);
+assert.equal(monitoring.jobs['check-production-routes'].env.RELEASE_CHECK_NONCE, '${{ github.run_id }}-${{ github.run_attempt }}');
 const curlProbe = monitoring.jobs['check-production-routes'].steps.find((step: any) => step.run).run;
+assert.match(curlProbe, /release\.json\?check=\$\{RELEASE_CHECK_NONCE\}/);
+assert.match(curlProbe, /--header "Cache-Control: no-cache, no-store, max-age=0, must-revalidate"/);
+assert.match(curlProbe, /--header "Pragma: no-cache"/);
 const expectedTuples = [
   'https://jrambackup1-lgtm.github.io/partsource/|200|PartSource.io',
   'https://jrambackup1-lgtm.github.io/partsource/parts/DIN912-M3X10|200|DIN912-M3X10',

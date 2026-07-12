@@ -20,6 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       EXPECTED_SHA: ${{ inputs.expected_sha }}
+      RELEASE_CHECK_NONCE: ${{ github.run_id }}-${{ github.run_attempt }}
     steps:
       - name: Check production status and content
         shell: bash
@@ -28,8 +29,10 @@ jobs:
 
           release_body="$(mktemp)"
           curl --fail --silent --show-error --location --retry 2 --max-time 30 \
+            --header "Cache-Control: no-cache, no-store, max-age=0, must-revalidate" \
+            --header "Pragma: no-cache" \
             --output "$release_body" \
-            "https://jrambackup1-lgtm.github.io/partsource/release.json?check=${EXPECTED_SHA:-scheduled}"
+            "https://jrambackup1-lgtm.github.io/partsource/release.json?check=${RELEASE_CHECK_NONCE}"
           RELEASE_FILE="$release_body" node <<'NODE'
           const fs = require('node:fs');
           const metadata = JSON.parse(fs.readFileSync(process.env.RELEASE_FILE, 'utf8'));
