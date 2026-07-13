@@ -11,7 +11,7 @@ The target MVP covers standard fasteners, safe discovery, technical reference, a
 | Target capability | Current shipped state | Owning master-plan phase | Entry/gate | Acceptance boundary |
 |---|---|---|---|---|
 | Standard fasteners | Partial: a bundled standards-derived fastener catalog ships, but coverage and provenance are incomplete. | Phase 2 | MP-2.1 taxonomy and MP-2.5 provenance gates pass. | Supported families use reviewed standards, editions, units, materials, and provenance; configurations never imply manufacture, stock, or availability. |
-| Safe discovery | Partial: exact catalog identifiers resolve and unknown input can produce a bounded candidate configuration. | Phase 4 | Phase 2 domain foundation is accepted; the MP-4.10 golden corpus passes. | Exact and broad search preserve hard constraints, expose interpretation, and label uncertain results as candidates requiring verification. |
+| Safe discovery | Partial: exact catalog identifiers resolve and unknown input can produce a bounded candidate configuration. | Phase 4 | Phase 2 domain foundation is accepted; the MP-4.12 golden corpus passes. | Exact and broad search preserve hard constraints, expose interpretation, and label uncertain results as candidates requiring verification. |
 | Technical reference | Current core: the runtime includes a reference library and read-only part views; evidence depth remains incomplete. | Phase 5 | Phase 2 provenance and Phase 4 discovery semantics pass. | Facts, diagrams, references, and result states are evidence-backed and never imply a listing, offer, equivalence, or approval. |
 | Anonymous browser-local BOM | Current core: users can add, edit, delete, import, and retain BOM lines in browser storage without an account. | Phase 6 | Phase 5 part semantics are stable; MP-6 storage, import, and integrity checks pass. | BOMs remain anonymous and local, preserve requirements separately from selections, surface storage limits, and fabricate no commercial facts. |
 | Truthful CSV/PDF exports | Current core: client-side CSV and PDF summaries ship. | Phase 6 | MP-6.6 and MP-6.7 export acceptance passes. | Exports preserve BOM truth, identify USD as the supported cost basis, and label user-entered/imported costs as user data rather than PartSource prices or offers. |
@@ -71,6 +71,7 @@ The MVP does not provide or promise:
 - confirmed supplier listings or offers;
 - equivalence or approval without evidence and, for approval, named organizational authorization;
 - authentication or cloud collaboration, including accounts, shared BOMs, roles, comments, or cross-device sync;
+- enterprise features and integrations are outside the MVP, including SSO/SAML, SCIM, punchout/cXML, ERP/PO integration, and compliance policy/workflows; each is individually demand-gated after the Phase 8 foundation;
 - commerce, checkout, payments, ordering, fulfilment, returns, or brokerage;
 - bulk scraping, login-wall circumvention, or unsanctioned supplier ingestion; or
 - scaled pSEO indexing or bulk page-per-SKU publication.

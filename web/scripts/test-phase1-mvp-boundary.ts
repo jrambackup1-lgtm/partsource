@@ -98,6 +98,31 @@ for (const nonGoal of [
   assert.match(nonGoals, new RegExp(nonGoal, 'i'), `non-goals must exclude ${nonGoal}`);
 }
 
+const reviewFailures: string[] = [];
+const safeDiscoveryRow = capabilities.match(/^\| Safe discovery \|.+\|$/m)?.[0] ?? '';
+const goldenCorpusPacket = safeDiscoveryRow.match(/MP-4\.\d+ golden corpus/)?.[0];
+if (goldenCorpusPacket !== 'MP-4.12 golden corpus') {
+  reviewFailures.push('Safe discovery must assign the golden corpus gate to exact packet MP-4.12');
+}
+
+const enterpriseNonGoal = nonGoals.match(/^- .*enterprise.*$/im)?.[0] ?? '';
+for (const requirement of [
+  'SSO/SAML',
+  'SCIM',
+  'punchout/cXML',
+  'ERP/PO integration',
+  'compliance policy/workflows',
+]) {
+  if (!enterpriseNonGoal.includes(requirement)) {
+    reviewFailures.push(`enterprise non-goal must exclude ${requirement}`);
+  }
+}
+if (!/individually demand-gated after the Phase 8 foundation/i.test(enterpriseNonGoal)) {
+  reviewFailures.push('enterprise non-goal must retain individually demand-gated ownership after the Phase 8 foundation');
+}
+
+assert.deepEqual(reviewFailures, [], `review corrections missing:\n${reviewFailures.join('\n')}`);
+
 const crlfFixture = boundary.replace(/\r?\n/g, '\r\n');
 assert.equal(
   extractSection(crlfFixture, 'Target MVP capabilities', 'Supported hardware'),
