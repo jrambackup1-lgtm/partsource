@@ -37,7 +37,7 @@ Valid phase statuses: `blocked`, `ready`, `in_progress`, `verification`, `comple
 ## Phase 1
 
 - [x] MP-1.1 Authoritative product source
-- [ ] MP-1.2 MVP boundary
+- [x] MP-1.2 MVP boundary
 - [ ] MP-1.3 Capability tiers
 - [ ] MP-1.4 Monetization validation
 - [ ] MP-1.5 Legal boundary
@@ -213,6 +213,7 @@ Append one row per completed packet.
 | MP-0.1 | 2026-07-12 | implement_release_truth | review_release_truth | `ee89bf0`, `ec4a003`; deploy run `29203432018` | CI success; deploy + transport/rendered smoke success; clean rehearsal lint/tests/build/browser 9/9 | live `release.json` = local HEAD = `origin/master` = `ec4a0032d140ad627c52a8e74778bbd124e8934d` | pass |
 | Phase 0 exit gate | 2026-07-12 | root | review_phase0_exit | commits `adc1977` through `ec4a003` | production SHA/routes/schema/sitemap; clean rehearsal; full 13-commit review | zero P0/P1; final reviewer approved completion and Phase 1 unlock | pass |
 | MP-1.1 | 2026-07-13 | implement_mp_1_1 | review_mp_1_1 | `42fa553`, `ee6ec56`, `f2a34a7` | focused contract RED→GREEN; CRLF fixture; clean-clone lint; unit/safety 24/24; build + 589 static pages | authoritative contract, precedence, decision/phase ownership, current runtime truth; zero review findings | pass |
+| MP-1.2 | 2026-07-13 | implement_mp_1_2 | review_mp_1_2 | `725b8e8`, `16f9f4f` | focused boundary RED→GREEN; LF/CRLF; clean-clone lint; unit/safety 24/24; build + 589 pages | current-vs-target MVP, fastener/quote/enterprise exclusions, exact phase ownership; zero review findings | pass |
 
 ## Open Risks and Blockers
 
