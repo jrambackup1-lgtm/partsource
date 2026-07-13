@@ -118,21 +118,88 @@ for (const boundary of [
 
 assert.match(normalized, /## Official sources/);
 assert.match(normalized, /Retrieved: 2026-07-13/g);
-for (const officialHost of [
-  'mcmaster.com',
-  'grainger.com',
-  'fastenal.com',
-  'misumi-ec.com',
-  'rs-online.com',
-  'boltdepot.com',
-  'business.amazon.com',
+const officialSourcesSection = normalized.match(
+  /## Official sources\n([\s\S]+?)\n## Internal authority sources/,
+)?.[1];
+assert.ok(officialSourcesSection, 'official sources section must have competitor sources');
+
+const approvedOfficialHosts: Record<string, ReadonlySet<string>> = {
+  'McMaster-Carr': new Set(['mcmaster.com', 'www.mcmaster.com']),
+  'Grainger': new Set(['grainger.com', 'www.grainger.com']),
+  'Fastenal': new Set(['fastenal.com', 'www.fastenal.com']),
+  'MISUMI': new Set([
+    'account.misumi-ec.com',
+    'my.misumi-ec.com',
+    'uk.misumi-ec.com',
+    'us.misumi-ec.com',
+  ]),
+  'RS': new Set([
+    'at.rs-online.com',
+    'au.rs-online.com',
+    'my.rs-online.com',
+    'za.rs-online.com',
+  ]),
+  'Bolt Depot': new Set(['boltdepot.com', 'www.boltdepot.com']),
+  'Amazon Business': new Set(['business.amazon.com']),
+};
+
+function isApprovedOfficialSource(
+  sourceUrl: string,
+  approvedHosts: ReadonlySet<string>,
+): boolean {
+  try {
+    const parsed = new URL(sourceUrl);
+    return parsed.protocol === 'https:' && approvedHosts.has(parsed.hostname.toLowerCase());
+  } catch {
+    return false;
+  }
+}
+
+let checkedOfficialSourceCount = 0;
+for (const [competitor, approvedHosts] of Object.entries(approvedOfficialHosts)) {
+  const escapedCompetitor = competitor.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const competitorSources = officialSourcesSection.match(
+    new RegExp(`### ${escapedCompetitor}\\n([\\s\\S]+?)(?=\\n### |$)`),
+  )?.[1];
+  assert.ok(competitorSources, `missing official source group for ${competitor}`);
+
+  const sourceUrls = [...competitorSources.matchAll(/\]\(([^)]+)\)/g)].map(
+    (match) => match[1],
+  );
+  assert.ok(sourceUrls.length > 0, `missing direct official source for ${competitor}`);
+
+  for (const sourceUrl of sourceUrls) {
+    const parsed = new URL(sourceUrl);
+    assert.equal(parsed.protocol, 'https:', `${competitor} source must use HTTPS: ${sourceUrl}`);
+    assert.ok(
+      approvedHosts.has(parsed.hostname.toLowerCase()),
+      `${competitor} source must use an approved official hostname: ${sourceUrl}`,
+    );
+    checkedOfficialSourceCount += 1;
+  }
+}
+assert.equal(
+  checkedOfficialSourceCount,
+  [...officialSourcesSection.matchAll(/\]\(([^)]+)\)/g)].length,
+  'every cited official URL must be assigned to and validated for a competitor',
+);
+
+for (const [competitor, spoofedUrl] of [
+  ['Grainger', 'https://evil.example/path/grainger.com'],
+  ['McMaster-Carr', 'https://evil.example/?next=https://www.mcmaster.com/'],
+  ['Fastenal', 'https://www.fastenal.com.evil.example/fast/help'],
 ]) {
-  assert.match(
-    normalized,
-    new RegExp(`https:\\/\\/(?:www\\.)?[^)\\s]*${officialHost.replace('.', '\\.')}`),
-    `missing direct official source for ${officialHost}`,
+  assert.equal(
+    isApprovedOfficialSource(spoofedUrl, approvedOfficialHosts[competitor]),
+    false,
+    `spoofed URL must not count as an official ${competitor} source`,
   );
 }
+assert.equal(
+  isApprovedOfficialSource('http://www.grainger.com/content/help', approvedOfficialHosts.Grainger),
+  false,
+  'HTTP source must not count as an official source',
+);
 
 assert.doesNotMatch(normalized, /https?:\/\/(?:www\.)?(?:google|bing)\./i);
 assert.match(normalized, /Not confirmed/);
