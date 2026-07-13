@@ -29,7 +29,7 @@ for (const topic of [
   'pSEO indexing',
   'Styling and runtime stack',
 ]) {
-  assert.match(contract, new RegExp(`\\| \\*\\*${topic}\\*\\* \\|[^\\n]+\\|[^\\n]*(?:Current|Rejected|Phase|MP-)`), `${topic} must have a resolved decision and owner`);
+  assert.match(contract, new RegExp(`\\| \\*\\*${topic}\\*\\* \\|[^\\r\\n]+\\|[^\\r\\n]*(?:Current|Rejected|Phase|MP-)`), `${topic} must have a resolved decision and owner`);
 }
 
 assert.match(contract, /Vite \+ React SPA/);
@@ -52,11 +52,11 @@ const truthSemantics: Record<string, RegExp[]> = {
   'Exact equivalent': [/fit, form, function/i, /material/i, /grade/i, /standard/i, /certifications/i],
   'Approved alternate': [/organization approved/i, /defined use/i],
 };
-const truthSection = contract.match(/## Product Truth Contract\n([\s\S]+?)\nNon-negotiable boundaries:/)?.[1];
+const truthSection = contract.match(/## Product Truth Contract\r?\n([\s\S]+?)\r?\nNon-negotiable boundaries:/)?.[1];
 assert.ok(truthSection, 'Product Truth Contract must have a definitions table');
 const truthDefinitions: string[] = [];
 for (const [term, requiredFragments] of Object.entries(truthSemantics)) {
-  const row = truthSection.match(new RegExp(`^\\| ${term} \\| (.+) \\|$`, 'm'));
+  const row = truthSection.match(new RegExp(`^\\| ${term} \\| (.+) \\|\\r?$`, 'm'));
   assert.ok(row, `${term} must have a Product Truth definition`);
   const definition = row[1].trim();
   assert.ok(definition, `${term} definition must not be empty`);
@@ -79,10 +79,10 @@ for (const boundary of [
 }
 
 assert.match(contract, /## Phase ownership register/);
-const ownershipSection = contract.match(/## Phase ownership register\n([\s\S]+?)\n## Change rule/)?.[1];
+const ownershipSection = contract.match(/## Phase ownership register\r?\n([\s\S]+?)\r?\n## Change rule/)?.[1];
 assert.ok(ownershipSection, 'Phase ownership register must have content');
 for (let phase = 0; phase <= 12; phase += 1) {
-  const row = ownershipSection.match(new RegExp(`^\\| Phase ${phase} \\| (.+) \\|$`, 'm'));
+  const row = ownershipSection.match(new RegExp(`^\\| Phase ${phase} \\| (.+) \\|\\r?$`, 'm'));
   assert.ok(row, `Phase ${phase} must have an ownership row`);
   assert.ok(row[1].trim(), `Phase ${phase} must own at least one promise`);
 }
@@ -98,5 +98,13 @@ for (const rejectedPromise of [
   assert.ok(ownershipSection.includes(rejectedPromise), `${rejectedPromise} must remain explicitly rejected`);
 }
 assert.match(ownershipSection, /are rejected from the current roadmap/);
+
+const crlfFixture = contract.replace(/\r?\n/g, '\r\n');
+const crlfTruthSection = crlfFixture.match(/## Product Truth Contract\r?\n([\s\S]+?)\r?\nNon-negotiable boundaries:/)?.[1];
+assert.ok(crlfTruthSection, 'CRLF Product Truth section must be parseable');
+assert.match(crlfTruthSection, /^\| Configuration \| (.+) \|\r?$/m);
+const crlfOwnershipSection = crlfFixture.match(/## Phase ownership register\r?\n([\s\S]+?)\r?\n## Change rule/)?.[1];
+assert.ok(crlfOwnershipSection, 'CRLF phase ownership section must be parseable');
+assert.match(crlfOwnershipSection, /^\| Phase 12 \| (.+) \|\r?$/m);
 
 console.log('Phase 1 product-contract checks passed.');
