@@ -20,7 +20,7 @@ Every model input has one of three labels:
 |---|---:|---|---|
 | Current attributable revenue | $0 observed | The current product contract records no commercial pricing, offer, checkout, account, or brokerage transaction. | No path is treated as validated. |
 | Current sourcing-help action | 1 mailto/clipboard handoff | `research/product-contract.md` says it is a lead only, without dependable submission, acknowledgement, SLA, ownership, or status. | Enough to test demand qualitatively now; not a revenue event. |
-| Primary monetization evidence | 0 completed PartSource user studies, 0 attributed purchases, 0 paid SaaS accounts, 0 fulfilled brokerage orders recorded in the reviewed research | `research/research-audit.md` identifies missing primary interviews, CAC, LTV, conversion, retention, and SOM evidence. | All numeric funnel inputs remain hypotheses. |
+| Primary monetization evidence | 0 completed PartSource user studies, 0 attributed purchases, 0 paid SaaS accounts, 0 fulfilled brokerage orders recorded in the reviewed research | `research/user-research-results.md` records 0/12 completed moderated sessions, and no primary interview, CAC, LTV, conversion, retention, or attributed-purchase evidence exists in the reviewed repository. | All numeric funnel inputs remain hypotheses. |
 | Supplier offer data | 0 sanctioned production feeds | `research/product-contract.md` assigns sanctioned supplier data to Phase 9 only. | No live price, inventory, availability, or optimizer model. |
 
 ### External benchmark inputs

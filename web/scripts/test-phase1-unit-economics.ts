@@ -13,6 +13,10 @@ assert.ok(
 const document = fs.readFileSync(documentPath, 'utf8');
 
 assert.match(document, /subordinate to `research\/product-contract\.md`/i);
+
+for (const citedDoc of new Set([...document.matchAll(/`(research\/[A-Za-z0-9._-]+\.md)`/g)].map((match) => match[1]))) {
+  assert.ok(fs.existsSync(path.join(repoRoot, citedDoc)), `cited repository document must exist in the repository: ${citedDoc}`);
+}
 for (const label of ['Observed', 'External benchmark', 'Hypothesis']) {
   assert.match(document, new RegExp(`\\*\\*${label}\\*\\*`), `missing ${label} input label`);
 }
