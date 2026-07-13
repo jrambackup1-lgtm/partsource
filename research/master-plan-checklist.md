@@ -38,7 +38,7 @@ Valid phase statuses: `blocked`, `ready`, `in_progress`, `verification`, `comple
 
 - [x] MP-1.1 Authoritative product source
 - [x] MP-1.2 MVP boundary
-- [ ] MP-1.3 Capability tiers
+- [x] MP-1.3 Capability tiers
 - [x] MP-1.4 Monetization validation
 - [ ] MP-1.5 Legal boundary
 - [ ] MP-1.6 Primary user research
@@ -216,6 +216,7 @@ Append one row per completed packet.
 | MP-1.2 | 2026-07-13 | implement_mp_1_2 | review_mp_1_2 | `725b8e8`, `16f9f4f` | focused boundary RED→GREEN; LF/CRLF; clean-clone lint; unit/safety 24/24; build + 589 pages | current-vs-target MVP, fastener/quote/enterprise exclusions, exact phase ownership; zero review findings | pass |
 | MP-1.7 | 2026-07-13 | implement_mp_1_7 | review_mp_1_7 | `319da79`, `a381435` | focused matrix RED→GREEN; 27 official URLs host-validated; clean-clone lint; unit/safety 24/24; build + 589 pages | 7 competitors + PartSource by 11 tasks/4 personas; controlled evidence states; zero review findings | pass |
 | MP-1.4 | 2026-07-13 | implement_mp_1_4 | review_mp_1_4 | `1dbbee8`, `8c520f1` | focused economics RED→GREEN; 12/12 scenario + 6/6 sensitivity rows; corruption fixture; clean-clone lint/unit/build | bottom-up SOM/CAC/LTV/margin/kill gates; commercial inputs remain hypotheses; zero review findings | pass |
+| MP-1.3 | 2026-07-13 | implement_mp_1_3 | review_mp_1_3 | `926faa1` | focused tiers RED→GREEN; LF/CRLF; clean-clone lint; unit/safety 24/24; build + 589 pages | 4 tiers, 9 dimensions, exact triggers/gates, presentation bans; zero review findings | pass |
 
 ## Open Risks and Blockers
 
