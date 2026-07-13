@@ -1,10 +1,14 @@
 # PartSource MP-1.6 Primary User Research Results
 
-**Packet status:** BLOCKED — qualifying evidence gate unmet
+**Derived packet state:** BLOCKED
 
-**Qualifying sessions:** 0/12
+**Authoritative checklist state:** unchecked
 
-**Comprehension passes:** 0/10 required
+**Decision-set sessions:** 0/12
+
+**Supplemental sessions:** 0 excluded
+
+**Unaided comprehension:** 0/12; threshold 10
 
 **Last updated:** 2026-07-13
 
@@ -24,25 +28,25 @@ This is the anonymized evidence ledger for `research/user-research-plan.md`. No 
 
 ## Session evidence ledger
 
-| Evidence ID | Date | Segment | Moderated duration and mode | Task outcomes | Comprehension verdict | Problem evidence | Monetization evidence | Consent status |
-|---|---|---|---|---|---|---|---|---|
+| Evidence ID | Set | Date | Segment | Moderated duration and mode | T1–T5 outcomes | Unaided comprehension verdict | Post-task comprehension | Problem evidence | Unprompted monetization | Aided path ranking | Consent and recording | Detailed note reference |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
 
 No qualifying moderated sessions are recorded.
 
-Each future row must use an anonymized `PS-UR-###` ID and contain every field above. A detailed session note using the template in the plan must follow in this file under the same evidence ID. Identity, employer, and contact data stay outside the repository.
+Each future row must use a unique anonymized `PS-UR-###` ID, be tagged `Decision` or `Supplemental`, and contain every field above. Use `T1=Complete|Partial|Failed: observation<br>...T5=...` for all five outcomes. A linked `### PS-UR-### detailed note` using the plan template must follow in this file. Identity, employer, and contact data stay outside the repository.
 
 ## Current gate assessment
 
 | Gate | Requirement | Current evidence | Result |
 |---|---|---|---|
-| Moderated sessions | At least 12 qualifying sessions | 0 | BLOCKED |
-| Exact quotas | 3 engineers; 3 procurement users; 2 maintenance users; 2 small-company buyers; 1 student/hobbyist; 1 enterprise procurement user | All segments 0 | BLOCKED |
-| Evidence integrity | Required fields, anonymized ID, consent, and detailed note for every counted session | No session evidence | BLOCKED |
-| Comprehension | At least 10 of the required 12; at least 80% if the decision set is larger | 0 passes | BLOCKED |
+| Decision set | Exactly 12 qualifying `Decision` rows; supplemental rows excluded | 0 decision; 0 supplemental | BLOCKED |
+| Exact quotas | 3 engineers; 3 procurement users; 2 maintenance users; 2 small-company buyers; 1 student/hobbyist; 1 enterprise procurement user | All decision segments 0 | BLOCKED |
+| Evidence integrity | Unique anonymized ID, at least 20 moderated minutes, T1–T5 outcomes, substantive fields, consent/recording state, and linked detailed note | No session evidence | BLOCKED |
+| Comprehension | At least 10 locked unaided passes in the exact 12-row decision set | 0/12; threshold 10 | BLOCKED |
 | Core problem | Survive/revise/kill threshold from the plan applied to primary evidence | Not testable | BLOCKED |
 | Monetization thesis | A path meets the plan's directional survival threshold | Not testable | BLOCKED |
 
-The packet and Phase 1 exit gate cannot be claimed complete until every row above passes. The checklist must remain unchecked.
+The derived packet state comes from parsed evidence plus `research/master-plan-checklist.md`. The packet and Phase 1 exit gate cannot be claimed complete until every row above passes and the authoritative checklist is correctly updated after review.
 
 ## Evidence boundary
 
@@ -52,4 +56,4 @@ No participant, task outcome, quote, willingness to pay, or session result has b
 
 ## Synthesis
 
-Not started. With 0/12 sessions, no primary theme, segment comparison, comprehension rate, problem verdict, or monetization verdict can be reported.
+Not started. With 0/12 decision-set sessions and 0/12 locked unaided comprehension passes, no primary theme, segment comparison, problem verdict, or monetization verdict can be reported. Threshold: 10 unaided passes.
