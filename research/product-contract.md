@@ -87,7 +87,7 @@ Non-negotiable boundaries:
 | Manufacturer part | Only claim when manufacturer identity and part number are supported by explicit evidence. |
 | Supplier listing | Not provided by the current MVP. Requires a sanctioned source, identity resolution, permission, and freshness controls in Phase 9. |
 | Offer | Not provided by the current MVP. Requires listing identity plus observed commercial fields, source, timestamp, and expiry in Phases 5 and 9. |
-| Candidate match | May be produced by decoding, search, or a supplier-site handoff; always requires user verification. |
+| Candidate match | A supplier-site URL is only a search handoff; a result may become a candidate match only after inspection and still requires verification. |
 | Cross-reference | May be shown only with explicit evidence and relationship type; never bulk-generated from dimensional similarity. |
 | Exact equivalent | Requires the complete Product Truth definition and the Phase 5 review policy. No current blanket equivalence claim exists. |
 | Approved alternate | Requires a named organization's approval for a defined use and Phase 8 authorization/audit controls. |

@@ -37,18 +37,35 @@ assert.match(contract, /Tailwind CSS 4/);
 assert.match(contract, /GitHub Pages/);
 assert.match(contract, /https:\/\/jrambackup1-lgtm\.github\.io\/partsource\//);
 
-for (const term of [
-  'Configuration',
-  'Manufacturer part',
-  'Supplier listing',
-  'Offer',
-  'Candidate match',
-  'Cross-reference',
-  'Exact equivalent',
-  'Approved alternate',
-]) {
-  assert.match(contract, new RegExp(`\\| ${term} \\|`), `${term} must remain distinct`);
+assert.ok(
+  /\| Candidate match \| A supplier-site URL is only a search handoff; a result may become a candidate match only after inspection and still requires verification\. \|/.test(contract),
+  'a supplier search handoff must remain distinct from an inspected candidate result',
+);
+
+const truthSemantics: Record<string, RegExp[]> = {
+  'Configuration': [/standards-defined/i, /not necessarily manufactured or stocked/i],
+  'Manufacturer part': [/real product/i, /manufacturer part number/i],
+  'Supplier listing': [/supplier-specific/i, /SKU/i, /manufacturer part/i],
+  'Offer': [/observed price or availability/i, /currency/i, /unit basis/i, /pack/i, /source/i, /timestamp/i, /expiry/i],
+  'Candidate match': [/possibly relevant result/i, /requiring verification/i],
+  'Cross-reference': [/relationship/i, /explicitly supported by evidence/i],
+  'Exact equivalent': [/fit, form, function/i, /material/i, /grade/i, /standard/i, /certifications/i],
+  'Approved alternate': [/organization approved/i, /defined use/i],
+};
+const truthSection = contract.match(/## Product Truth Contract\n([\s\S]+?)\nNon-negotiable boundaries:/)?.[1];
+assert.ok(truthSection, 'Product Truth Contract must have a definitions table');
+const truthDefinitions: string[] = [];
+for (const [term, requiredFragments] of Object.entries(truthSemantics)) {
+  const row = truthSection.match(new RegExp(`^\\| ${term} \\| (.+) \\|$`, 'm'));
+  assert.ok(row, `${term} must have a Product Truth definition`);
+  const definition = row[1].trim();
+  assert.ok(definition, `${term} definition must not be empty`);
+  for (const fragment of requiredFragments) {
+    assert.match(definition, fragment, `${term} definition must preserve ${fragment}`);
+  }
+  truthDefinitions.push(definition);
 }
+assert.equal(new Set(truthDefinitions).size, Object.keys(truthSemantics).length, 'Product Truth definitions must be distinct');
 
 for (const boundary of [
   'Never describe a configuration as stocked.',
@@ -62,6 +79,24 @@ for (const boundary of [
 }
 
 assert.match(contract, /## Phase ownership register/);
-assert.match(contract, /Phase 0[\s\S]+Phase 1[\s\S]+Phase 2[\s\S]+Phase 3[\s\S]+Phase 4[\s\S]+Phase 5[\s\S]+Phase 6[\s\S]+Phase 7[\s\S]+Phase 8[\s\S]+Phase 9[\s\S]+Phase 10[\s\S]+Phase 11[\s\S]+Phase 12/);
+const ownershipSection = contract.match(/## Phase ownership register\n([\s\S]+?)\n## Change rule/)?.[1];
+assert.ok(ownershipSection, 'Phase ownership register must have content');
+for (let phase = 0; phase <= 12; phase += 1) {
+  const row = ownershipSection.match(new RegExp(`^\\| Phase ${phase} \\| (.+) \\|$`, 'm'));
+  assert.ok(row, `Phase ${phase} must have an ownership row`);
+  assert.ok(row[1].trim(), `Phase ${phase} must own at least one promise`);
+}
+for (const rejectedPromise of [
+  'CAD/STEP downloads',
+  'torque calculators as product tools',
+  'material-substitution tools',
+  'embedded commerce widgets',
+  'admin portals',
+  'localization',
+  'automatic split-order optimization',
+]) {
+  assert.ok(ownershipSection.includes(rejectedPromise), `${rejectedPromise} must remain explicitly rejected`);
+}
+assert.match(ownershipSection, /are rejected from the current roadmap/);
 
 console.log('Phase 1 product-contract checks passed.');
