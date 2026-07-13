@@ -7,7 +7,7 @@ This file is the cross-session source of truth. Agents must update it only after
 | Phase | Status | Started | Completed | Evidence |
 |---|---|---|---|---|
 | 0 — Contain Current Production Risk | complete | 2026-07-11 | 2026-07-12 | commits through `ec4a003`; CI `29203431947`; deploy/smoke `29203432018`; clean rehearsal + independent review pass |
-| 1 — Product, Users, Business Boundaries | in_progress | 2026-07-13 | — | Phase 0 exit gate passed; Phase 1 execution started at MP-1.1 |
+| 1 — Product, Users, Business Boundaries | in_progress | 2026-07-13 | — | MP-1.1–MP-1.5 and MP-1.7 complete; MP-1.6 kit approved but real sessions 0/12 |
 | 2 — Mechanical Domain Foundation | blocked | — | — | — |
 | 3 — UI Foundation | blocked | — | — | — |
 | 4 — Search and Catalog Discovery | blocked | — | — | — |
@@ -225,3 +225,4 @@ Append one row per completed packet.
 |---|---|---|---|---|---|
 | P2-0-1 | 1 | `research/master-plan.md` Current Readiness still describes the pre-Phase-0 audit snapshot | Phase 1 | Reconcile into the authoritative product source without erasing historical audit context | resolved by MP-1.1 (`42fa553`) |
 | P2-0-2 | 1 | `research/prd.md` still names obsolete Next.js/Vanilla CSS architecture | Phase 1 | Update authoritative architecture description to match the shipped Vite/React/Tailwind runtime | resolved by authoritative precedence and runtime contract in MP-1.1 (`42fa553`) |
+| P1-1.6 | 1 | MP-1.6 requires 12 real moderated sessions with exact segment quotas; current qualifying evidence is 0/12 | Product owner / research recruiter | Complete 12 consented sessions, record valid anonymized evidence, achieve at least 10/12 unaided comprehension, and record core-problem plus monetization decisions | open; kit `ffa1770`, `db6db0b`, `cddc4cb`, `435f6e9`; independent kit review approved |
