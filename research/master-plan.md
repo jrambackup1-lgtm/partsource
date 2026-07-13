@@ -3,6 +3,7 @@
 **Status:** Approved execution roadmap
 **Execution tracker:** `research/master-plan-checklist.md`
 **Session prompt:** `research/phase-execution-prompt.md`
+**Current product contract:** `research/product-contract.md`
 
 ## Outcome
 
@@ -18,7 +19,9 @@ Build PartSource into a trustworthy, standards-first mechanical hardware discove
 
 Work proceeds one phase at a time. No phase starts until the prior exit gate passes.
 
-## Current Readiness
+## Current Readiness — Pre-Phase-0 Audit Snapshot
+
+The findings below are preserved as the audit snapshot that initiated Phase 0; they are not a statement of current production readiness. Phase 0 completion evidence is recorded in `research/master-plan-checklist.md`. Current product claims and boundaries live in `research/product-contract.md`.
 
 Technical checks pass, but the product is not production-ready:
 
