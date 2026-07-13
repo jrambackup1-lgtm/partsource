@@ -132,21 +132,64 @@ for (const question of [
 }
 
 const sources = normaliseNewlines(memo).slice(normaliseNewlines(memo).indexOf('## Official sources\n'));
-assert.match(sources, /Retrieved: 2026-07-13/);
-for (const jurisdiction of ['India', 'European Union', 'United Kingdom', 'California / United States', 'United States', 'Hosting', 'Supplier access']) {
-  assert.match(sources, new RegExp(`^\\| ${jurisdiction.replace('/', '\\/')} \\|`, 'm'), `official sources must label ${jurisdiction}`);
+const sourceUrls = [...sources.matchAll(/\]\((https:\/\/[^)\s]+)\)/g)].map((match) => match[1]);
+const staleDpdpActUrl = 'https://www.meity.gov.in/writereaddata/files/Digital%20Personal%20Data%20Protection%20Act%202023.pdf';
+
+assert.ok(
+  !sourceUrls.includes(staleDpdpActUrl),
+  `official sources must not retain the stale DPDP Act URL: ${staleDpdpActUrl}`,
+);
+
+const requiredOfficialUrls = [
+  'https://www.meity.gov.in/documents/act-and-policies/digital-personal-data-protection-rules-2025-gDOxUjMtQWa',
+  'https://www.meity.gov.in/static/uploads/2024/06/2bf1f0e9f04e6fb4f8fef35e82c42aa5.pdf',
+  'https://www.meity.gov.in/static/uploads/2025/11/53450e6e5dc0bfa85ebd78686cadad39.pdf',
+  'https://www.meity.gov.in/static/uploads/2025/11/c56ceae6c383460ca69577428d36828b.pdf',
+  'https://eur-lex.europa.eu/eli/reg/2016/679/oj/eng',
+  'https://ico.org.uk/for-organisations/direct-marketing-and-privacy-and-electronic-communications/guide-to-pecr/cookies-and-similar-technologies/',
+  'https://cppa.ca.gov/pdf/general_notices.pdf',
+  'https://www.ftc.gov/business-guidance/resources/ftcs-endorsement-guides-what-people-are-asking',
+  'https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages',
+  'https://www.mcmaster.com/help/api/',
+  'https://consumeraffairs.nic.in/acts-and-rules/consumer-protection/consumer-protection',
+] as const;
+
+assert.equal(new Set(sourceUrls).size, sourceUrls.length, 'official source URLs must not be duplicated');
+assert.equal(sourceUrls[0], requiredOfficialUrls[0], 'current MeitY DPDP source page must be the preferred first India source');
+for (const requiredUrl of requiredOfficialUrls) {
+  assert.ok(sourceUrls.includes(requiredUrl), `official sources must include exact URL: ${requiredUrl}`);
 }
-for (const officialHost of [
-  'meity.gov.in',
+
+const allowedOfficialHosts = new Set([
+  'www.meity.gov.in',
   'eur-lex.europa.eu',
   'ico.org.uk',
   'cppa.ca.gov',
-  'ftc.gov',
+  'www.ftc.gov',
   'docs.github.com',
-  'mcmaster.com',
+  'www.mcmaster.com',
   'consumeraffairs.nic.in',
-]) {
-  assert.match(sources, new RegExp(`https:\\/\\/(?:www\\.)?${officialHost.replace('.', '\\.')}`), `sources must include direct official URL for ${officialHost}`);
+]);
+for (const sourceUrl of sourceUrls) {
+  const parsed = new URL(sourceUrl);
+  assert.equal(parsed.protocol, 'https:', `official source must use HTTPS: ${sourceUrl}`);
+  assert.ok(allowedOfficialHosts.has(parsed.hostname), `official source host is not approved: ${parsed.hostname}`);
+}
+
+assert.match(sources, /\*\*Retrieved: 2026-07-13\. Live retrieval checked: 2026-07-13\.\*\*/);
+assert.match(sources, /focused repository test validates the recorded URL strings, HTTPS, and approved hosts; it does not make live HTTP requests/i);
+const sourceRows = [...sources.matchAll(/^\| ([^|]+) \| \[[^\]]+\]\((https:\/\/[^)\s]+)\) \| ([^|]+) \| ([^|]+) \|$/gm)];
+assert.equal(sourceRows.length, requiredOfficialUrls.length, 'every official source must have one table row with retrieval status');
+for (const [, , sourceUrl, , status] of sourceRows) {
+  assert.ok(requiredOfficialUrls.includes(sourceUrl as (typeof requiredOfficialUrls)[number]), `unexpected source row URL: ${sourceUrl}`);
+  assert.match(
+    status.trim(),
+    /^(?:Live content retrieved|Official search content retrieved; direct open timed out) on 2026-07-13\.$/,
+    `source row must record exact retrieval status: ${sourceUrl}`,
+  );
+}
+for (const jurisdiction of ['India', 'European Union', 'United Kingdom', 'California / United States', 'United States', 'Hosting', 'Supplier access']) {
+  assert.match(sources, new RegExp(`^\\| ${jurisdiction.replace('/', '\\/')} \\|`, 'm'), `official sources must label ${jurisdiction}`);
 }
 
 const crlfFixture = normaliseNewlines(memo).replace(/\n/g, '\r\n');
