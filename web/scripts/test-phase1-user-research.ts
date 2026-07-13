@@ -49,7 +49,7 @@ type ChecklistStates = {
   readinessKit: boolean;
   phase1IndependentReview: boolean;
   phase1Exit: boolean;
-  deferredStudy: boolean;
+  phase2Packets: boolean[];
   phase2IndependentReview: boolean;
   phase2Exit: boolean;
 };
@@ -271,11 +271,23 @@ function parseChecklistStates(markdown: string): ChecklistStates {
     assert.ok(state !== undefined, `authoritative checklist must contain ${label}`);
     return state.toLowerCase() === 'x';
   };
+  const phase2Packets = [
+    'MP-2.1 Taxonomy',
+    'MP-2.2 Standards registry',
+    'MP-2.3 Units',
+    'MP-2.4 Material semantics',
+    'MP-2.5 Provenance',
+    'MP-2.6 Cross-reference policy',
+    'MP-2.7 Catalog migration',
+    'MP-2.8 Reference verification',
+    'MP-2.9 Publishing lifecycle',
+    'MP-2.10 Moderated primary research execution and decisions',
+  ].map(checked);
   return {
     readinessKit: checked('MP-1.6 Primary research readiness kit'),
     phase1IndependentReview: checked('Phase 1 independent review'),
     phase1Exit: checked('Phase 1 exit gate passed'),
-    deferredStudy: checked('MP-2.10 Moderated primary research execution and decisions'),
+    phase2Packets,
     phase2IndependentReview: checked('Phase 2 independent review'),
     phase2Exit: checked('Phase 2 exit gate passed'),
   };
@@ -377,13 +389,15 @@ function deriveStates(
     : checklistStates.readinessKit ? 'COMPLETE' : 'READY_FOR_CHECKLIST_REVIEW';
 
   const deferredStudyEvidenceMet = packetEvidenceGateMet(sessions) && decisionsFinalized(decisions);
-  assert.ok(!checklistStates.deferredStudy || deferredStudyEvidenceMet, 'checklist cannot mark MP-2.10 complete while the moderated study or decisions are incomplete');
+  const deferredStudyChecked = checklistStates.phase2Packets[9];
+  assert.ok(!deferredStudyChecked || deferredStudyEvidenceMet, 'checklist cannot mark MP-2.10 complete while the moderated study or decisions are incomplete');
   const deferredStudy: DeferredStudyState = !deferredStudyEvidenceMet
     ? 'BLOCKED'
-    : checklistStates.deferredStudy ? 'COMPLETE' : 'READY_FOR_CHECKLIST_REVIEW';
+    : deferredStudyChecked ? 'COMPLETE' : 'READY_FOR_CHECKLIST_REVIEW';
 
-  const phase2PrerequisitesMet = deferredStudy === 'COMPLETE' && decisionsSurvive(decisions) && checklistStates.phase2IndependentReview;
-  assert.ok(!checklistStates.phase2Exit || phase2PrerequisitesMet, 'Phase 2 exit gate cannot be checked before MP-2.10 passes with surviving decisions and independent review');
+  const allPhase2PacketsChecked = checklistStates.phase2Packets.length === 10 && checklistStates.phase2Packets.every(Boolean);
+  const phase2PrerequisitesMet = allPhase2PacketsChecked && deferredStudy === 'COMPLETE' && decisionsSurvive(decisions) && checklistStates.phase2IndependentReview;
+  assert.ok(!checklistStates.phase2Exit || phase2PrerequisitesMet, 'Phase 2 exit gate cannot be checked before MP-2.1 through MP-2.10, surviving decisions, and independent review all pass');
   const phase2Exit: PhaseExitState = checklistStates.phase2Exit
     ? 'COMPLETE'
     : phase2PrerequisitesMet ? 'READY_FOR_EXIT_GATE_REVIEW' : 'BLOCKED';
@@ -442,7 +456,7 @@ function assertResultsConsistency(markdown: string, sessions: Session[], checkli
     ['MP-1.6 checklist', checklistStates.readinessKit],
     ['Phase 1 independent review checklist', checklistStates.phase1IndependentReview],
     ['Phase 1 exit gate checklist', checklistStates.phase1Exit],
-    ['MP-2.10 checklist', checklistStates.deferredStudy],
+    ['MP-2.10 checklist', checklistStates.phase2Packets[9]],
     ['Phase 2 independent review checklist', checklistStates.phase2IndependentReview],
     ['Phase 2 exit gate checklist', checklistStates.phase2Exit],
   ] as const) {
@@ -541,18 +555,21 @@ const unchecked: ChecklistStates = {
   readinessKit: false,
   phase1IndependentReview: false,
   phase1Exit: false,
-  deferredStudy: false,
+  phase2Packets: Array(10).fill(false),
   phase2IndependentReview: false,
   phase2Exit: false,
 };
+const onlyDeferredStudyChecked = [...Array(9).fill(false), true];
+const allPhase2PacketsChecked = Array(10).fill(true);
 
 assert.deepEqual(deriveStates(validTwelve, syntheticNotes, pendingDecisions, unchecked), { readinessKit: 'READY_FOR_CHECKLIST_REVIEW', deferredStudy: 'BLOCKED', phase2Exit: 'BLOCKED' });
 assert.deepEqual(deriveStates(validTwelve, syntheticNotes, survivingDecisions, unchecked), { readinessKit: 'READY_FOR_CHECKLIST_REVIEW', deferredStudy: 'READY_FOR_CHECKLIST_REVIEW', phase2Exit: 'BLOCKED' });
-assert.deepEqual(deriveStates(validTwelve, syntheticNotes, survivingDecisions, { ...unchecked, readinessKit: true, deferredStudy: true }), { readinessKit: 'COMPLETE', deferredStudy: 'COMPLETE', phase2Exit: 'BLOCKED' }, 'readiness-kit completion stays separate from deferred-study completion and Phase 2 exit');
-assert.deepEqual(deriveStates(validTwelve, syntheticNotes, survivingDecisions, { ...unchecked, readinessKit: true, deferredStudy: true, phase2IndependentReview: true }), { readinessKit: 'COMPLETE', deferredStudy: 'COMPLETE', phase2Exit: 'READY_FOR_EXIT_GATE_REVIEW' });
-assert.deepEqual(deriveStates(validTwelve, syntheticNotes, survivingDecisions, { ...unchecked, readinessKit: true, deferredStudy: true, phase2IndependentReview: true, phase2Exit: true }), { readinessKit: 'COMPLETE', deferredStudy: 'COMPLETE', phase2Exit: 'COMPLETE' });
-assert.deepEqual(deriveStates(validTwelve, syntheticNotes, killedDecisions, { ...unchecked, readinessKit: true, deferredStudy: true, phase2IndependentReview: true }), { readinessKit: 'COMPLETE', deferredStudy: 'COMPLETE', phase2Exit: 'BLOCKED' }, 'finalized kill decisions complete MP-2.10 but block Phase 2 exit');
-assert.throws(() => deriveStates(validTwelve, syntheticNotes, killedDecisions, { ...unchecked, readinessKit: true, deferredStudy: true, phase2IndependentReview: true, phase2Exit: true }), /Phase 2 exit gate cannot be checked/);
+assert.deepEqual(deriveStates(validTwelve, syntheticNotes, survivingDecisions, { ...unchecked, readinessKit: true, phase2Packets: onlyDeferredStudyChecked }), { readinessKit: 'COMPLETE', deferredStudy: 'COMPLETE', phase2Exit: 'BLOCKED' }, 'readiness-kit completion stays separate from deferred-study completion and Phase 2 exit');
+assert.equal(deriveStates(validTwelve, syntheticNotes, survivingDecisions, { ...unchecked, readinessKit: true, phase2Packets: onlyDeferredStudyChecked, phase2IndependentReview: true }).phase2Exit, 'BLOCKED', 'full Phase 2 exit cannot be ready while MP-2.1 through MP-2.9 are unchecked');
+assert.deepEqual(deriveStates(validTwelve, syntheticNotes, survivingDecisions, { ...unchecked, readinessKit: true, phase2Packets: allPhase2PacketsChecked, phase2IndependentReview: true }), { readinessKit: 'COMPLETE', deferredStudy: 'COMPLETE', phase2Exit: 'READY_FOR_EXIT_GATE_REVIEW' });
+assert.deepEqual(deriveStates(validTwelve, syntheticNotes, survivingDecisions, { ...unchecked, readinessKit: true, phase2Packets: allPhase2PacketsChecked, phase2IndependentReview: true, phase2Exit: true }), { readinessKit: 'COMPLETE', deferredStudy: 'COMPLETE', phase2Exit: 'COMPLETE' });
+assert.deepEqual(deriveStates(validTwelve, syntheticNotes, killedDecisions, { ...unchecked, readinessKit: true, phase2Packets: allPhase2PacketsChecked, phase2IndependentReview: true }), { readinessKit: 'COMPLETE', deferredStudy: 'COMPLETE', phase2Exit: 'BLOCKED' }, 'finalized kill decisions complete MP-2.10 but block Phase 2 exit');
+assert.throws(() => deriveStates(validTwelve, syntheticNotes, killedDecisions, { ...unchecked, readinessKit: true, phase2Packets: allPhase2PacketsChecked, phase2IndependentReview: true, phase2Exit: true }), /Phase 2 exit gate cannot be checked/);
 assert.deepEqual(deriveStates(validTwelve.slice(0, 11), syntheticNotes, pendingDecisionsFor(validTwelve.slice(0, 11)), unchecked), { readinessKit: 'READY_FOR_CHECKLIST_REVIEW', deferredStudy: 'BLOCKED', phase2Exit: 'BLOCKED' });
 assert.deepEqual(deriveStates(validTwelve.map((session, index) => ({ ...session, unaidedComprehension: `${index < 9 ? 'Pass' : 'Fail'}: Synthetic fixture reason remains substantive` })), syntheticNotes, survivingDecisions, unchecked), { readinessKit: 'READY_FOR_CHECKLIST_REVIEW', deferredStudy: 'BLOCKED', phase2Exit: 'BLOCKED' });
 
@@ -573,9 +590,10 @@ assert.throws(() => validateSession(validTwelve[0], syntheticNotes.replace('Synt
 assert.throws(() => validateSession(validTwelve[0], syntheticNotes.replace('Synthetic validator fixture only.', 'Observed IP 192.168.1.20 in session.')), /linked note contains IP address/);
 assert.throws(() => validateSession(validTwelve[0], syntheticNotes.replace('Synthetic validator fixture only.', 'See https:\/\/example.invalid\/identity for details.')), /linked note contains direct URL/);
 assert.throws(() => validateSession(validTwelve[0], syntheticNotes.replace('Synthetic validator fixture only.', 'Employer: ExampleCo was disclosed.')), /linked note contains labeled direct identifier/);
-assert.throws(() => deriveStates([], '', pendingDecisionsFor([]), { ...unchecked, deferredStudy: true }), /checklist cannot mark MP-2.10 complete/);
-assert.throws(() => deriveStates(validTwelve, syntheticNotes, pendingDecisions, { ...unchecked, deferredStudy: true }), /checklist cannot mark MP-2.10 complete/);
-assert.throws(() => deriveStates(validTwelve, syntheticNotes, survivingDecisions, { ...unchecked, deferredStudy: true, phase2Exit: true }), /Phase 2 exit gate cannot be checked/);
+assert.throws(() => deriveStates([], '', pendingDecisionsFor([]), { ...unchecked, phase2Packets: onlyDeferredStudyChecked }), /checklist cannot mark MP-2.10 complete/);
+assert.throws(() => deriveStates(validTwelve, syntheticNotes, pendingDecisions, { ...unchecked, phase2Packets: onlyDeferredStudyChecked }), /checklist cannot mark MP-2.10 complete/);
+assert.throws(() => deriveStates(validTwelve, syntheticNotes, survivingDecisions, { ...unchecked, phase2Packets: onlyDeferredStudyChecked, phase2Exit: true }), /Phase 2 exit gate cannot be checked/);
+assert.throws(() => deriveStates(validTwelve, syntheticNotes, survivingDecisions, { ...unchecked, phase2Packets: allPhase2PacketsChecked, phase2Exit: true }), /Phase 2 exit gate cannot be checked/);
 assert.throws(() => validateResearchDecisions({ ...survivingDecisions, coreProblem: { ...survivingDecisions.coreProblem, supportingIds: [...ids.slice(0, 7), 'PS-UR-999'] } }, validTwelve), /non-decision evidence ID/);
 assert.throws(() => validateResearchDecisions({ ...survivingDecisions, coreProblem: { ...survivingDecisions.coreProblem, supportingIds: ids.slice(0, 7), contraryIds: ids.slice(7), thresholdAccounting: '7/12 synthetic sessions meet the core threshold' } }, validTwelve), /SURVIVE requires at least 8\/12/);
 assert.throws(() => validateResearchDecisions({ ...survivingDecisions, monetization: { ...survivingDecisions.monetization, supportingIds: ids.slice(0, 3), contraryIds: ids.slice(3), thresholdAccounting: '3/12 synthetic sessions meet monetization' } }, validTwelve), /SURVIVE requires at least 4\/12/);
