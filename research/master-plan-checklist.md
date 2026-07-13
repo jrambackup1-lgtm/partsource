@@ -42,7 +42,7 @@ Valid phase statuses: `blocked`, `ready`, `in_progress`, `verification`, `comple
 - [ ] MP-1.4 Monetization validation
 - [ ] MP-1.5 Legal boundary
 - [ ] MP-1.6 Primary user research
-- [ ] MP-1.7 Competitive matrix
+- [x] MP-1.7 Competitive matrix
 - [ ] Phase 1 independent review
 - [ ] Phase 1 exit gate passed
 
@@ -214,6 +214,7 @@ Append one row per completed packet.
 | Phase 0 exit gate | 2026-07-12 | root | review_phase0_exit | commits `adc1977` through `ec4a003` | production SHA/routes/schema/sitemap; clean rehearsal; full 13-commit review | zero P0/P1; final reviewer approved completion and Phase 1 unlock | pass |
 | MP-1.1 | 2026-07-13 | implement_mp_1_1 | review_mp_1_1 | `42fa553`, `ee6ec56`, `f2a34a7` | focused contract RED→GREEN; CRLF fixture; clean-clone lint; unit/safety 24/24; build + 589 static pages | authoritative contract, precedence, decision/phase ownership, current runtime truth; zero review findings | pass |
 | MP-1.2 | 2026-07-13 | implement_mp_1_2 | review_mp_1_2 | `725b8e8`, `16f9f4f` | focused boundary RED→GREEN; LF/CRLF; clean-clone lint; unit/safety 24/24; build + 589 pages | current-vs-target MVP, fastener/quote/enterprise exclusions, exact phase ownership; zero review findings | pass |
+| MP-1.7 | 2026-07-13 | implement_mp_1_7 | review_mp_1_7 | `319da79`, `a381435` | focused matrix RED→GREEN; 27 official URLs host-validated; clean-clone lint; unit/safety 24/24; build + 589 pages | 7 competitors + PartSource by 11 tasks/4 personas; controlled evidence states; zero review findings | pass |
 
 ## Open Risks and Blockers
 
