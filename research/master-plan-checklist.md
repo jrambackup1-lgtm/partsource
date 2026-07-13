@@ -7,8 +7,8 @@ This file is the cross-session source of truth. Agents must update it only after
 | Phase | Status | Started | Completed | Evidence |
 |---|---|---|---|---|
 | 0 — Contain Current Production Risk | complete | 2026-07-11 | 2026-07-12 | commits through `ec4a003`; CI `29203431947`; deploy/smoke `29203432018`; clean rehearsal + independent review pass |
-| 1 — Product, Users, Business Boundaries | in_progress | 2026-07-13 | — | MP-1.1–MP-1.7 complete; independent review and exit gate remain unchecked |
-| 2 — Mechanical Domain Foundation | blocked | — | — | MP-2.10 deferred study blocked: 0/12 sessions; 0/12 unaided passes; decisions pending |
+| 1 — Product, Users, Business Boundaries | complete | 2026-07-13 | 2026-07-13 | MP-1.1–MP-1.7 complete; exact-head verification and independent exit review pass at `210d365` |
+| 2 — Mechanical Domain Foundation | ready | — | — | Unlocked by Phase 1 exit; MP-2.10 deferred study remains 0/12 and must pass before Phase 3 |
 | 3 — UI Foundation | blocked | — | — | Locked until Phase 2 and MP-2.10 pass |
 | 4 — Search and Catalog Discovery | blocked | — | — | — |
 | 5 — Detail, Equivalence, Reference | blocked | — | — | — |
@@ -43,8 +43,8 @@ Valid phase statuses: `blocked`, `ready`, `in_progress`, `verification`, `comple
 - [x] MP-1.5 Legal boundary
 - [x] MP-1.6 Primary research readiness kit
 - [x] MP-1.7 Competitive matrix
-- [ ] Phase 1 independent review
-- [ ] Phase 1 exit gate passed
+- [x] Phase 1 independent review
+- [x] Phase 1 exit gate passed
 
 ## Phase 2
 
@@ -220,6 +220,7 @@ Append one row per completed packet.
 | MP-1.3 | 2026-07-13 | implement_mp_1_3 | review_mp_1_3 | `926faa1` | focused tiers RED→GREEN; LF/CRLF; clean-clone lint; unit/safety 24/24; build + 589 pages | 4 tiers, 9 dimensions, exact triggers/gates, presentation bans; zero review findings | pass |
 | MP-1.5 | 2026-07-13 | implement_mp_1_5 | review_mp_1_5 | `1c842fb`, `e1d06b0` | focused legal RED→GREEN; official-source URL/host guards; live source correction; clean-clone lint/unit/build | operator/data/privacy/liability/affiliate/supplier-use boundaries; zero blocking review findings | pass |
 | MP-1.6 | 2026-07-13 | implement_mp_1_6 | review_mp_1_6_kit | `ffa1770`, `db6db0b`, `cddc4cb`, `435f6e9` | focused RED→GREEN; evidence-state and privacy fixtures | approved primary-research readiness kit only; real-session execution remains 0/12 and is deferred to MP-2.10 | pass |
+| Phase 1 exit gate | 2026-07-13 | root | review_phase1_exit | commits `42fa553` through `210d365` | clean exact-head: 7/7 Phase 1 focused; lint; unit 24/24 + safety suites; build + 589 static pages; browser 9/9 | all Phase 1 packets and amended governance reviewed; zero P0/P1 findings; Phase 2 unlock approved | pass |
 
 ## Open Risks and Blockers
 

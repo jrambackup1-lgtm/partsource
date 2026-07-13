@@ -8,9 +8,9 @@
 
 **MP-1.6 checklist state:** checked
 
-**Phase 1 independent review checklist state:** unchecked
+**Phase 1 independent review checklist state:** checked
 
-**Phase 1 exit gate checklist state:** unchecked
+**Phase 1 exit gate checklist state:** checked
 
 **MP-2.10 checklist state:** unchecked
 

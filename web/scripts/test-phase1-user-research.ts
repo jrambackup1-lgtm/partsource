@@ -503,9 +503,11 @@ assert.match(productContract, /\| Phase 1 \|[^\r\n]+primary-research readiness k
 assert.match(productContract, /\| Phase 2 \|[^\r\n]+moderated primary research[^\r\n]+MP-2\.10/i);
 assert.match(productContract, /\| Phase 3 \|[^\r\n]+blocked[^\r\n]+Phase 2[^\r\n]+MP-2\.10/i);
 assert.match(phasePrompt, /Phase 3[^\r\n]+blocked[^\r\n]+Phase 2[^\r\n]+MP-2\.10/i);
-assert.match(checklist, /^\| 1 [^|]+\| in_progress \|/m);
-assert.match(checklist, /^\| 2 [^|]+\| blocked \|/m);
+assert.match(checklist, /^\| 1 [^|]+\| complete \|/m);
+assert.match(checklist, /^\| 2 [^|]+\| ready \|/m);
 assert.match(checklist, /^\| 3 [^|]+\| blocked \|/m);
+assert.match(checklist, /^- \[x\] Phase 1 independent review$/m);
+assert.match(checklist, /^- \[x\] Phase 1 exit gate passed$/m);
 assert.match(checklist, /^\| MP-1\.6 \|[^\r\n]+readiness kit[^\r\n]+0\/12[^\r\n]+pass/im);
 assert.match(checklist, /^\| P1-2\.10 \| 2 \|[^\r\n]+0\/12[^\r\n]+MP-2\.10[^\r\n]+Phase 2 exit[^\r\n]+open/im);
 
