@@ -135,6 +135,7 @@ Complete one detailed note under the matching ledger evidence ID:
 - **Note retention:** retain anonymized detailed notes and ledger rows for 24 months after the MP-1.6 decision, then the research owner reviews and deletes them unless a documented legal requirement applies.
 - **Access owner:** the PartSource research owner is the sole default accessor for private recontact data and recordings; repository readers see anonymized notes only.
 - **Deletion path:** a participant requests deletion through the same private channel used to arrange the session. The research owner resolves the private ID mapping, deletes the recording and recontact data, removes the detailed note and ledger row, and excludes that session from recalculated gates.
+- A manual anonymization review of the ledger row and linked detailed note is required before the session qualifies. Automated pattern checks are safeguards only; they do not establish that evidence is anonymous.
 - Secondary quotes may guide recruiting or prompts, but receive no `PS-UR` ID and never count toward quota, comprehension, problem, or monetization gates.
 - A session missing any required ledger field, consent, or detailed note remains non-qualifying until corrected from real evidence.
 
@@ -146,13 +147,18 @@ Complete one detailed note under the matching ledger evidence ID:
 4. Code monetization evidence by buyer, trigger, path selected, refusal condition, and volunteered willingness to pay. Do not convert words into revenue forecasts.
 5. Call a theme “cross-segment” only when supported by at least three qualifying sessions across at least two segments. Otherwise label it isolated.
 6. Compare findings with secondary research only after primary coding. Secondary quotes cannot fill missing primary cells.
-7. Publish a decision table: survive, revise/retest, or kill, with supporting evidence IDs and contrary IDs.
+7. Publish structured core-problem and monetization decisions with threshold accounting, supporting decision-set evidence IDs, and contrary IDs. Use `PENDING` until the exact decision set is complete.
+8. Record the core-problem verdict as `SURVIVE`, `REVISE_RETEST`, or `KILL`. Record monetization as `SURVIVE_QUOTE_LEAD`, `SURVIVE_REFERRAL`, `SURVIVE_TEAM_SOFTWARE`, `REVISE_RETEST`, or `KILL`. A survival verdict must cite qualifying decision-set evidence IDs.
 
 ## Stop and kill criteria
 
 Stop a session immediately if consent is absent or withdrawn, the participant exposes confidential or controlled information, the moderator cannot maintain a safe neutral protocol, or the prototype would require a false price, stock, equivalence, approval, or order claim. Exclude sessions under 20 moderated minutes or missing required tasks, evidence, or consent.
 
 Keep MP-1.6 and the Phase 1 exit gate blocked until exactly 12 qualifying `Decision` sessions meet every exact quota and at least 10 pass locked unaided comprehension. Supplemental sessions never repair or enlarge the decision set.
+
+**MP-1.6 packet completion:** exactly 12 valid decision rows with exact quotas and at least 10 locked unaided comprehension passes. Once this evidence gate passes, MP-1.6 may be reviewed and checked independently of the wider Phase 1 exit gate.
+
+**Phase 1 exit readiness:** MP-1.6 must be complete; the structured core-problem verdict must be `SURVIVE`; one structured monetization verdict must be `SURVIVE_*`; and Phase 1 independent review must be checked. Only then may the separate Phase 1 exit-gate checklist item be reviewed. A finalized revise or kill decision completes the research record but blocks Phase 1 exit.
 
 After the quota set is complete:
 

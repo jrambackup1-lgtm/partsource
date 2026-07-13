@@ -1,8 +1,14 @@
 # PartSource MP-1.6 Primary User Research Results
 
-**Derived packet state:** BLOCKED
+**Derived MP-1.6 packet state:** BLOCKED
 
-**Authoritative checklist state:** unchecked
+**Derived Phase 1 exit readiness:** BLOCKED
+
+**MP-1.6 checklist state:** unchecked
+
+**Phase 1 independent review checklist state:** unchecked
+
+**Phase 1 exit gate checklist state:** unchecked
 
 **Decision-set sessions:** 0/12
 
@@ -46,13 +52,24 @@ Each future row must use a unique anonymized `PS-UR-###` ID, be tagged `Decision
 | Core problem | Survive/revise/kill threshold from the plan applied to primary evidence | Not testable | BLOCKED |
 | Monetization thesis | A path meets the plan's directional survival threshold | Not testable | BLOCKED |
 
-The derived packet state comes from parsed evidence plus `research/master-plan-checklist.md`. The packet and Phase 1 exit gate cannot be claimed complete until every row above passes and the authoritative checklist is correctly updated after review.
+MP-1.6 is not complete.
+
+Phase 1 exit gate has not passed.
+
+The MP-1.6 packet state derives from parsed session evidence plus its authoritative checklist item. Phase 1 exit readiness separately requires packet completion, surviving structured problem and monetization decisions, and the authoritative independent-review item. The exit checklist cannot be checked before those prerequisites.
+
+## Structured decision gates
+
+| Gate | Verdict | Evidence IDs | Threshold accounting |
+|---|---|---|---|
+| Core problem | PENDING | — | 0/12 decision sessions; no primary problem threshold can be calculated. |
+| Monetization thesis | PENDING | — | 0/12 decision sessions; no primary monetization threshold can be calculated. |
 
 ## Evidence boundary
 
 Secondary research in `research/customer-and-vendor-insights.md` may inform recruitment and prompts but does not count as a moderated session, quota evidence, a comprehension pass, or validation of the problem or monetization thesis.
 
-No participant, task outcome, quote, willingness to pay, or session result has been inferred from that material.
+No participant, task outcome, quote, willingness to pay, or session result has been inferred from that material. Every future ledger row and linked note requires manual anonymization review before qualification; automated syntax and privacy patterns are safeguards only.
 
 ## Synthesis
 
