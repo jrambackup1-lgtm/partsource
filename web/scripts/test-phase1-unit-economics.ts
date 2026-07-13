@@ -54,12 +54,29 @@ type Scenario = {
   contribution: number;
 };
 
+type UnitEconomics = {
+  path: string;
+  scenario?: string;
+  cac: number;
+  arpa: number;
+  margin: number;
+  churn: number;
+  ltv: number;
+  monthlyContribution: number;
+  payback: number;
+  ltvCac: number;
+};
+
 function parseNumber(value: string): number {
-  return Number(value.replace(/[$,%]/g, '').replace(/,/g, ''));
+  return Number(value.replace(/,/g, '').replace(/[^\d.-]/g, ''));
 }
 
 function assertApprox(actual: number, expected: number, message: string): void {
   assert.ok(Math.abs(actual - expected) < 0.000_001, `${message}: expected ${expected}, got ${actual}`);
+}
+
+function assertRounded(actual: number, expected: number, message: string): void {
+  assert.ok(Math.abs(actual - expected) <= 0.011, `${message}: expected ${expected}, got ${actual}`);
 }
 
 function parseScenarios(markdown: string): Scenario[] {
@@ -103,6 +120,77 @@ for (const pathName of paths) {
   }
 }
 
+function parseUnitEconomics(markdown: string, withScenario: boolean): UnitEconomics[] {
+  const pattern = withScenario
+    ? /### Conservative\/base\/upside unit-economics scenarios\r?\n([\s\S]+?)(?=\r?\n## Sensitivity)/
+    : /### Base-case unit-economics screen\r?\n([\s\S]+?)\r?\nWorked checks:/;
+  const section = markdown.match(pattern)?.[1];
+  assert.ok(section, `${withScenario ? 'scenario' : 'base'} unit-economics table must be parseable`);
+
+  return section
+    .split(/\r?\n/)
+    .filter((line) => /^\| (Affiliate\/referral|Quote-lead|SaaS|Brokerage) \|/.test(line))
+    .map((line) => {
+      const cells = line.split('|').slice(1, -1).map((cell) => cell.trim());
+      const offset = withScenario ? 1 : 0;
+      assert.equal(cells.length, 9 + offset, `unit-economics row has wrong shape: ${line}`);
+      return {
+        path: cells[0],
+        scenario: withScenario ? cells[1] : undefined,
+        cac: parseNumber(cells[1 + offset]),
+        arpa: parseNumber(cells[2 + offset]),
+        margin: parseNumber(cells[3 + offset]) / 100,
+        churn: parseNumber(cells[4 + offset]) / 100,
+        ltv: parseNumber(cells[5 + offset]),
+        monthlyContribution: parseNumber(cells[6 + offset]),
+        payback: parseNumber(cells[7 + offset]),
+        ltvCac: parseNumber(cells[8 + offset]),
+      };
+    });
+}
+
+function validateUnitEconomics(rowsToValidate: UnitEconomics[], expectedCount: number): void {
+  assert.equal(rowsToValidate.length, expectedCount, `expected ${expectedCount} unit-economics rows`);
+  for (const row of rowsToValidate) {
+    const label = `${row.path}${row.scenario ? ` ${row.scenario}` : ''}`;
+    assert.ok(row.churn > 0 && row.churn <= 1, `${label} churn must be in (0, 100%]`);
+    const expectedLtv = (row.arpa * row.margin) / row.churn;
+    const expectedMonthlyContribution = (row.arpa * row.margin) / 12;
+    assertRounded(row.ltv, expectedLtv, `${label} LTV arithmetic`);
+    assertRounded(row.monthlyContribution, expectedMonthlyContribution, `${label} monthly contribution arithmetic`);
+    assertRounded(row.payback, row.cac / expectedMonthlyContribution, `${label} payback arithmetic`);
+    assertRounded(row.ltvCac, expectedLtv / row.cac, `${label} LTV:CAC arithmetic`);
+  }
+}
+
+const baseEconomics = parseUnitEconomics(document, false);
+validateUnitEconomics(baseEconomics, paths.length);
+for (const pathName of paths) {
+  assert.equal(baseEconomics.filter((row) => row.path === pathName).length, 1, `${pathName} needs one base-economics row`);
+}
+
+const corruptedBaseFixture = document.replace(
+  '| SaaS | $240 | $480 | 80% | 30% | $1,280 |',
+  '| SaaS | $240 | $480 | 80% | 30% | $1,281 |',
+);
+assert.notEqual(corruptedBaseFixture, document, 'corruption fixture must alter SaaS LTV');
+assert.throws(
+  () => validateUnitEconomics(parseUnitEconomics(corruptedBaseFixture, false), paths.length),
+  /SaaS LTV arithmetic/,
+  'a corrupted base LTV must fail recomputation',
+);
+
+const scenarioEconomics = parseUnitEconomics(document, true);
+validateUnitEconomics(scenarioEconomics, paths.length * scenarios.length);
+for (const pathName of paths) {
+  for (const scenario of scenarios) {
+    assert.ok(
+      scenarioEconomics.some((row) => row.path === pathName && row.scenario === scenario),
+      `${pathName} needs ${scenario} CAC, margin, churn, LTV, payback, and LTV:CAC`,
+    );
+  }
+}
+
 const sensitivitySection = document.match(/## Sensitivity to the two largest drivers\r?\n([\s\S]+?)\r?\n## /)?.[1];
 assert.ok(sensitivitySection, 'two-driver sensitivity section must exist');
 for (const driver of ['Reachable qualified users', 'Monetized conversion']) {
@@ -110,6 +198,32 @@ for (const driver of ['Reachable qualified users', 'Monetized conversion']) {
 }
 for (const pathName of paths) {
   assert.match(sensitivitySection, new RegExp(pathName.replace('/', '\\/')), `${pathName} needs sensitivity output`);
+}
+assert.match(sensitivitySection, /\| Reachable qualified users \| -30% \|/);
+assert.match(sensitivitySection, /\| Reachable qualified users \| \+50% \|/);
+assert.match(sensitivitySection, /\| Monetized conversion \| -50% \|/);
+assert.match(sensitivitySection, /\| Monetized conversion \| \+100% \|/);
+
+const sensitivityRows = sensitivitySection
+  .split(/\r?\n/)
+  .filter((line) => /^\| (Reachable qualified users|Monetized conversion) \|/.test(line))
+  .map((line) => line.split('|').slice(1, -1).map((cell) => cell.trim()));
+assert.equal(sensitivityRows.length, 6, 'each sensitivity driver needs downside, base, and upside');
+const baseRevenue = [1_800, 11_250, 7_200, 12_000];
+for (const cells of sensitivityRows) {
+  const factors: Record<string, number> = {
+    'Reachable qualified users|-30%': 0.7,
+    'Reachable qualified users|Base': 1,
+    'Reachable qualified users|+50%': 1.5,
+    'Monetized conversion|-50%': 0.5,
+    'Monetized conversion|Base': 1,
+    'Monetized conversion|+100%': 2,
+  };
+  const factor = factors[`${cells[0]}|${cells[1]}`];
+  assert.ok(factor, `unexpected sensitivity row: ${cells[0]} ${cells[1]}`);
+  cells.slice(2).forEach((value, index) => {
+    assertApprox(parseNumber(value), baseRevenue[index] * factor, `${cells[0]} ${cells[1]} sensitivity arithmetic`);
+  });
 }
 
 for (const [pathName, phase] of [
@@ -128,6 +242,15 @@ for (const [pathName, phase] of [
     assert.match(section, new RegExp(`\\*\\*${threshold}:\\*\\*[^\\r\\n]*\\d`), `${pathName} needs numeric ${threshold} threshold`);
   }
 }
+
+const saasSection = document.match(/### SaaS\r?\n([\s\S]+?)(?=\r?\n### Brokerage)/)?.[1];
+assert.ok(saasSection, 'SaaS decision section must be parseable');
+assert.match(document, /Annualized churn = 1 - \(observed 90-day logo retention\)\^4/);
+const saasPass = saasSection.match(/\*\*Pass:\*\*([^\r\n]+)/)?.[1];
+assert.ok(saasPass, 'SaaS pass gate must exist');
+assert.match(saasPass, /observed 12-month annual logo churn|Annualized churn/);
+assert.match(saasPass, /observed 90-day logo retention/);
+assert.match(saasPass, /LTV:CAC >=3\.0/);
 
 assert.match(document, /Sanctioned supplier data remains Phase 9 only\./);
 assert.match(document, /SaaS and company features remain Phase 8 only\./);
@@ -151,5 +274,7 @@ assert.doesNotMatch(document, /https?:\/\/(?:www\.)?google\.[^\s)]+\/search/i);
 
 const crlfFixture = document.replace(/\r?\n/g, '\r\n');
 assert.equal(parseScenarios(crlfFixture).length, rows.length, 'scenario parsing must be LF/CRLF safe');
+assert.equal(parseUnitEconomics(crlfFixture, false).length, baseEconomics.length, 'base economics parsing must be LF/CRLF safe');
+assert.equal(parseUnitEconomics(crlfFixture, true).length, scenarioEconomics.length, 'scenario economics parsing must be LF/CRLF safe');
 
 console.log('Phase 1 unit-economics checks passed.');

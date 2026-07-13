@@ -77,8 +77,11 @@ Model formulas:
 - LTV = ARPA x contribution gross margin / annual logo churn
 - Payback months = CAC / monthly contribution profit per account
 - LTV:CAC = LTV / CAC
+- Annualized churn = 1 - (observed 90-day logo retention)^4
 
 Reachable qualified users means named or measurable people PartSource can plausibly reach through its owned product, approved communities, direct research recruitment, or a controlled cohort. It excludes arbitrary percentages of market TAM.
+
+For the SaaS pass gate, the 90-day proxy compounds observed cohort survival across four equal periods. This is conservative relative to treating 90-day retention as annual retention. If a mature observed 12-month cohort has worse churn, use that worse observed value; hypothesis churn never qualifies.
 
 ## Bottom-up SOM scenarios
 
@@ -110,22 +113,41 @@ Every value in this table is **Hypothesis**. Affiliate/referral and quote-lead a
 | SaaS | $240 | $480 | 80% | 30% | $1,280 | $32.00 | 7.5 months | 5.33 |
 | Brokerage | $1,000 | $1,000 | 30% | 50% | $600 | $25.00 | 40.0 months | 0.60 |
 
-Worked checks: affiliate LTV = $60 x 80% / 100% = $48; quote-lead payback = $100 / ($250 x 60% / 12) = 8 months; SaaS LTV = $480 x 80% / 30% = $1,280; brokerage LTV:CAC = ($1,000 x 30% / 50%) / $1,000 = 0.60. The attractive hypothetical SaaS ratio is not evidence that users will pay or stay.
+Worked checks: affiliate LTV = $60 x 80% / 100% = $48; quote-lead payback = $100 / ($250 x 60% / 12) = 8 months; SaaS LTV = $480 x 80% / 30% = $1,280; brokerage LTV:CAC = ($1,000 x 30% / 50%) / $1,000 = 0.60. The attractive hypothetical SaaS ratio is not evidence that users will pay or stay. It cannot satisfy the SaaS pass gate without observed cohort retention and observed or conservatively annualized churn.
+
+### Conservative/base/upside unit-economics scenarios
+
+Every input and output below is **Hypothesis**. CAC and ARPA are USD per monetized account; contribution margin and annual churn/loss proxy are percentages; LTV is USD per account; monthly contribution is USD per account per month; payback is months; LTV:CAC is a ratio. For non-subscription affiliate/referral and quote-lead paths, the loss proxy represents loss of repeat annual value rather than subscription cancellation.
+
+| Path | Scenario | CAC | ARPA | Contribution margin | Annual churn/loss proxy | LTV | Monthly contribution / account | Payback | LTV:CAC |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Affiliate/referral | Conservative | $80 | $30 | 70% | 100% | $21.00 | $1.75 | 45.71 months | 0.26 |
+| Affiliate/referral | Base | $40 | $60 | 80% | 100% | $48.00 | $4.00 | 10.00 months | 1.20 |
+| Affiliate/referral | Upside | $20 | $90 | 85% | 80% | $95.63 | $6.38 | 3.14 months | 4.78 |
+| Quote-lead | Conservative | $200 | $100 | 50% | 100% | $50.00 | $4.17 | 48.00 months | 0.25 |
+| Quote-lead | Base | $100 | $250 | 60% | 100% | $150.00 | $12.50 | 8.00 months | 1.50 |
+| Quote-lead | Upside | $50 | $500 | 70% | 70% | $500.00 | $29.17 | 1.71 months | 10.00 |
+| SaaS | Conservative | $480 | $240 | 70% | 50% | $336.00 | $14.00 | 34.29 months | 0.70 |
+| SaaS | Base | $240 | $480 | 80% | 30% | $1,280.00 | $32.00 | 7.50 months | 5.33 |
+| SaaS | Upside | $120 | $960 | 85% | 15% | $5,440.00 | $68.00 | 1.76 months | 45.33 |
+| Brokerage | Conservative | $2,000 | $300 | 20% | 100% | $60.00 | $5.00 | 400.00 months | 0.03 |
+| Brokerage | Base | $1,000 | $1,000 | 30% | 50% | $600.00 | $25.00 | 40.00 months | 0.60 |
+| Brokerage | Upside | $500 | $2,000 | 40% | 25% | $3,200.00 | $66.67 | 7.50 months | 6.40 |
 
 ## Sensitivity to the two largest drivers
 
-Reachable qualified users and monetized conversion are the two largest uncertain common drivers because revenue changes linearly with either and PartSource has observed neither. The table changes one driver at a time from the base case while holding all other inputs constant.
+Reachable qualified users and monetized conversion are co-dominant common revenue drivers because revenue is their product and PartSource has observed neither. Their test ranges differ: reachable users use -30%/+50%, reflecting a bounded controlled-cohort recruitment range; monetized conversion uses -50%/+100%, reflecting wider early-funnel uncertainty. These are **Hypothesis** ranges. Each row changes one driver from base while holding all other inputs constant.
 
 | Driver | Test versus base | Affiliate/referral revenue | Quote-lead revenue | SaaS revenue | Brokerage revenue |
 |---|---:|---:|---:|---:|---:|
-| Reachable qualified users | -50% | $900 | $5,625 | $3,600 | $6,000 |
+| Reachable qualified users | -30% | $1,260 | $7,875 | $5,040 | $8,400 |
 | Reachable qualified users | Base | $1,800 | $11,250 | $7,200 | $12,000 |
 | Reachable qualified users | +50% | $2,700 | $16,875 | $10,800 | $18,000 |
 | Monetized conversion | -50% | $900 | $5,625 | $3,600 | $6,000 |
 | Monetized conversion | Base | $1,800 | $11,250 | $7,200 | $12,000 |
-| Monetized conversion | +50% | $2,700 | $16,875 | $10,800 | $18,000 |
+| Monetized conversion | +100% | $3,600 | $22,500 | $14,400 | $24,000 |
 
-If both drivers miss by 50%, revenue is 25% of base, not 50%. Therefore no path should be funded from the upside case before measured reach and conversion exist.
+If reachable users miss by 30% and conversion misses by 50%, revenue is 35% of base because the effects multiply. Therefore no path should be funded from the upside case before measured reach and conversion exist.
 
 ## Path evidence, gates, and thresholds
 
@@ -157,9 +179,9 @@ Thresholds are experiment decision rules, not promises. A path cannot run merely
 - **Missing evidence:** Repeated team workflow, buyer and user identity, feature demand, design partners, willingness to pay, billing owner, support load, security needs, activation, paid conversion, retention, churn, CAC, and expansion.
 - **Earliest eligible phase:** Phase 8, after the secure backend trigger and company-workspace foundation. Price interviews and fake-door research without payment may occur earlier if clearly labeled.
 - **Operational prerequisites:** Secure backend; organizations and roles; durable shared workflow; billing and cancellation; privacy and retention controls; support ownership; cohort analytics; no paywall that damages current anonymous local utility without evidence.
-- **Pass:** In a cohort of at least 30 qualified design-partner accounts, >=20% activate the company workflow, >=10% pay, 90-day logo retention >=70%, LTV:CAC >=3.0, and CAC payback <=12 months.
-- **Iterate:** With at least 30 accounts, paid conversion 5-9.99%, 90-day retention 40-69.99%, or LTV:CAC 1.0-2.99; change one package or workflow variable and retest.
-- **Kill:** After 50 qualified accounts, activation <10%, paid conversion <5%, 90-day retention <40%, LTV:CAC <1.0, or CAC payback >24 months.
+- **Pass:** In a cohort of at least 30 qualified design-partner accounts, >=20% activate the company workflow, >=10% pay, observed 90-day logo retention >=85%, and churn comes from either observed 12-month annual logo churn or Annualized churn = 1 - (observed 90-day logo retention)^4; recompute LTV with that observed or annualized churn, then require LTV:CAC >=3.0 and CAC payback <=12 months. Hypothesis churn can never satisfy this gate.
+- **Iterate:** With at least 30 accounts, paid conversion 5-9.99%, observed 90-day retention 60-84.99%, LTV:CAC 1.0-2.99 after recomputation with observed/annualized churn, or CAC payback 12.01-24 months; change one package or workflow variable and retest.
+- **Kill:** After 50 qualified accounts, activation <10%, paid conversion <5%, observed 90-day retention <60%, LTV:CAC <1.0 after recomputation with observed/annualized churn, or CAC payback >24 months.
 
 ### Brokerage
 
