@@ -1,14 +1,22 @@
-# PartSource MP-1.6 Primary User Research Results
+# PartSource Primary Research Readiness and Deferred Study Results
 
-**Derived MP-1.6 packet state:** BLOCKED
+**Derived MP-1.6 readiness-kit state:** COMPLETE
 
-**Derived Phase 1 exit readiness:** BLOCKED
+**Derived MP-2.10 deferred-study state:** BLOCKED
 
-**MP-1.6 checklist state:** unchecked
+**Derived Phase 2 deferred-study exit readiness:** BLOCKED
+
+**MP-1.6 checklist state:** checked
 
 **Phase 1 independent review checklist state:** unchecked
 
 **Phase 1 exit gate checklist state:** unchecked
+
+**MP-2.10 checklist state:** unchecked
+
+**Phase 2 independent review checklist state:** unchecked
+
+**Phase 2 exit gate checklist state:** unchecked
 
 **Decision-set sessions:** 0/12
 
@@ -18,7 +26,7 @@
 
 **Last updated:** 2026-07-13
 
-This is the anonymized evidence ledger for `research/user-research-plan.md`. No qualifying moderated sessions are recorded. Preparation of the research kit is not completion of MP-1.6.
+This is the anonymized evidence ledger for `research/user-research-plan.md`. The approved empty ledger and protocol complete the MP-1.6 readiness kit only. No qualifying moderated session, comprehension pass, or study decision is claimed; execution is deferred to MP-2.10.
 
 ## Quota progress
 
@@ -41,7 +49,7 @@ No qualifying moderated sessions are recorded.
 
 Each future row must use a unique anonymized `PS-UR-###` ID, be tagged `Decision` or `Supplemental`, and contain every field above. Use `T1=Complete|Partial|Failed: observation<br>...T5=...` for all five outcomes. A linked `### PS-UR-### detailed note` using the plan template must follow in this file and contain the exact line `Manual anonymization review: passed`. Identity, employer, and contact data stay outside the repository.
 
-## Current gate assessment
+## Current deferred-study gate assessment
 
 | Gate | Requirement | Current evidence | Result |
 |---|---|---|---|
@@ -52,11 +60,17 @@ Each future row must use a unique anonymized `PS-UR-###` ID, be tagged `Decision
 | Core problem | Survive/revise/kill threshold from the plan applied to primary evidence | Not testable | BLOCKED |
 | Monetization thesis | A path meets the plan's directional survival threshold | Not testable | BLOCKED |
 
-MP-1.6 is not complete.
+MP-1.6 readiness-kit completion does not establish participant evidence.
 
-Phase 1 exit gate has not passed.
+MP-2.10 is not complete.
 
-The MP-1.6 packet state derives from parsed session evidence plus its authoritative checklist item. Phase 1 exit readiness separately requires packet completion, surviving structured problem and monetization decisions, and the authoritative independent-review item. The exit checklist cannot be checked before those prerequisites.
+Phase 2 exit gate has not passed.
+
+The MP-1.6 readiness-kit state derives from kit availability plus its authoritative checklist item.
+
+The MP-2.10 state separately derives from parsed session evidence, decisions, and its checklist item. Phase 2 deferred-study exit readiness additionally requires surviving structured decisions and Phase 2 independent review.
+
+The deferred research gate is not met.
 
 ## Structured decision gates
 
@@ -75,4 +89,4 @@ No participant, task outcome, quote, willingness to pay, or session result has b
 
 ## Synthesis
 
-Not started. With 0/12 decision-set sessions and 0/12 locked unaided comprehension passes, no primary theme, segment comparison, problem verdict, or monetization verdict can be reported. Threshold: 10 unaided passes.
+MP-2.10 not started. With 0/12 decision-set sessions and 0/12 locked unaided comprehension passes, no primary theme, segment comparison, problem verdict, or monetization verdict can be reported. Threshold: 10 unaided passes.

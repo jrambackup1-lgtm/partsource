@@ -102,18 +102,16 @@ Work packets:
 - **MP-1.3 Capability tiers:** Personal/local, company/team, enterprise, and brokerage/commerce.
 - **MP-1.4 Monetization validation:** Affiliate, quote lead, SaaS, and brokerage assumptions with bottom-up SOM, CAC, LTV, gross margin, and kill thresholds.
 - **MP-1.5 Legal boundary:** Operator entity, privacy, liability, sourcing disclaimers, affiliate disclosure, retention, and acceptable supplier data use.
-- **MP-1.6 Primary research:** Recruit engineers, procurement buyers, technicians, and small-company buyers.
+- **MP-1.6 Primary research readiness kit:** Maintain the approved moderated-study protocol and evidence ledger in `research/user-research-plan.md` and `research/user-research-results.md`; real-session execution belongs to MP-2.10.
 - **MP-1.7 Competitive matrix:** Compare McMaster, Grainger, Fastenal, MISUMI, RS, Bolt Depot, and Amazon Business by user task.
-
-Required user testing: at least 12 moderated sessions—three engineers, three procurement users, two maintenance users, two small-company buyers, one student/hobbyist, and one enterprise procurement user.
 
 Exit gate:
 
 - One authoritative product contract exists.
 - Every promised capability is assigned to a phase.
 - No unresolved contradiction remains about scraping, pricing, pins, imperial coverage, currency, accounts, or commerce.
-- At least 80% of participants correctly explain what PartSource does and does not verify.
-- The core problem and monetization thesis survive user evidence.
+- The MP-1.6 primary-research readiness kit exists, its focused test passes, and its evidence plus prior independent kit review are recorded.
+- Phase 1 independent review confirms the authoritative contract, phase ownership, contradiction resolution, readiness kit, tests, and evidence. Real moderated sessions and finalized study decisions are not Phase 1 exit dependencies.
 
 ## Phase 2 — Build the Mechanical Domain Foundation
 
@@ -137,6 +135,7 @@ Work packets:
 - **MP-2.7 Catalog migration:** Relabel generated entries as theoretical configurations.
 - **MP-2.8 Reference verification:** Named standard editions, citations, and mechanical SME review.
 - **MP-2.9 Publishing lifecycle:** Draft, reviewed, approved, published, stale, withdrawn.
+- **MP-2.10 Moderated primary research execution and decisions:** Execute exactly 12 qualifying decision-set sessions—three engineers, three procurement users, two maintenance users, two small-company buyers, one student/hobbyist, and one enterprise procurement user—using the MP-1.6 readiness kit; require at least 10 of 12 locked unaided comprehension passes and evidence-linked core-problem and monetization decisions.
 
 Initial complete scope: socket-head, button-head, flat/countersunk, hex-head, nuts, and washers. Pins, bearings, rivets, and other hardware remain unsupported until their taxonomy and evidence exist.
 
@@ -147,6 +146,8 @@ Exit gate:
 - DIN/ISO differences are explicit.
 - Two-person review is required for cross-references.
 - Integrity tests reject missing provenance and impossible combinations.
+- MP-2.10 is complete with exactly 12 qualifying decision-set sessions, at least 10 of 12 locked unaided comprehension passes, and finalized evidence-linked decisions.
+- Core-problem and monetization verdicts survive. `REVISE_RETEST` or `KILL` blocks Phase 2 exit even when the MP-2.10 research record is complete.
 
 ## Phase 3 — Rebuild the UI Foundation
 

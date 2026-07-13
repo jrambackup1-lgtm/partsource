@@ -26,6 +26,7 @@ Treat `research/master-plan-checklist.md` as the cross-session state source.
 3. If its status is `in_progress` or `verification`, resume it. Do not restart completed work.
 4. Never work on a later phase.
 5. If an entry condition or dependency is unmet, record the blocker and stop without checking anything complete.
+6. Phase 3 remains blocked until the Phase 2 exit gate and MP-2.10 both pass. A completed Phase 1 exit gate may make Phase 2 ready, but does not start it in the same session.
 
 ## Execution method
 

@@ -1,10 +1,10 @@
-# PartSource MP-1.6 Primary User Research Plan
+# PartSource MP-1.6 Primary Research Readiness Kit
 
-**Status:** Prepared; execution not started
+**Status:** Readiness kit complete; MP-2.10 execution not started
 
-**Current evidence:** 0 qualifying moderated sessions
+**Current evidence:** 0/12 qualifying moderated sessions; 0/12 unaided passes; decisions pending
 
-This plan tests whether target users understand the current PartSource boundary, experience the problem it addresses, and identify a monetization path worth testing. It does not treat secondary quotes, surveys, unmoderated tests, recruitment calls, or hypothetical participants as moderated sessions.
+This approved readiness kit defines how MP-2.10 will test whether target users understand the current PartSource boundary, experience the problem it addresses, and identify a monetization path worth testing. Kit approval is not participant evidence. Secondary quotes, surveys, unmoderated tests, recruitment calls, and hypothetical participants do not count as moderated sessions.
 
 ## Recruitment screener
 
@@ -40,7 +40,7 @@ Recruit alternates, but stop counting when the exact 12-session quota set is com
 
 Read this before collecting research data:
 
-> This voluntary research session evaluates PartSource, not you. It should take 30–45 minutes. We will record task outcomes and anonymized notes under an anonymized evidence ID. The research ledger contains no names or contact details. Anonymized notes are retained for 24 months after the MP-1.6 decision; an optional recording is deleted within 30 days of the session. The research owner is the only default accessor. You may skip any question, stop at any time, or request deletion through the same private channel used to arrange the session. Screen or audio recording is optional and requires a separate explicit opt-in; declining recording does not prevent participation. Please avoid showing confidential supplier terms, employer data, credentials, personal data, or controlled technical information. Do you consent to the moderated session and retention of anonymized notes? Separately, do you opt in to recording?
+> This voluntary research session evaluates PartSource, not you. It should take 30–45 minutes. We will record task outcomes and anonymized notes under an anonymized evidence ID. The research ledger contains no names or contact details. Anonymized notes are retained for 24 months after the MP-2.10 decision; an optional recording is deleted within 30 days of the session. The research owner is the only default accessor. You may skip any question, stop at any time, or request deletion through the same private channel used to arrange the session. Screen or audio recording is optional and requires a separate explicit opt-in; declining recording does not prevent participation. Please avoid showing confidential supplier terms, employer data, credentials, personal data, or controlled technical information. Do you consent to the moderated session and retention of anonymized notes? Separately, do you opt in to recording?
 
 Record session consent, anonymized-note retention consent, and the separate recording choice. If session or note-retention consent is absent or withdrawn, stop and do not count the session. If recording is declined, record “not recorded” and take anonymized notes only. If accidental identifying or confidential information appears, exclude it from the ledger and redact it from any retained research artifact.
 
@@ -133,7 +133,7 @@ Complete one detailed note under the matching ledger evidence ID:
 - If recontact data is needed, the research owner keeps it separately from the repository and does not expose it in the evidence ID.
 - Optional recordings require the separate opt-in. Store any approved recording outside the repository in access-controlled storage; the ledger records only “opted in” or “not recorded.”
 - **Recording retention:** delete an opted-in recording within 30 days of its session after the detailed note is quality-checked.
-- **Note retention:** retain anonymized detailed notes and ledger rows for 24 months after the MP-1.6 decision, then the research owner reviews and deletes them unless a documented legal requirement applies.
+- **Note retention:** retain anonymized detailed notes and ledger rows for 24 months after the MP-2.10 decision, then the research owner reviews and deletes them unless a documented legal requirement applies.
 - **Access owner:** the PartSource research owner is the sole default accessor for private recontact data and recordings; repository readers see anonymized notes only.
 - **Deletion path:** a participant requests deletion through the same private channel used to arrange the session. The research owner resolves the private ID mapping, deletes the recording and recontact data, removes the detailed note and ledger row, and excludes that session from recalculated gates.
 - A manual anonymization review of the ledger row and linked detailed note is required before the session qualifies. Automated pattern checks are safeguards only; they do not establish that evidence is anonymous.
@@ -155,11 +155,13 @@ Complete one detailed note under the matching ledger evidence ID:
 
 Stop a session immediately if consent is absent or withdrawn, the participant exposes confidential or controlled information, the moderator cannot maintain a safe neutral protocol, or the prototype would require a false price, stock, equivalence, approval, or order claim. Exclude sessions under 20 moderated minutes or missing required tasks, evidence, or consent.
 
-Keep MP-1.6 and the Phase 1 exit gate blocked until exactly 12 qualifying `Decision` sessions meet every exact quota and at least 10 pass locked unaided comprehension. Supplemental sessions never repair or enlarge the decision set.
+Keep MP-2.10 and the Phase 2 exit gate blocked until exactly 12 qualifying `Decision` sessions meet every exact quota and at least 10 pass locked unaided comprehension. Supplemental sessions never repair or enlarge the decision set.
 
-**MP-1.6 packet completion:** exactly 12 valid decision rows with exact quotas and at least 10 locked unaided comprehension passes. Once this evidence gate passes, MP-1.6 may be reviewed and checked independently of the wider Phase 1 exit gate.
+**MP-1.6 readiness-kit completion:** the approved protocol and empty evidence ledger exist, their focused test passes, and independent kit review is recorded. This does not claim real participant evidence.
 
-**Phase 1 exit readiness:** MP-1.6 must be complete; the structured core-problem verdict must be `SURVIVE`; one structured monetization verdict must be `SURVIVE_*`; and Phase 1 independent review must be checked. Only then may the separate Phase 1 exit-gate checklist item be reviewed. A finalized revise or kill decision completes the research record but blocks Phase 1 exit.
+**MP-2.10 completion:** exactly 12 valid decision rows with exact quotas, at least 10 locked unaided comprehension passes, and finalized evidence-linked core-problem and monetization decisions. A finalized `REVISE_RETEST` or `KILL` decision completes the research record but blocks Phase 2 exit.
+
+**Phase 2 deferred-study exit readiness:** MP-2.10 must be complete; the structured core-problem verdict must be `SURVIVE`; one structured monetization verdict must be `SURVIVE_*`; and Phase 2 independent review must be checked. Only then may the separate Phase 2 exit-gate checklist item be reviewed.
 
 After the quota set is complete:
 

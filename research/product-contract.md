@@ -123,9 +123,9 @@ Every capability promised by the reconciled inputs is either assigned below or r
 | Master-plan phase | Owned promises |
 |---|---|
 | Phase 0 | Release identity, routing, SEO/structured-data containment, unsupported-claim removal, CI/deploy/rollback, and legacy-ingestion isolation. Complete; its original readiness findings are historical. |
-| Phase 1 | Current MVP boundary, capability tiers, monetization evidence and kill thresholds, legal boundary, primary user research, and competitive validation. |
-| Phase 2 | Fastener taxonomy; standards and editions; metric/imperial units; material semantics; provenance; cross-reference policy; configuration relabeling; reference verification; publishing lifecycle; pins only after taxonomy/evidence approval. |
-| Phase 3 | Public responsive shell, removal of prototype theatre, design tokens, complete component/state treatment, accessibility foundation, and visual regression baselines. |
+| Phase 1 | Current MVP boundary, capability tiers, monetization evidence and kill thresholds, legal boundary, the approved primary-research readiness kit, and competitive validation. Real-session execution is deferred to Phase 2. |
+| Phase 2 | Fastener taxonomy; standards and editions; metric/imperial units; material semantics; provenance; cross-reference policy; configuration relabeling; reference verification; publishing lifecycle; moderated primary research execution and evidence-linked decisions under MP-2.10; pins only after taxonomy/evidence approval. |
+| Phase 3 | Public responsive shell, removal of prototype theatre, design tokens, complete component/state treatment, accessibility foundation, and visual regression baselines. Phase 3 remains blocked until Phase 2 and MP-2.10 pass. |
 | Phase 4 | Safe exact/broad search, identifier namespaces, metric and imperial parsing, hard constraints, results/facets/autocomplete, explanations, persistent queries, and golden corpus. |
 | Phase 5 | Evidence-backed detail, accurate diagrams, candidate/cross-reference/equivalence states, truthful supplier handoffs, sourced offer display, compatibility, references, and engineering-only schema. |
 | Phase 6 | Named local BOMs, requirement/selection separation, safe import, no fabrication, editing, storage health, CSV/PDF exports with currency basis, mobile use, and offline limits. SmartCart/split-BOM optimization is not owned here and remains blocked pending sanctioned data and commercial validation. |

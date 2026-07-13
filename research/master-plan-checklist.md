@@ -7,9 +7,9 @@ This file is the cross-session source of truth. Agents must update it only after
 | Phase | Status | Started | Completed | Evidence |
 |---|---|---|---|---|
 | 0 — Contain Current Production Risk | complete | 2026-07-11 | 2026-07-12 | commits through `ec4a003`; CI `29203431947`; deploy/smoke `29203432018`; clean rehearsal + independent review pass |
-| 1 — Product, Users, Business Boundaries | in_progress | 2026-07-13 | — | MP-1.1–MP-1.5 and MP-1.7 complete; MP-1.6 kit approved but real sessions 0/12 |
-| 2 — Mechanical Domain Foundation | blocked | — | — | — |
-| 3 — UI Foundation | blocked | — | — | — |
+| 1 — Product, Users, Business Boundaries | in_progress | 2026-07-13 | — | MP-1.1–MP-1.7 complete; independent review and exit gate remain unchecked |
+| 2 — Mechanical Domain Foundation | blocked | — | — | MP-2.10 deferred study blocked: 0/12 sessions; 0/12 unaided passes; decisions pending |
+| 3 — UI Foundation | blocked | — | — | Locked until Phase 2 and MP-2.10 pass |
 | 4 — Search and Catalog Discovery | blocked | — | — | — |
 | 5 — Detail, Equivalence, Reference | blocked | — | — | — |
 | 6 — Personal and Local BOM | blocked | — | — | — |
@@ -41,7 +41,7 @@ Valid phase statuses: `blocked`, `ready`, `in_progress`, `verification`, `comple
 - [x] MP-1.3 Capability tiers
 - [x] MP-1.4 Monetization validation
 - [x] MP-1.5 Legal boundary
-- [ ] MP-1.6 Primary user research
+- [x] MP-1.6 Primary research readiness kit
 - [x] MP-1.7 Competitive matrix
 - [ ] Phase 1 independent review
 - [ ] Phase 1 exit gate passed
@@ -57,6 +57,7 @@ Valid phase statuses: `blocked`, `ready`, `in_progress`, `verification`, `comple
 - [ ] MP-2.7 Catalog migration
 - [ ] MP-2.8 Reference verification
 - [ ] MP-2.9 Publishing lifecycle
+- [ ] MP-2.10 Moderated primary research execution and decisions
 - [ ] Phase 2 independent review
 - [ ] Phase 2 exit gate passed
 
@@ -218,6 +219,7 @@ Append one row per completed packet.
 | MP-1.4 | 2026-07-13 | implement_mp_1_4 | review_mp_1_4 | `1dbbee8`, `8c520f1` | focused economics RED→GREEN; 12/12 scenario + 6/6 sensitivity rows; corruption fixture; clean-clone lint/unit/build | bottom-up SOM/CAC/LTV/margin/kill gates; commercial inputs remain hypotheses; zero review findings | pass |
 | MP-1.3 | 2026-07-13 | implement_mp_1_3 | review_mp_1_3 | `926faa1` | focused tiers RED→GREEN; LF/CRLF; clean-clone lint; unit/safety 24/24; build + 589 pages | 4 tiers, 9 dimensions, exact triggers/gates, presentation bans; zero review findings | pass |
 | MP-1.5 | 2026-07-13 | implement_mp_1_5 | review_mp_1_5 | `1c842fb`, `e1d06b0` | focused legal RED→GREEN; official-source URL/host guards; live source correction; clean-clone lint/unit/build | operator/data/privacy/liability/affiliate/supplier-use boundaries; zero blocking review findings | pass |
+| MP-1.6 | 2026-07-13 | implement_mp_1_6 | review_mp_1_6_kit | `ffa1770`, `db6db0b`, `cddc4cb`, `435f6e9` | focused RED→GREEN; evidence-state and privacy fixtures | approved primary-research readiness kit only; real-session execution remains 0/12 and is deferred to MP-2.10 | pass |
 
 ## Open Risks and Blockers
 
@@ -225,4 +227,4 @@ Append one row per completed packet.
 |---|---|---|---|---|---|
 | P2-0-1 | 1 | `research/master-plan.md` Current Readiness still describes the pre-Phase-0 audit snapshot | Phase 1 | Reconcile into the authoritative product source without erasing historical audit context | resolved by MP-1.1 (`42fa553`) |
 | P2-0-2 | 1 | `research/prd.md` still names obsolete Next.js/Vanilla CSS architecture | Phase 1 | Update authoritative architecture description to match the shipped Vite/React/Tailwind runtime | resolved by authoritative precedence and runtime contract in MP-1.1 (`42fa553`) |
-| P1-1.6 | 1 | MP-1.6 requires 12 real moderated sessions with exact segment quotas; current qualifying evidence is 0/12 | Product owner / research recruiter | Complete 12 consented sessions, record valid anonymized evidence, achieve at least 10/12 unaided comprehension, and record core-problem plus monetization decisions | open; kit `ffa1770`, `db6db0b`, `cddc4cb`, `435f6e9`; independent kit review approved |
+| P1-2.10 | 2 | MP-2.10 deferred study has 0/12 qualifying moderated sessions, 0/12 unaided passes, and pending decisions; Phase 2 exit is blocked | Product owner / research recruiter | Complete MP-2.10 with the exact 12-session quota set, at least 10/12 unaided comprehension, evidence-linked decisions, and surviving verdicts required by the Phase 2 exit gate | open |
