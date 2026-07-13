@@ -37,8 +37,8 @@ type CoreProblemVerdict = 'PENDING' | 'SURVIVE' | 'REVISE_RETEST' | 'KILL';
 type MonetizationVerdict = 'PENDING' | 'SURVIVE_QUOTE_LEAD' | 'SURVIVE_REFERRAL' | 'SURVIVE_TEAM_SOFTWARE' | 'REVISE_RETEST' | 'KILL';
 type ChecklistStates = { packet: boolean; independentReview: boolean; phaseExit: boolean };
 type ResearchDecisions = {
-  coreProblem: { verdict: CoreProblemVerdict; evidenceIds: string[]; thresholdAccounting: string };
-  monetization: { verdict: MonetizationVerdict; evidenceIds: string[]; thresholdAccounting: string };
+  coreProblem: { verdict: CoreProblemVerdict; supportingIds: string[]; contraryIds: string[]; thresholdAccounting: string };
+  monetization: { verdict: MonetizationVerdict; supportingIds: string[]; contraryIds: string[]; thresholdAccounting: string };
 };
 type DerivedStates = { packet: PacketState; phaseExit: PhaseExitState };
 type Session = {
@@ -122,6 +122,7 @@ for (const policy of ['Recording retention:', 'Note retention:', 'Access owner:'
 assert.match(handling, /Recording retention:[^\r\n]+\d+ days/i);
 assert.match(handling, /Note retention:[^\r\n]+\d+ months/i);
 assert.match(handling, /manual anonymization review[^\r\n]+before[^\r\n]+qualif/i, 'manual anonymization review must precede qualification');
+assert.match(section(plan, 'Session note template', 2), /Manual anonymization review: passed/, 'detailed note template needs the exact manual-review attestation');
 
 const comprehensionSection = section(plan, 'Comprehension rubric', 2);
 assert.match(comprehensionSection, /unaided[^\r\n]+immediately after Task 1/i);
@@ -180,7 +181,7 @@ function assertSubstantive(value: string, label: string): void {
 function assertPrivacySafe(value: string, label: string): void {
   const directIdentifiers: Array<[string, RegExp]> = [
     ['email', /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i],
-    ['phone', /\b\d{10,15}\b|(?:\+\d{1,3}[ .-]?)?(?:\(?\d{3}\)?[ .-])\d{3}[ .-]\d{4}/],
+    ['phone', /\b\d{10,15}\b|(?:\+\d{1,3}[ .-]?)?(?:\(\d{3}\)|\d{3})[ .-]?\d{3}[ .-]?\d{4}/],
     ['IP address', /\b(?:\d{1,3}\.){3}\d{1,3}\b/],
     ['direct URL', /\b(?:https?:\/\/|www\.)\S+/i],
     ['labeled direct identifier', /\b(?:name|employer|company|address|account|calendar|linkedin|slack)\s*[:=]\s*\S+/i],
@@ -221,11 +222,12 @@ function validateSession(session: Session, notesMarkdown: string): void {
 
   const anchor = session.id.toLowerCase();
   assert.equal(session.detailedNoteRef, `[${session.id}](#${anchor}-detailed-note)`, `${session.id} needs a linked detailed note reference`);
-  const notePattern = new RegExp(`^### ${session.id} detailed note\\r?\\n([\\s\\S]+?)(?=\\r?\\n### |$)`, 'gm');
+  const notePattern = new RegExp(`(?:^|\\r?\\n)### ${session.id} detailed note\\r?\\n([\\s\\S]+?)(?=\\r?\\n### |$)`, 'g');
   const linkedNotes = [...notesMarkdown.matchAll(notePattern)];
   assert.equal(linkedNotes.length, 1, `${session.id} must have exactly one linked detailed note`);
   const noteBody = linkedNotes[0][1].replace(/[#*_`]/g, '').trim();
   assertSubstantive(noteBody, `${session.id} detailed note`);
+  assert.match(noteBody, /^Manual anonymization review: passed$/m, `${session.id} needs Manual anonymization review: passed`);
   assertPrivacySafe(Object.values(session).join(' '), `${session.id} ledger fields`);
   assertPrivacySafe(noteBody, `${session.id} linked note`);
 }
@@ -276,10 +278,15 @@ function parseDecisionGates(markdown: string): ResearchDecisions {
 
   const parsed = new Map(rows.map((row) => {
     const cells = row.split('|').slice(1, -1).map((cell) => cell.trim());
-    assert.equal(cells.length, 4, `structured decision row must have four cells: ${row}`);
-    assertSubstantive(cells[3], `${cells[0]} threshold accounting`);
-    const evidenceIds = cells[2] === '—' ? [] : cells[2].split(',').map((id) => id.trim());
-    return [cells[0], { verdict: cells[1], evidenceIds, thresholdAccounting: cells[3] }];
+    assert.equal(cells.length, 5, `structured decision row must have five cells: ${row}`);
+    assertSubstantive(cells[4], `${cells[0]} threshold accounting`);
+    const parseIds = (value: string): string[] => value === '—' ? [] : value.split(',').map((id) => id.trim());
+    return [cells[0], {
+      verdict: cells[1],
+      supportingIds: parseIds(cells[2]),
+      contraryIds: parseIds(cells[3]),
+      thresholdAccounting: cells[4],
+    }];
   }));
   const core = parsed.get('Core problem');
   const monetizationDecision = parsed.get('Monetization thesis');
@@ -298,17 +305,23 @@ function validateResearchDecisions(decisions: ResearchDecisions, sessions: Sessi
     ['core problem', decisions.coreProblem],
     ['monetization', decisions.monetization],
   ] as const) {
-    const pending = decision.verdict === 'PENDING';
-    assert.equal(decision.evidenceIds.length === 0, pending, `${label} verdict and evidence IDs must agree`);
-    assert.equal(new Set(decision.evidenceIds).size, decision.evidenceIds.length, `${label} evidence IDs must be unique`);
-    for (const id of decision.evidenceIds) {
+    assert.equal(new Set(decision.supportingIds).size, decision.supportingIds.length, `${label} supporting IDs must be unique`);
+    assert.equal(new Set(decision.contraryIds).size, decision.contraryIds.length, `${label} contrary IDs must be unique`);
+    const classifiedIds = [...decision.supportingIds, ...decision.contraryIds];
+    assert.equal(new Set(classifiedIds).size, classifiedIds.length, `${label} supporting and contrary IDs must be disjoint`);
+    for (const id of classifiedIds) {
       assert.ok(decisionIds.has(id), `${label} cites non-decision evidence ID: ${id}`);
+    }
+    assert.deepEqual(new Set(classifiedIds), decisionIds, `${label} supporting and contrary IDs must classify every decision session exactly once`);
+    if (decision.verdict !== 'PENDING') {
+      assert.equal(decisionIds.size, decisionSetSize, `${label} cannot be finalized before all 12 decision sessions`);
     }
     assertSubstantive(decision.thresholdAccounting, `${label} threshold accounting`);
     const thresholdCount = decision.thresholdAccounting.match(/\b(\d+)\/12\b/)?.[1];
     assert.ok(thresholdCount !== undefined, `${label} threshold accounting needs an exact n/12 result`);
     const count = Number(thresholdCount);
     assert.ok(count >= 0 && count <= decisionSetSize, `${label} threshold count must be within 0/12–12/12`);
+    assert.equal(count, decision.supportingIds.length, `${label} threshold count must equal supporting evidence IDs`);
     if (label === 'core problem') {
       if (decision.verdict === 'SURVIVE') assert.ok(count >= 8, 'core problem SURVIVE requires at least 8/12');
       if (decision.verdict === 'REVISE_RETEST') assert.ok(count >= 5 && count <= 7, 'core problem REVISE_RETEST requires 5–7/12');
@@ -455,18 +468,26 @@ const syntheticSession = (id: number, segment: string, pass = true, set: SetTag 
 };
 const syntheticSegments = [...requiredQuotas.entries()].flatMap(([segment, count]) => Array.from({ length: count }, () => segment));
 const validTwelve = syntheticSegments.map((segment, index) => syntheticSession(index + 1, segment, index < 10));
-const syntheticNotes = validTwelve.map((session) => `### ${session.id} detailed note\n\nSynthetic validator fixture only.`).join('\n\n');
-const pendingDecisions: ResearchDecisions = {
-  coreProblem: { verdict: 'PENDING', evidenceIds: [], thresholdAccounting: '0/12 synthetic sessions assessed for the problem decision' },
-  monetization: { verdict: 'PENDING', evidenceIds: [], thresholdAccounting: '0/12 synthetic sessions assessed for monetization' },
+const syntheticNotes = validTwelve.map((session) => `### ${session.id} detailed note\n\nSynthetic validator fixture only.\n\nManual anonymization review: passed`).join('\n\n');
+const decisionIdsFor = (sessionsToClassify: Session[]): string[] => sessionsToClassify
+  .filter((session) => session.set === 'Decision')
+  .map((session) => session.id);
+const pendingDecisionsFor = (sessionsToClassify: Session[]): ResearchDecisions => {
+  const ids = decisionIdsFor(sessionsToClassify);
+  return {
+    coreProblem: { verdict: 'PENDING', supportingIds: [], contraryIds: ids, thresholdAccounting: '0/12 synthetic sessions support the problem decision' },
+    monetization: { verdict: 'PENDING', supportingIds: [], contraryIds: ids, thresholdAccounting: '0/12 synthetic sessions support monetization' },
+  };
 };
+const ids = decisionIdsFor(validTwelve);
+const pendingDecisions = pendingDecisionsFor(validTwelve);
 const survivingDecisions: ResearchDecisions = {
-  coreProblem: { verdict: 'SURVIVE', evidenceIds: ['PS-UR-001', 'PS-UR-002'], thresholdAccounting: '8/12 synthetic sessions meet the core threshold' },
-  monetization: { verdict: 'SURVIVE_QUOTE_LEAD', evidenceIds: ['PS-UR-003', 'PS-UR-004'], thresholdAccounting: '4/12 synthetic sessions meet one monetization threshold' },
+  coreProblem: { verdict: 'SURVIVE', supportingIds: ids.slice(0, 8), contraryIds: ids.slice(8), thresholdAccounting: '8/12 synthetic sessions meet the core threshold' },
+  monetization: { verdict: 'SURVIVE_QUOTE_LEAD', supportingIds: ids.slice(0, 4), contraryIds: ids.slice(4), thresholdAccounting: '4/12 synthetic sessions meet one monetization threshold' },
 };
 const killedDecisions: ResearchDecisions = {
-  coreProblem: { verdict: 'KILL', evidenceIds: ['PS-UR-001'], thresholdAccounting: '2/12 synthetic sessions support the core problem' },
-  monetization: { verdict: 'KILL', evidenceIds: ['PS-UR-002'], thresholdAccounting: '1/12 synthetic sessions support a monetization path' },
+  coreProblem: { verdict: 'KILL', supportingIds: ids.slice(0, 2), contraryIds: ids.slice(2), thresholdAccounting: '2/12 synthetic sessions support the core problem' },
+  monetization: { verdict: 'KILL', supportingIds: ids.slice(0, 1), contraryIds: ids.slice(1), thresholdAccounting: '1/12 synthetic sessions support a monetization path' },
 };
 const unchecked: ChecklistStates = { packet: false, independentReview: false, phaseExit: false };
 
@@ -476,11 +497,11 @@ assert.deepEqual(deriveStates(validTwelve, syntheticNotes, survivingDecisions, {
 assert.deepEqual(deriveStates(validTwelve, syntheticNotes, survivingDecisions, { packet: true, independentReview: true, phaseExit: true }), { packet: 'COMPLETE', phaseExit: 'COMPLETE' });
 assert.deepEqual(deriveStates(validTwelve, syntheticNotes, killedDecisions, { packet: true, independentReview: true, phaseExit: false }), { packet: 'COMPLETE', phaseExit: 'BLOCKED' }, 'finalized kill decisions complete research but block Phase 1 exit');
 assert.throws(() => deriveStates(validTwelve, syntheticNotes, killedDecisions, { packet: true, independentReview: true, phaseExit: true }), /Phase 1 exit gate cannot be checked/);
-assert.deepEqual(deriveStates(validTwelve.slice(0, 11), syntheticNotes, pendingDecisions, unchecked), { packet: 'BLOCKED', phaseExit: 'BLOCKED' });
+assert.deepEqual(deriveStates(validTwelve.slice(0, 11), syntheticNotes, pendingDecisionsFor(validTwelve.slice(0, 11)), unchecked), { packet: 'BLOCKED', phaseExit: 'BLOCKED' });
 assert.deepEqual(deriveStates(validTwelve.map((session, index) => ({ ...session, unaidedComprehension: `${index < 9 ? 'Pass' : 'Fail'}: Synthetic fixture reason remains substantive` })), syntheticNotes, pendingDecisions, unchecked), { packet: 'BLOCKED', phaseExit: 'BLOCKED' });
 
 const supplemental = syntheticSession(13, 'Engineer', true, 'Supplemental');
-const supplementalNotes = `${syntheticNotes}\n\n### ${supplemental.id} detailed note\n\nSynthetic supplemental fixture only.`;
+const supplementalNotes = `${syntheticNotes}\n\n### ${supplemental.id} detailed note\n\nSynthetic supplemental fixture only.\n\nManual anonymization review: passed`;
 assert.equal(deriveStates([...validTwelve, supplemental], supplementalNotes, pendingDecisions, unchecked).packet, 'READY_FOR_CHECKLIST_REVIEW', 'supplemental sessions must be excluded from the exact decision set');
 assert.throws(() => deriveStates([...validTwelve, syntheticSession(13, 'Engineer')], supplementalNotes, pendingDecisions, unchecked), /cannot exceed exactly 12 rows/);
 assert.throws(() => deriveStates([...validTwelve, { ...validTwelve[0] }], syntheticNotes, pendingDecisions, unchecked), /duplicate evidence ID/);
@@ -496,12 +517,22 @@ assert.throws(() => validateSession(validTwelve[0], syntheticNotes.replace('Synt
 assert.throws(() => validateSession(validTwelve[0], syntheticNotes.replace('Synthetic validator fixture only.', 'Observed IP 192.168.1.20 in session.')), /linked note contains IP address/);
 assert.throws(() => validateSession(validTwelve[0], syntheticNotes.replace('Synthetic validator fixture only.', 'See https:\/\/example.invalid\/identity for details.')), /linked note contains direct URL/);
 assert.throws(() => validateSession(validTwelve[0], syntheticNotes.replace('Synthetic validator fixture only.', 'Employer: ExampleCo was disclosed.')), /linked note contains labeled direct identifier/);
-assert.throws(() => deriveStates([], '', pendingDecisions, { ...unchecked, packet: true }), /checklist cannot mark MP-1.6 complete/);
+assert.throws(() => deriveStates([], '', pendingDecisionsFor([]), { ...unchecked, packet: true }), /checklist cannot mark MP-1.6 complete/);
 assert.throws(() => deriveStates(validTwelve, syntheticNotes, pendingDecisions, { packet: true, independentReview: false, phaseExit: true }), /Phase 1 exit gate cannot be checked/);
 assert.throws(() => deriveStates(validTwelve, syntheticNotes, pendingDecisions, { packet: true, independentReview: true, phaseExit: false }), /independent review cannot be checked/);
-assert.throws(() => validateResearchDecisions({ ...survivingDecisions, coreProblem: { ...survivingDecisions.coreProblem, evidenceIds: ['PS-UR-999'] } }, validTwelve), /non-decision evidence ID/);
-assert.throws(() => validateResearchDecisions({ ...survivingDecisions, coreProblem: { ...survivingDecisions.coreProblem, thresholdAccounting: '7/12 synthetic sessions meet the core threshold' } }, validTwelve), /SURVIVE requires at least 8\/12/);
-assert.throws(() => validateResearchDecisions({ ...survivingDecisions, monetization: { ...survivingDecisions.monetization, thresholdAccounting: '3/12 synthetic sessions meet monetization' } }, validTwelve), /SURVIVE requires at least 4\/12/);
+assert.throws(() => validateResearchDecisions({ ...survivingDecisions, coreProblem: { ...survivingDecisions.coreProblem, supportingIds: [...ids.slice(0, 7), 'PS-UR-999'] } }, validTwelve), /non-decision evidence ID/);
+assert.throws(() => validateResearchDecisions({ ...survivingDecisions, coreProblem: { ...survivingDecisions.coreProblem, supportingIds: ids.slice(0, 7), contraryIds: ids.slice(7), thresholdAccounting: '7/12 synthetic sessions meet the core threshold' } }, validTwelve), /SURVIVE requires at least 8\/12/);
+assert.throws(() => validateResearchDecisions({ ...survivingDecisions, monetization: { ...survivingDecisions.monetization, supportingIds: ids.slice(0, 3), contraryIds: ids.slice(3), thresholdAccounting: '3/12 synthetic sessions meet monetization' } }, validTwelve), /SURVIVE requires at least 4\/12/);
+const mismatchedDecisions: ResearchDecisions = {
+  ...survivingDecisions,
+  coreProblem: { ...survivingDecisions.coreProblem, supportingIds: ids.slice(0, 2), contraryIds: ids.slice(2) },
+};
+assert.throws(() => validateResearchDecisions(mismatchedDecisions, validTwelve), /threshold count must equal supporting evidence IDs/, '8/12 with only two supporting IDs must fail reconciliation');
+assert.throws(() => validateResearchDecisions({ ...survivingDecisions, coreProblem: { ...survivingDecisions.coreProblem, contraryIds: ids.slice(9) } }, validTwelve), /classify every decision session exactly once/, 'missing classified ID must fail');
+assert.throws(() => validateResearchDecisions({ ...survivingDecisions, coreProblem: { ...survivingDecisions.coreProblem, contraryIds: [ids[0], ...ids.slice(8)] } }, validTwelve), /must be disjoint/, 'supporting/contrary duplicate must fail');
+assert.throws(() => validateSession(validTwelve[0], syntheticNotes.replace('\n\nManual anonymization review: passed', '')), /Manual anonymization review: passed/, 'missing manual-review attestation must fail');
+assert.throws(() => validateSession(validTwelve[0], syntheticNotes.replace('Manual anonymization review: passed', 'Manual anonymization review: failed')), /Manual anonymization review: passed/, 'failed manual-review attestation must fail');
+assert.throws(() => validateSession(validTwelve[0], syntheticNotes.replace('Synthetic validator fixture only.', 'Call (415)555-0123 for details.')), /linked note contains phone/, 'compact parenthesized phone must fail privacy scan');
 assert.throws(() => assertNoContradictoryClaims(`${results}\nMP-1.6 complete; review not done.`, { packet: 'BLOCKED', phaseExit: 'BLOCKED' }), /contradictory packet completion claim/);
 assert.doesNotThrow(() => assertNoContradictoryClaims('MP-1.6 is not complete.\nPhase 1 exit gate has not passed.', { packet: 'BLOCKED', phaseExit: 'BLOCKED' }));
 

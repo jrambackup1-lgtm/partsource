@@ -123,6 +123,7 @@ Complete one detailed note under the matching ledger evidence ID:
 - Researcher interpretation, explicitly separated from observations.
 - Follow-up question or protocol issue; no feature commitment.
 - The detailed note heading must be `### PS-UR-### detailed note` so its ledger reference resolves.
+- `Manual anonymization review: passed` after a human reviewer checks the entire ledger row and linked note. Missing or failed attestation keeps the session non-qualifying.
 
 ## Evidence IDs and handling
 
@@ -147,7 +148,7 @@ Complete one detailed note under the matching ledger evidence ID:
 4. Code monetization evidence by buyer, trigger, path selected, refusal condition, and volunteered willingness to pay. Do not convert words into revenue forecasts.
 5. Call a theme “cross-segment” only when supported by at least three qualifying sessions across at least two segments. Otherwise label it isolated.
 6. Compare findings with secondary research only after primary coding. Secondary quotes cannot fill missing primary cells.
-7. Publish structured core-problem and monetization decisions with threshold accounting, supporting decision-set evidence IDs, and contrary IDs. Use `PENDING` until the exact decision set is complete.
+7. Publish structured core-problem and monetization decisions with threshold accounting plus disjoint supporting and contrary evidence-ID lists. For each gate, the two lists must be unique, contain no supplemental or unknown ID, and together classify all 12 decision-set IDs exactly once. The `n/12` numerator must equal the number of supporting IDs. Use `PENDING` until the exact decision set is complete.
 8. Record the core-problem verdict as `SURVIVE`, `REVISE_RETEST`, or `KILL`. Record monetization as `SURVIVE_QUOTE_LEAD`, `SURVIVE_REFERRAL`, `SURVIVE_TEAM_SOFTWARE`, `REVISE_RETEST`, or `KILL`. A survival verdict must cite qualifying decision-set evidence IDs.
 
 ## Stop and kill criteria
