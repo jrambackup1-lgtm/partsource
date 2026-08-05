@@ -35,3 +35,6 @@ web_backup_vite/
 .env.production.local
 web/.env*
 !web/.env.example
+
+# Agent worktrees
+.worktrees/
