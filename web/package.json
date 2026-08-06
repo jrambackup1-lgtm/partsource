@@ -11,6 +11,7 @@
     "sitemap": "tsx scripts/generate-sitemap.ts",
     "lint": "tsc --noEmit",
     "test": "tsx scripts/test-decoder.ts && tsx scripts/test-p0-safety.ts && tsx scripts/test-product-truth.ts && tsx scripts/test-product-truth-behavior.ts && tsx scripts/test-static-metadata.ts",
+    "test:supabase-catalog-foundation": "npx supabase test db --local ../supabase/tests/catalog_foundation.sql",
     "test:browser": "playwright test"
   },
   "dependencies": {
