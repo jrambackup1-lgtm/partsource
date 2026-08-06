@@ -38,3 +38,6 @@ web/.env*
 
 # Agent worktrees
 .worktrees/
+
+# Supabase CLI local state
+supabase/.temp/
