@@ -1,66 +1,24 @@
-# PartSource — Web App
+# PartSource progressive catalog POC
 
-Industrial hardware research tool. Review standard-fastener specifications, build BOMs, export, and open supplier searches for independent verification.
+PartSource is a local deterministic mechanical-component catalog POC.
 
-## Prerequisites
+`query → catalog level → family → filters → result list`
 
-- **Node.js** >= 18 (tested with 22.x)
+Exact ID keeps visible family/result-list context and highlights one supported exact record. The user explicitly selects a row before detail opens. Non-exact search never auto-selects.
 
-## Quick Start
+The POC uses a validated local synthetic bundle. It makes no external request and contains no runtime AI/agent, supplier, catalog API, BOM, procurement, ordering, or commercial workflow.
 
-### One-time setup
+## Run locally
 
 ```bash
-# From the web/ directory
 npm ci
-```
-
-This installs the frontend and test dependencies.
-
-### Run locally
-
-```bash
 npm run dev
 ```
 
-Starts the Vite app at http://localhost:3000.
+## Release audit
 
-## Supplier searches
-
-Supplier links are search handoffs, not offers, listings, or confirmed matches. Verify identity, price, availability, and specifications on the supplier site. Catalog items enter the BOM with no selected supplier and no invented cost; imported costs are preserved.
-
-## Project Structure
-
-```
-web/
-├── src/
-│   ├── components/    # UI components (Sidebar, Header, Footer, etc.)
-│   ├── contexts/      # Currency context (USD/EUR/GBP/CAD switching)
-│   ├── hooks/         # BOM state management, CSV import/export, PDF
-│   ├── lib/           # Parts database, Fuse search, parser, suppliers
-│   ├── pages/         # Route pages (Home, PartDetail, Admin, WidgetEmbed)
-│   └── App.tsx        # Root app with routing
-├── scripts/
-│   ├── legacy-ingestion/   # Fail-closed historical experiments
-│   └── generate-sitemap.ts # Sitemap generator
-├── .env.example      # Reserved config template
-└── package.json
+```bash
+npm run release:audit
 ```
 
-## Scripts
-
-| Command              | Description                                    |
-| -------------------- | ---------------------------------------------- |
-| `npm run dev`        | Frontend only                                  |
-| `npm run build`      | Production build                               |
-| `npm run lint`       | TypeScript type-check (`tsc --noEmit`)         |
-| `npm test`           | Unit/integration and production-contract tests |
-| `npm run test:browser` | Launch-critical Playwright flows             |
-| `npm run sitemap`    | Generate sitemap XML for SEO                   |
-| `npm run clean`      | Remove build artifacts                         |
-
-## Tech Stack
-
-- **Frontend**: React 19, TypeScript, Vite, Tailwind CSS 4, Radix UI
-- **Search**: Fuse.js (client-side fuzzy search)
-- **BOM**: localStorage persistence, PapaParse CSV, jsPDF PDF export
+Current authority is `../research/product-contract.md`. The full POC technical contract is `../docs/specs/partsource-progressive-catalog-poc.md`.

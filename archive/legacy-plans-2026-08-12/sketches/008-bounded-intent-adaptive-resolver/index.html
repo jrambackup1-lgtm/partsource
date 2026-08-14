@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PartSource 008 — bounded intent-adaptive resolver</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f5f2;
+      --surface: #ffffff;
+      --ink: #161915;
+      --muted: #62675f;
+      --line: #d9dcd5;
+      --soft: #eceee9;
+      --accent: #155d50;
+      --accent-soft: #e5f1ed;
+      --warn: #855017;
+      --warn-soft: #fff3e1;
+      --danger: #8b3535;
+      --danger-soft: #fff0ef;
+      --focus: #166bd3;
+      --radius: 10px;
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--bg); color: var(--ink); font: 15px/1.45 Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+    body { margin: 0; min-width: 0; }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible, summary:focus-visible { outline: 3px solid color-mix(in srgb, var(--focus) 45%, transparent); outline-offset: 2px; }
+    button:disabled { cursor: not-allowed; }
+    .site-head { border-bottom: 1px solid var(--line); background: rgba(245,245,242,.96); }
+    .site-head__in { max-width: 980px; margin: auto; padding: 15px 20px; display: flex; justify-content: space-between; gap: 20px; align-items: center; }
+    .brand { font-weight: 790; letter-spacing: -.025em; }
+    .scope { color: var(--muted); font-size: 12px; text-align: right; }
+    main { max-width: 980px; margin: auto; padding: 30px 20px 90px; }
+    .prototype-note { margin: 0 0 12px; color: var(--muted); font-size: 12px; }
+    .resolver { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 8px; }
+    .resolver label { grid-column: 1/-1; font-weight: 720; font-size: 13px; }
+    .resolver input { min-width: 0; width: 100%; border: 1px solid #aeb4aa; border-radius: 8px; background: var(--surface); padding: 12px 13px; }
+    .resolver button, .primary { border: 0; border-radius: 8px; background: var(--ink); color: white; padding: 11px 16px; font-weight: 720; }
+    .resolver button:hover, .primary:hover { background: var(--accent); }
+    .state-banner { margin-top: 18px; border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: var(--radius); background: var(--surface); padding: 17px 18px; }
+    .state-banner[data-tone="warn"] { border-left-color: var(--warn); background: var(--warn-soft); }
+    .state-banner[data-tone="danger"] { border-left-color: var(--danger); background: var(--danger-soft); }
+    .eyebrow { display: block; color: var(--muted); font-size: 11px; font-weight: 760; letter-spacing: .08em; text-transform: uppercase; }
+    .state-banner h1 { margin: 5px 0 4px; font-size: clamp(22px, 4vw, 34px); line-height: 1.08; letter-spacing: -.035em; }
+    .state-banner p { margin: 0; color: #50554d; max-width: 760px; }
+    .state-token { display: inline-flex; margin-top: 12px; border: 1px solid currentColor; border-radius: 999px; padding: 4px 8px; color: var(--muted); font: 12px/1.1 ui-monospace, SFMono-Regular, Consolas, monospace; }
+    .work { display: grid; grid-template-columns: minmax(0,1.35fr) minmax(260px,.65fr); gap: 12px; margin-top: 12px; align-items: start; }
+    .stack { display: grid; gap: 12px; min-width: 0; }
+    .panel { min-width: 0; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); overflow: hidden; }
+    .panel-head { padding: 14px 16px 10px; display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+    .panel-head h2, .panel-head h3 { margin: 0; font-size: 14px; letter-spacing: -.01em; }
+    .panel-head span { color: var(--muted); font-size: 11px; }
+    .raw-clue { margin: 0 16px 15px; padding: 11px 12px; border-radius: 7px; background: #f6f7f4; overflow-wrap: anywhere; font: 650 13px/1.45 ui-monospace, SFMono-Regular, Consolas, monospace; }
+    .facts { width: 100%; border-collapse: collapse; }
+    .facts th, .facts td { text-align: left; vertical-align: top; padding: 10px 14px; border-top: 1px solid var(--soft); }
+    .facts th { width: 30%; color: var(--muted); font-size: 12px; font-weight: 650; }
+    .facts td:nth-child(2) { width: 34%; font-weight: 690; overflow-wrap: anywhere; }
+    .facts td:last-child { color: var(--muted); font-size: 11px; }
+    .fact-state { display: inline-block; margin-bottom: 2px; color: var(--ink); font-weight: 720; }
+    .family-list, .candidate-list, .agent-list { list-style: none; margin: 0; padding: 0; }
+    .family-row, .candidate-row, .agent-row { border-top: 1px solid var(--soft); padding: 13px 15px; }
+    .family-row:first-child, .candidate-row:first-child, .agent-row:first-child { border-top: 0; }
+    .family-row { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; }
+    .family-row strong, .candidate-row strong { display: block; }
+    .family-row p, .candidate-row p, .agent-row p { margin: 3px 0 0; color: var(--muted); font-size: 12px; }
+    .quiet { border: 1px solid #b5bab1; border-radius: 7px; background: white; padding: 8px 10px; font-size: 12px; font-weight: 700; }
+    .quiet:hover { border-color: var(--ink); }
+    .candidate-row label { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; cursor: pointer; }
+    .candidate-row input { margin-top: 4px; accent-color: var(--accent); }
+    .record-id { font: 700 12px/1.35 ui-monospace, SFMono-Regular, Consolas, monospace; overflow-wrap: anywhere; }
+    .record-facts { display: flex; flex-wrap: wrap; gap: 5px 12px; margin-top: 7px; color: var(--muted); font-size: 12px; }
+    .agent-role { color: var(--muted); font-size: 11px; font-weight: 760; letter-spacing: .05em; text-transform: uppercase; }
+    .quote { display: inline-block; margin-top: 7px; border-left: 2px solid var(--line); padding-left: 8px; color: var(--muted); font: 12px/1.35 ui-monospace, SFMono-Regular, Consolas, monospace; overflow-wrap: anywhere; }
+    .agent-offline { padding: 16px; color: var(--muted); }
+    .next { margin-top: 12px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 15px 16px; display: flex; justify-content: space-between; align-items: center; gap: 14px; }
+    .next strong { display: block; }
+    .next p { margin: 2px 0 0; color: var(--muted); font-size: 12px; }
+    .snapshot { margin-top: 12px; border: 1px solid var(--accent); border-radius: var(--radius); background: var(--accent-soft); padding: 16px; }
+    .snapshot h2 { margin: 3px 0 5px; font-size: 18px; }
+    .snapshot p { margin: 0; color: #44534e; }
+    .snapshot .quiet { margin-top: 12px; background: transparent; }
+    details.state-inspector { margin-top: 12px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+    details.state-inspector summary { padding: 12px 15px; cursor: pointer; font-weight: 700; font-size: 12px; }
+    details.state-inspector pre { margin: 0; border-top: 1px solid var(--soft); padding: 14px; overflow: auto; font: 11px/1.45 ui-monospace, SFMono-Regular, Consolas, monospace; }
+    .test-harness { margin-top: 36px; padding-top: 22px; border-top: 1px dashed #bfc3bb; }
+    .test-harness h2 { margin: 0; font-size: 14px; }
+    .test-harness p { margin: 4px 0 12px; color: var(--muted); font-size: 12px; }
+    .case-buttons { display: flex; flex-wrap: wrap; gap: 6px; }
+    .case-buttons button { border: 1px solid var(--line); border-radius: 6px; background: transparent; padding: 6px 8px; color: var(--muted); font-size: 11px; }
+    .case-buttons button[aria-pressed="true"] { border-color: var(--ink); background: var(--ink); color: white; }
+    .empty { padding: 18px 16px; color: var(--muted); }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    @media (max-width: 680px) {
+      .site-head__in { padding: 12px; align-items: flex-start; }
+      .scope { max-width: 170px; }
+      main { padding: 22px 12px 70px; }
+      .resolver { grid-template-columns: 1fr; }
+      .resolver button { min-height: 44px; }
+      .work { grid-template-columns: 1fr; }
+      .state-banner { padding: 15px; }
+      .state-banner h1 { font-size: 25px; }
+      .facts, .facts tbody, .facts tr, .facts th, .facts td { display: block; width: 100%; }
+      .facts tr { border-top: 1px solid var(--soft); padding: 10px 12px; }
+      .facts th, .facts td { border: 0; padding: 0; }
+      .facts td:nth-child(2) { width: 100%; margin-top: 2px; }
+      .facts td:last-child { width: 100%; margin-top: 4px; display: block; }
+      .family-row { grid-template-columns: 1fr; }
+      .family-row .quiet { justify-self: start; min-height: 44px; }
+      .next { align-items: flex-start; flex-direction: column; }
+      .next .primary { width: 100%; min-height: 44px; }
+      .record-facts { display: grid; grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-head">
+    <div class="site-head__in">
+      <div class="brand">PartSource</div>
+      <div class="scope">POC fixture 30.1 · discovery only</div>
+    </div>
+  </header>
+  <main>
+    <p class="prototype-note">Throwaway behavioral prototype. Synthetic records. No reviewed catalog or mechanical approval.</p>
+    <form class="resolver" id="resolver" role="search">
+      <label for="clue">Describe a fastener or enter a synthetic PS-DEMO identifier</label>
+      <input id="clue" name="clue" autocomplete="off" spellcheck="false" />
+      <button type="submit">Resolve</button>
+    </form>
+
+    <section class="state-banner" id="stateBanner" aria-labelledby="stateTitle" aria-live="polite">
+      <span class="eyebrow" id="routeLabel"></span>
+      <h1 id="stateTitle"></h1>
+      <p id="stateSummary"></p>
+      <span class="state-token" id="stateKind"></span>
+    </section>
+
+    <div id="workspace"></div>
+    <details class="state-inspector">
+      <summary>Inspect complete prototype state</summary>
+      <pre id="stateJson"></pre>
+    </details>
+
+    <section class="test-harness" aria-labelledby="testTitle">
+      <h2 id="testTitle">Prototype test harness</h2>
+      <p>Stable fixture states. Not part of the product direction.</p>
+      <div class="case-buttons" id="caseButtons"></div>
+    </section>
+  </main>
+  <div class="sr-only" id="announce" aria-live="assertive"></div>
+<script>
+(() => {
+  'use strict';
+  const BUNDLE = Object.freeze({
+    id: 'PS-DEMO-BUNDLE-30.1',
+    boundary: 'Clearly synthetic interaction fixture; not a reviewed catalog release.',
+    families: [
+      { id: 'socket', name: 'Socket head cap screw', note: 'Illustrative internal-drive cylindrical-head profile.' },
+      { id: 'button', name: 'Button head screw', note: 'Illustrative internal-drive rounded low-profile family.' },
+      { id: 'pan', name: 'Pan head machine screw', note: 'Illustrative rounded-head machine-screw family.' }
+    ],
+    records: ['socket','button','pan'].flatMap((family, familyIndex) =>
+      ['M3','M4'].flatMap(thread =>
+        ['8 mm','12 mm'].flatMap(length =>
+          ['A2 synthetic','Steel synthetic'].map((material, materialIndex) => ({
+            id: `PS30-${String(familyIndex + 1).padStart(2,'0')}-${thread}-${length.replace(' mm','')}-${materialIndex + 1}`,
+            family,
+            thread,
+            length,
+            material,
+            finish: materialIndex === 0 ? 'Plain synthetic' : 'Dark finish synthetic',
+            evidence: 'Synthetic fixture record only'
+          }))
+        )
+      )
+    )
+  });
+
+  const CASES = Object.freeze({
+    broad: { label: 'Broad intent', raw: 'M4 screw' },
+    constrained: { label: 'Constrained intent', raw: 'M4 socket head screw' },
+    'exact-one': { label: 'Exact ID · one', raw: 'PS-DEMO:ONE-001' },
+    'exact-zero': { label: 'Exact ID · zero', raw: 'PS-DEMO:ZERO-404' },
+    'exact-many': { label: 'Exact ID · many', raw: 'PS-DEMO:MANY-002' },
+    ambiguous: { label: 'Ambiguous input', raw: 'M4 low profile screw' },
+    missing: { label: 'Missing data', raw: 'socket head screw' },
+    conflict: { label: 'Conflicting facts', raw: 'M4 M5 socket head screw, 8 mm 12 mm' },
+    'plausible-absent': { label: 'Not in fixture', raw: 'M4 socket head screw, 99 mm' },
+    unsupported: { label: 'Unsupported scope', raw: '6204 bearing for a high-speed shaft' },
+    'model-offline': { label: 'Model unavailable', raw: 'M4 screw' },
+    'fixture-offline': { label: 'Fixture unavailable', raw: 'PS-DEMO:ONE-001' }
+  });
+
+  const EXACT_MAP = Object.freeze({
+    'PS-DEMO:ONE-001': ['PS30-01-M4-12-1'],
+    'PS-DEMO:MANY-002': ['PS30-01-M4-8-1', 'PS30-01-M4-12-2']
+  });
+
+  const esc = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+  const byId = id => document.getElementById(id);
+  const getRecord = id => BUNDLE.records.find(record => record.id === id);
+  const params = new URLSearchParams(location.search);
+  let currentCase = Object.hasOwn(CASES, params.get('case')) ? params.get('case') : 'broad';
+  let state = null;
+
+  function occurrences(raw, regex) {
+    return [...raw.matchAll(regex)].map(match => ({ value: match[0], span: match[0], index: match.index }));
+  }
+
+  function parseDeterministic(raw) {
+    const threadTokens = occurrences(raw, /\bM\d+(?:\.\d+)?\b/gi);
+    const lengthTokens = occurrences(raw, /\b\d+(?:\.\d+)?\s*mm\b/gi);
+    const identifierTokens = occurrences(raw, /\bPS-DEMO:[A-Z0-9-]+\b/gi);
+    const uniqueThreads = [...new Set(threadTokens.map(item => item.value.toUpperCase()))];
+    const uniqueLengths = [...new Set(lengthTokens.map(item => item.value.toLowerCase().replace(/\s+/g,' ')))];
+    return {
+      raw,
+      threadTokens,
+      lengthTokens,
+      identifierTokens,
+      thread: uniqueThreads.length === 1 ? uniqueThreads[0] : null,
+      length: uniqueLengths.length === 1 ? uniqueLengths[0] : null,
+      threadConflict: uniqueThreads.length > 1,
+      lengthConflict: uniqueLengths.length > 1
+    };
+  }
+
+  function routeCustom(raw) {
+    const value = raw.trim();
+    const lower = value.toLowerCase();
+    const parsed = parseDeterministic(value);
+    if (!value) return 'missing';
+    if (/\b(bearing|gear|seal|motor)\b/i.test(value)) return 'unsupported';
+    if (parsed.threadConflict || parsed.lengthConflict) return 'conflict';
+    if (parsed.identifierTokens.length > 1) return 'conflict';
+    if (parsed.identifierTokens.length) {
+      const id = parsed.identifierTokens[0].value.toUpperCase();
+      if (/\bM\d+/i.test(value.replace(parsed.identifierTokens[0].value,''))) return 'conflict';
+      if (id === 'PS-DEMO:ONE-001') return 'exact-one';
+      if (id === 'PS-DEMO:MANY-002') return 'exact-many';
+      return 'exact-zero';
+    }
+    if (/^[A-Z0-9-]{7,}$/i.test(value)) return 'ambiguous';
+    if (parsed.thread && /socket\s+head/i.test(value) && /99\s*mm/i.test(value)) return 'plausible-absent';
+    if (parsed.thread && /socket\s+head/i.test(value)) return 'constrained';
+    if (parsed.thread && /screw|fastener|bolt/i.test(lower)) return 'broad';
+    if (/screw|fastener|bolt/i.test(lower)) return 'missing';
+    return 'ambiguous';
+  }
+
+  function fact(field, value, stateName, origin, span = '') {
+    return { field, value, state: stateName, origin, span };
+  }
+
+  function baseFacts(parsed) {
+    const facts = [parsed.raw ? fact('Original clue', parsed.raw, 'supplied', 'User input', parsed.raw) : fact('Original clue', 'Blank', 'missing', 'No user text')];
+    parsed.threadTokens.forEach(item => facts.push(fact('Thread token', item.value, 'supplied', 'User input span', item.span)));
+    if (parsed.thread && !parsed.threadConflict) facts.push(fact('Thread designation', parsed.thread, 'parsed', 'Deterministic rule v30.1', parsed.threadTokens[0].span));
+    parsed.lengthTokens.forEach(item => facts.push(fact('Length token', item.value, 'supplied', 'User input span', item.span)));
+    if (parsed.length && !parsed.lengthConflict) facts.push(fact('Length', parsed.length, 'parsed', 'Deterministic unit parser v30.1', parsed.lengthTokens[0].span));
+    parsed.identifierTokens.forEach(item => facts.push(fact('Identifier', item.value.toUpperCase(), 'supplied', 'User input span', item.span)));
+    return facts;
+  }
+
+  function agentsFor(caseKey, raw) {
+    const lower = raw.toLowerCase();
+    if (caseKey === 'model-offline' || caseKey === 'fixture-offline' || caseKey.startsWith('exact-') || caseKey === 'conflict' || caseKey === 'unsupported') return [];
+    if ((caseKey === 'constrained' || caseKey === 'plausible-absent') && lower.includes('socket head')) return [
+      { role: 'Terminology interpreter', text: '“socket head” may refer to the socket-head profile in this fixture.', span: 'socket head', kind: 'proposal' },
+      { role: 'Interpretation critic', text: 'The phrase alone does not establish standard, head geometry, material, finish, or suitability.', span: 'socket head', kind: 'challenge' },
+      { role: 'Question writer', text: 'Which length do you need?', span: raw, kind: 'question' }
+    ];
+    const broadTerm = raw.match(/\b(screw|fastener|bolt)\b/i)?.[0];
+    if (caseKey === 'broad' && broadTerm) return [
+      { role: 'Terminology interpreter', text: `“${broadTerm}” is broader than the three fixture family profiles.`, span: broadTerm, kind: 'proposal' },
+      { role: 'Interpretation critic', text: 'Head shape, drive, function, pitch, and length remain unresolved.', span: broadTerm, kind: 'challenge' },
+      { role: 'Question writer', text: 'Which head and drive form matches your clue?', span: raw, kind: 'question' }
+    ];
+    if (caseKey === 'ambiguous' && lower.includes('low profile')) return [
+      { role: 'Terminology interpreter', text: '“low profile” could describe more than one fixture boundary.', span: 'low profile', kind: 'proposal' },
+      { role: 'Interpretation critic', text: 'The phrase cannot select a family or candidate without a head/drive distinction.', span: 'low profile', kind: 'challenge' },
+      { role: 'Question writer', text: 'Is the head cylindrical, rounded button, or pan shaped?', span: raw, kind: 'question' }
+    ];
+    if (caseKey === 'missing' && lower.includes('socket head')) return [
+      { role: 'Terminology interpreter', text: '“socket head” suggests one fixture family, but remains a proposal.', span: 'socket head', kind: 'proposal' },
+      { role: 'Interpretation critic', text: 'No thread size or length was supplied.', span: raw, kind: 'challenge' },
+      { role: 'Question writer', text: 'What thread designation is required?', span: raw, kind: 'question' }
+    ];
+    return [];
+  }
+
+  function buildState(caseKey, raw) {
+    const parsed = parseDeterministic(raw);
+    const facts = baseFacts(parsed);
+    const next = {
+      caseKey, raw, route: 'text_discovery', resolution: 'clarification_required',
+      identityCardinality: 'not_evaluated', candidateCardinality: 'not_evaluated',
+      fixtureStatus: 'ready', modelStatus: 'ready', selectionGate: 'blocked',
+      title: 'More information is required.', summary: 'The clue is preserved. No candidate is selected.', tone: 'warn',
+      facts, agents: agentsFor(caseKey, raw), familyCandidates: [], candidateIds: [],
+      acceptedFamily: null, selectedId: null, snapshot: null, safeAction: 'Edit the clue'
+    };
+
+    if (caseKey === 'broad') {
+      Object.assign(next, { resolution: 'family_candidates', title: 'Three family boundaries remain.', summary: `${parsed.thread || 'The parsed thread'} carries forward. Pitch, length, material, finish, and family remain unresolved.`, familyCandidates: BUNDLE.families.map(f => f.id), selectionGate: 'family_choice_only', safeAction: 'Choose one family interpretation' });
+      next.facts.push(fact('Family', 'Unresolved', 'missing', 'No deterministic family rule'));
+      next.facts.push(fact('Pitch · length · material · finish', 'Not supplied', 'missing', 'No defaults applied'));
+    } else if (caseKey === 'constrained') {
+      Object.assign(next, { resolution: 'clarification_required', title: 'One family interpretation is proposed.', summary: `${parsed.thread || 'The parsed thread'} carries forward. The family needs user acceptance; pitch, length, material, and finish remain missing.`, familyCandidates: ['socket'], selectionGate: 'family_choice_only', safeAction: 'Use the family interpretation to continue' });
+      next.facts.push(fact('Family', 'Socket head cap screw', 'agent proposal', 'Terminology interpreter fixture', 'socket head'));
+      next.facts.push(fact('Pitch · length · material · finish', 'Not supplied', 'missing', 'No defaults applied'));
+    } else if (caseKey === 'exact-one') {
+      const id = parsed.identifierTokens[0]?.value.toUpperCase() || 'PS-DEMO:ONE-001';
+      Object.assign(next, { route: 'exact_identifier', resolution: 'exact_mapping', identityCardinality: 'one', candidateCardinality: 'one', title: 'One synthetic mapping is in this fixture.', summary: 'The mapping is visible but unselected. One result is not proof of suitability or correctness.', candidateIds: EXACT_MAP[id] || EXACT_MAP['PS-DEMO:ONE-001'], selectionGate: 'candidate_snapshot_choice', safeAction: 'Choose the mapped candidate' });
+      next.facts.push(fact('Namespace', 'PS-DEMO', 'parsed', 'Strict deterministic prefix rule v30.1', 'PS-DEMO:'));
+      next.facts.push(fact('Mapping boundary', BUNDLE.boundary, 'fixture', BUNDLE.id));
+    } else if (caseKey === 'exact-zero') {
+      Object.assign(next, { route: 'exact_identifier', resolution: 'identifier_not_in_bundle', identityCardinality: 'zero', candidateCardinality: 'not_evaluated', title: 'No mapping is indexed in this fixture.', summary: 'This does not mean the identifier or component is invalid. No nearby identifier was substituted.', safeAction: 'Check the identifier or namespace' });
+      next.facts.push(fact('Namespace', 'PS-DEMO', 'parsed', 'Strict deterministic prefix rule v30.1', 'PS-DEMO:'));
+    } else if (caseKey === 'exact-many') {
+      const id = parsed.identifierTokens[0]?.value.toUpperCase() || 'PS-DEMO:MANY-002';
+      Object.assign(next, { route: 'exact_identifier', resolution: 'ambiguous_identifier', identityCardinality: 'many', candidateCardinality: 'many', title: 'Two mappings collide in this fixture.', summary: 'Both targets stay visible. PartSource did not choose the first record.', candidateIds: EXACT_MAP[id] || EXACT_MAP['PS-DEMO:MANY-002'], selectionGate: 'blocked', safeAction: 'Resolve the mapping collision before selection' });
+      next.facts.push(fact('Namespace', 'PS-DEMO', 'parsed', 'Strict deterministic prefix rule v30.1', 'PS-DEMO:'));
+      next.facts.push(fact('Identity collision', '2 targets', 'conflicting', 'Synthetic mapping fixture'));
+    } else if (caseKey === 'ambiguous') {
+      if (next.agents.length) {
+        Object.assign(next, { resolution: 'clarification_required', title: 'The clue has more than one plausible meaning.', summary: 'M4 is preserved. “Low profile” is an interpretation, not a family fact.', familyCandidates: ['button','pan'], selectionGate: 'family_choice_only', safeAction: 'Choose one family interpretation' });
+        next.facts.push(fact('Term', 'low profile', 'agent proposal', 'Terminology interpreter fixture', 'low profile'));
+      } else {
+        Object.assign(next, { resolution: 'clarification_required', title: 'The clue is ambiguous.', summary: 'No supported family interpretation can be tied to an actual input span. No candidate search ran.', safeAction: 'Add a recognized family clue' });
+        next.facts.push(fact('Family', 'Unresolved', 'missing', 'No span-anchored interpretation'));
+      }
+    } else if (caseKey === 'missing') {
+      if (!parsed.raw.trim()) {
+        Object.assign(next, { resolution: 'clarification_required', title: 'No component clue was supplied.', summary: 'The blank clue remains blank. No interpretation, default, or candidate search ran.', safeAction: 'Describe the component clue' });
+        next.facts.push(fact('Component clue', 'Not supplied', 'missing', 'No fixture default applied'));
+      } else {
+        Object.assign(next, { resolution: 'clarification_required', title: 'A selection-critical fact is missing.', summary: 'No thread size was supplied. No size, pitch, length, material, or finish was defaulted.', safeAction: 'Supply the thread designation' });
+        next.facts.push(fact('Thread designation', 'Not supplied', 'missing', 'Required before fixture filtering'));
+      }
+    } else if (caseKey === 'conflict') {
+      const identifierConflict = parsed.identifierTokens.length > 1;
+      Object.assign(next, {
+        resolution: 'conflict',
+        title: identifierConflict ? 'Supplied identifiers conflict.' : 'Supplied facts conflict.',
+        summary: identifierConflict ? 'Every identifier remains visible. There is no first-ID winner and no candidate search.' : 'M4/M5 and 8 mm/12 mm all remain visible. There is no winner and no candidate search.',
+        tone: 'danger', selectionGate: 'blocked', safeAction: 'Correct the conflicting clue'
+      });
+      if (identifierConflict) next.facts.push(fact('Identifier conflict', parsed.identifierTokens.map(x => x.value.toUpperCase()).join(' ↔ '), 'conflicting', 'All supplied occurrences preserved'));
+      if (parsed.threadConflict) next.facts.push(fact('Thread conflict', parsed.threadTokens.map(x => x.value).join(' ↔ '), 'conflicting', 'All supplied occurrences preserved'));
+      if (parsed.lengthConflict) next.facts.push(fact('Length conflict', parsed.lengthTokens.map(x => x.value).join(' ↔ '), 'conflicting', 'All supplied occurrences preserved'));
+    } else if (caseKey === 'plausible-absent') {
+      Object.assign(next, { resolution: 'constrained_candidates', candidateCardinality: 'zero', title: 'The plausible configuration is not represented.', summary: `The fixture has no ${parsed.thread || 'supplied thread'} × ${parsed.length || 'supplied length'} record. This is not a claim that the component is invalid or unavailable.`, safeAction: `Revise the ${parsed.length || 'length'} constraint` });
+      next.facts.push(fact('Family', 'Socket head cap screw', 'agent proposal', 'Terminology interpreter fixture', 'socket head'));
+      next.facts.push(fact('Fixture result', '0 exact synthetic records', 'not in fixture', BUNDLE.id));
+    } else if (caseKey === 'unsupported') {
+      const unsupportedTerm = parsed.raw.match(/\b(bearing|gear|seal|motor)\b/i)?.[0] || 'component';
+      Object.assign(next, { route: 'invalid_input', resolution: 'unsupported_scope', title: 'This clue is outside the fixture scope.', summary: `The ${unsupportedTerm} clue is preserved. It was not reinterpreted as a fastener or nearby family.`, tone: 'warn', safeAction: 'Edit the clue; this fixture covers three fastener profiles only' });
+      next.facts.push(fact('Component class', unsupportedTerm, 'unsupported', 'Closed fixture scope rule', unsupportedTerm));
+    } else if (caseKey === 'model-offline') {
+      Object.assign(next, { resolution: 'clarification_required', modelStatus: 'unavailable', title: 'Interpretation model is unavailable.', summary: 'M4 remains deterministically parsed. No family proposal, candidate, or stale result is shown.', tone: 'danger', agents: [], safeAction: 'Retry interpretation; M4 remains preserved' });
+      next.facts.push(fact('Family interpretation', 'Unavailable', 'agent unavailable', 'No fallback guess'));
+    } else if (caseKey === 'fixture-offline') {
+      Object.assign(next, { route: 'exact_identifier', resolution: 'fixture_unavailable', identityCardinality: 'not_evaluated', candidateCardinality: 'not_evaluated', fixtureStatus: 'unavailable', modelStatus: 'not_needed', title: 'The fixture bundle is unavailable.', summary: 'The input is preserved. No mapping, candidate, previous snapshot, or selection action is current.', tone: 'danger', agents: [], safeAction: 'Retry the named fixture bundle' });
+      next.facts.push(fact('Fixture', BUNDLE.id, 'unavailable', 'No result reused'));
+    }
+    return next;
+  }
+
+  function stateLabel(value) {
+    return value.replaceAll('_',' ');
+  }
+
+  function renderFacts(facts) {
+    return `<table class="facts"><tbody>${facts.map(item => `<tr><th>${esc(item.field)}</th><td>${esc(item.value)}</td><td><span class="fact-state">${esc(item.state)}</span><br>${esc(item.origin)}${item.span ? `<br>span: “${esc(item.span)}”` : ''}</td></tr>`).join('')}</tbody></table>`;
+  }
+
+  function renderFamilies() {
+    if (!state.familyCandidates.length || state.acceptedFamily) return '';
+    return `<section class="panel" aria-labelledby="familyTitle"><div class="panel-head"><h2 id="familyTitle">Candidate family interpretations</h2><span>not facts</span></div><ul class="family-list">${state.familyCandidates.map(id => {
+      const family = BUNDLE.families.find(item => item.id === id);
+      return `<li class="family-row"><div><strong>${esc(family.name)}</strong><p>${esc(family.note)}</p></div><button class="quiet" type="button" data-family="${esc(id)}">Use this interpretation</button></li>`;
+    }).join('')}</ul></section>`;
+  }
+
+  function constrainedCandidates() {
+    if (!state.acceptedFamily) return state.candidateIds.map(getRecord).filter(Boolean);
+    return BUNDLE.records.filter(record => record.family === state.acceptedFamily && (!state.parsed.thread || record.thread === state.parsed.thread) && (!state.parsed.length || record.length.toLowerCase() === state.parsed.length));
+  }
+
+  function renderCandidates() {
+    const records = constrainedCandidates();
+    if (!records.length) return '';
+    const blocked = state.selectionGate === 'blocked';
+    return `<section class="panel" aria-labelledby="candidateTitle"><div class="panel-head"><h2 id="candidateTitle">${state.route === 'exact_identifier' ? 'Mapped synthetic records' : 'Synthetic candidate records'}</h2><span>${records.length} · none selected</span></div><ul class="candidate-list">${records.map(record => `<li class="candidate-row"><label><input type="radio" name="candidate" value="${esc(record.id)}" ${state.selectedId === record.id ? 'checked' : ''} ${blocked ? 'disabled' : ''} /><span><span class="record-id">${esc(record.id)}</span><strong>${esc(BUNDLE.families.find(f => f.id === record.family).name)}</strong><span class="record-facts"><span>Thread ${esc(record.thread)}</span><span>Length ${esc(record.length)}</span><span>${esc(record.material)}</span><span>${esc(record.finish)}</span></span><p>${esc(record.evidence)}. Mapping or filtering does not mean selection.</p></span></label></li>`).join('')}</ul></section>`;
+  }
+
+  function renderAgents() {
+    if (state.modelStatus === 'unavailable') return `<section class="panel" aria-labelledby="agentTitle"><div class="panel-head"><h2 id="agentTitle">Agent work</h2><span>bounded</span></div><div class="agent-offline">Unavailable. No proposal or fallback guess was created.</div></section>`;
+    if (!state.agents.length) return '';
+    return `<section class="panel" aria-labelledby="agentTitle"><div class="panel-head"><h2 id="agentTitle">Interpretation work</h2><span>proposals cannot change gates</span></div><ul class="agent-list">${state.agents.map(agent => `<li class="agent-row"><span class="agent-role">${esc(agent.role)} · ${esc(agent.kind)}</span><p>${esc(agent.text)}</p><span class="quote">input span: “${esc(agent.span)}”</span></li>`).join('')}</ul></section>`;
+  }
+
+  function renderNext() {
+    const records = constrainedCandidates();
+    if (state.snapshot) {
+      const record = getRecord(state.snapshot.recordId);
+      return `<section class="snapshot" id="snapshot" aria-labelledby="snapshotTitle"><span class="eyebrow">User-created fixture artifact</span><h2 id="snapshotTitle">Discovery snapshot · not approval</h2><p>${esc(record.id)} was chosen by the user. Unknowns and fixture limits remain attached. No engineering or commercial action is enabled.</p><button class="quiet" type="button" id="changeChoice">Change choice</button></section>`;
+    }
+    if (state.selectedId) return `<section class="next"><div><strong>Candidate chosen by user</strong><p>Create a local in-memory discovery snapshot. This does not approve the record.</p></div><button class="primary" id="createSnapshot" type="button">Create discovery snapshot</button></section>`;
+    const candidateHint = records.length && state.selectionGate !== 'blocked' ? 'Choose one candidate above. Nothing is preselected.' : state.safeAction;
+    return `<section class="next"><div><strong>Next safe action</strong><p>${esc(candidateHint)}</p></div></section>`;
+  }
+
+  function render() {
+    state.parsed = parseDeterministic(state.raw);
+    byId('clue').value = state.raw;
+    byId('routeLabel').textContent = `${stateLabel(state.route)} · ${BUNDLE.id}`;
+    byId('stateTitle').textContent = state.title;
+    byId('stateSummary').textContent = state.summary;
+    byId('stateKind').textContent = `${stateLabel(state.resolution)} · identity ${stateLabel(state.identityCardinality)}`;
+    byId('stateBanner').dataset.tone = state.tone || 'safe';
+    const original = `<section class="panel" aria-labelledby="clueTitle"><div class="panel-head"><h2 id="clueTitle">Original clue</h2><span>preserved</span></div><p class="raw-clue" id="rawClue">${esc(state.raw || 'Blank input')}</p></section>`;
+    const ledger = `<section class="panel" aria-labelledby="factsTitle"><div class="panel-head"><h2 id="factsTitle">Fact ledger</h2><span>origin stays visible</span></div>${renderFacts(state.facts)}</section>`;
+    const family = renderFamilies();
+    const candidates = renderCandidates();
+    const agents = renderAgents();
+    byId('workspace').innerHTML = `<div class="work"><div class="stack">${original}${family}${candidates}${renderNext()}</div><div class="stack">${ledger}${agents}</div></div>`;
+    byId('stateJson').textContent = JSON.stringify({
+      case: state.caseKey, raw: state.raw, route: state.route, resolution: state.resolution,
+      identityCardinality: state.identityCardinality, candidateCardinality: constrainedCandidates().length || state.candidateCardinality,
+      fixtureStatus: state.fixtureStatus, modelStatus: state.modelStatus, selectionGate: state.selectionGate,
+      acceptedFamily: state.acceptedFamily, selectedId: state.selectedId, snapshot: state.snapshot,
+      constraints: state.facts.map(({field,value,state: truthState,origin,span}) => ({field,value,truthState,origin,span}))
+    }, null, 2);
+    byId('caseButtons').innerHTML = Object.entries(CASES).map(([key,item]) => `<button type="button" data-case="${esc(key)}" aria-pressed="${String(key === state.caseKey)}">${esc(item.label)}</button>`).join('');
+    bindDynamic();
+  }
+
+  function setCase(caseKey, raw) {
+    currentCase = raw !== undefined ? routeCustom(raw) : Object.hasOwn(CASES, caseKey) ? caseKey : 'broad';
+    const resolvedRaw = raw === undefined ? CASES[currentCase].raw : raw;
+    state = buildState(currentCase, resolvedRaw);
+    const nextParams = new URLSearchParams();
+    nextParams.set('case', currentCase);
+    if (raw !== undefined && raw !== CASES[currentCase]?.raw) nextParams.set('q', raw);
+    history.pushState({case: currentCase}, '', `?${nextParams.toString()}`);
+    byId('announce').textContent = state.title;
+    render();
+  }
+
+  function bindDynamic() {
+    document.querySelectorAll('[data-family]').forEach(button => button.addEventListener('click', () => {
+      state.acceptedFamily = button.dataset.family;
+      state.familyCandidates = [];
+      state.resolution = 'constrained_candidates';
+      state.selectionGate = 'candidate_snapshot_choice';
+      const matches = constrainedCandidates();
+      state.candidateCardinality = matches.length === 0 ? 'zero' : matches.length === 1 ? 'one' : 'many';
+      state.title = `${matches.length} synthetic candidates remain.`;
+      state.summary = `${state.parsed.thread || 'No thread'} carried forward. No candidate is selected.`;
+      state.safeAction = matches.length ? 'Choose one candidate' : 'Revise a constraint';
+      state.selectedId = null;
+      state.snapshot = null;
+      render();
+    }));
+    document.querySelectorAll('input[name="candidate"]').forEach(input => input.addEventListener('change', () => {
+      state.selectedId = input.value;
+      state.snapshot = null;
+      render();
+    }));
+    document.querySelectorAll('[data-case]').forEach(button => button.addEventListener('click', () => setCase(button.dataset.case)));
+    byId('createSnapshot')?.addEventListener('click', () => {
+      state.snapshot = { recordId: state.selectedId, createdBy: 'explicit_user_action', bundle: BUNDLE.id };
+      render();
+    });
+    byId('changeChoice')?.addEventListener('click', () => {
+      state.snapshot = null;
+      state.selectedId = null;
+      render();
+    });
+  }
+
+  byId('resolver').addEventListener('submit', event => {
+    event.preventDefault();
+    const raw = byId('clue').value;
+    setCase(routeCustom(raw), raw);
+  });
+  addEventListener('popstate', () => {
+    const url = new URL(location.href);
+    const suppliedQuery = url.searchParams.has('q');
+    const queryRaw = suppliedQuery ? url.searchParams.get('q') : '';
+    const requestedCase = Object.hasOwn(CASES, url.searchParams.get('case')) ? url.searchParams.get('case') : 'broad';
+    const caseKey = suppliedQuery ? routeCustom(queryRaw) : requestedCase;
+    currentCase = caseKey;
+    state = buildState(caseKey, suppliedQuery ? queryRaw : CASES[caseKey].raw);
+    render();
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === '/' && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)) {
+      event.preventDefault(); byId('clue').focus(); byId('clue').select();
+    }
+  });
+
+  const suppliedQuery = params.has('q');
+  const queryRaw = suppliedQuery ? params.get('q') : '';
+  if (suppliedQuery) currentCase = routeCustom(queryRaw);
+  const initialRaw = suppliedQuery ? queryRaw : CASES[currentCase].raw;
+  state = buildState(currentCase, initialRaw);
+  history.replaceState({case: currentCase}, '', `?case=${encodeURIComponent(currentCase)}${suppliedQuery ? `&q=${encodeURIComponent(initialRaw)}` : ''}`);
+  render();
+})();
+</script>
+</body>
+</html>

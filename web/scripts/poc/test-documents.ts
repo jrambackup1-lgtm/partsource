@@ -1,0 +1,14 @@
+import * as assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+const root = resolve(process.cwd(), '..');
+const docs = ['research/product-contract.md','research/prd.md','SPEC_CONFIRMATION.md','CONTEXT.md','docs/specs/partsource-progressive-catalog-poc.md'];
+const text = docs.map(file => readFileSync(resolve(root, file), 'utf8')).join('\n');
+for (const phrase of ['query → catalog level → family → filters → result list','synthetic']) assert.match(text, new RegExp(phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'));
+assert.match(text, /runtime (uses no AI or agents|behavior is deterministic\. No AI or agents run)/i);
+const ticket39 = readFileSync(resolve(root, '.wayfinder/poc-ship/evidence/ticket-39-post-poc-ux-delta-acceptance-corpus.md'), 'utf8');
+assert.match(ticket39, /PROXY PASS — bounded synthetic acceptance corpus/);
+assert.match(ticket39, /\*\*Qualified approval:\*\* \*\*OPEN \/ NOT SUPPLIED/);
+assert.match(ticket39, /proxy evidence/i);
+assert.match(ticket39, /Formal qualified approval remains OPEN \/ NOT SUPPLIED/);
+console.log('POC authority document guard passed.');

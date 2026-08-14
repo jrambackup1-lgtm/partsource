@@ -41,3 +41,13 @@ web/.env*
 
 # Supabase CLI local state
 supabase/.temp/
+**/supabase/.temp/
+**/supabase/.branches/
+
+# Python bytecode
+__pycache__/
+**/__pycache__/
+*.py[cod]
+
+# Local historical screenshot artifacts excluded from the release packet
+archive/legacy-plans-2026-08-12/sketches/008-bounded-intent-adaptive-resolver/screenshots/*.png

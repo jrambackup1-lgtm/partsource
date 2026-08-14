@@ -1,0 +1,2703 @@
+diff --git a/AGENTS.md b/AGENTS.md
+index f5161c8..f312696 100644
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -5,11 +5,14 @@ Research vault and development project for the mechanical hardware sourcing tool
+
+ ## Key Files
+ - `research/product-contract.md` — Authoritative current product contract and sole source of truth for product claims and boundaries
++- `research/production-readiness-plan.md` — Approved production-ready restart plan
++- `research/production-readiness-checklist.md` — Sole live execution tracker
++- `research/data-source-register.md` — Source permission and ingestion gate
+ - `research/prd.md` — Product Requirements Document (MVP Prototype)
+-- `research/aistudio_checklist.md` — Live ship checklist & log (done / remaining tasks)
+ - `research/grill-decisions.md` — Finalized technical requirements & decisions
+ - `research/business-plan.md` — Business plan, pillars, and domain architecture
+ - `research/market-research.md` — Verified mechanical TAM, comparables & VC landscape
+ - `research/customer-and-vendor-insights.md` — Affiliate programs, community pain quotes & factual corrections
+ - `research/pseo-risk-audit.md` — pSEO risk scoring & rollout strategy
+
++Superseded roadmaps and checklists are historical only under `research/archive/paused-2026-07-31/`.
+diff --git a/research/aistudio_checklist.md b/research/aistudio_checklist.md
+deleted file mode 100644
+index 83cb41b..0000000
+--- a/research/aistudio_checklist.md
++++ /dev/null
+@@ -1,91 +0,0 @@
+-# PartSource — Ship Checklist & Log
+-
+-Living checklist for partsource.io. Supersedes the old AI Studio export checklist
+-(that era is done — the app is exported, rebuilt on Vite/React, and live).
+-
+-**Live site:** https://jrambackup1-lgtm.github.io/partsource/
+-**Current production state (2026-07-11):** Technical catalog plus supplier-search handoffs only; no catalog pricing, inventory, scraper, admin, orders, auth, or compliance claims in the production UI. Historical entries below describe superseded builds.
+-
+----
+-
+-## 1. Shipped ✅
+-
+-### 2026-07-09 — Made it functional & deployed
+-- [x] Fixed router basename vs `/partsource/` base path (blank-page bug, dev + prod)
+-- [x] SPA `404.html` fallback so deep links work on GitHub Pages
+-- [x] CI: decoder tests + build + deploy on every push; `workflow_dispatch` for manual rebuilds
+-- [x] Historical: Zoro scraper deployed to Render. Superseded on 2026-07-11; production scraper usage is disabled.
+-
+-### 2026-07-10 — Real catalog & honesty pass (audit-doc pivot)
+-- [x] 585-part catalog: 60 hand-verified McMaster crosses + ~525 generated from public
+-      DIN/ISO standards (DIN 912/7991/933, ISO 7380, DIN 934/985, DIN 125A/127B; M2–M12; steel + A2)
+-- [x] Own part numbers are primary identity (e.g. `DIN912-M4X12-A2`); McMaster PN is a reference field only
+-- [x] Unknown part numbers: honest "Not Indexed" state — no fabricated specs/prices/stock,
+-      raw-PN supplier search links, request-indexing mailto CTA
+-- [x] Removed all fake stock counts; estimated rows say "Check site"; McMaster row only on verified crosses
+-- [x] Exact-match catalog lookup (unknown numbers can no longer fuzzy-match a wrong part)
+-- [x] Images fixed: per-category CAD schematic + SVG glyphs; Photo toggle & stock photos removed
+-- [x] "Not affiliated with McMaster-Carr" disclaimer in footer; unindexed pages noindexed, no JSON-LD offers
+-- [x] Historical scraper accepted spec-derived `q`; it is not part of the production buyer flow.
+-- [x] 17 decoder tests + 19-check Playwright smoke, green locally and on production
+-- [x] Data sourcing locked: NO McMaster/skdin/Source-Search/distributor bulk scraping
+-      (see `research/data-sourcing-decision.md` + audit-doc guardrails); Fastener Superstore
+-      audited — no JSON-LD/affiliate/API → not viable
+-
+-### 2026-07-10 (later) — V1 feature push & cross-reference integrity audit
+-- [x] **RED FLAG found & resolved**: the "60 verified" McMaster crosses were fabricated —
+-      live Zoro data disproved them (91251A242 claimed M4×12, actually #10-24 × 1/2").
+-      All purged. Crosses now live in `MCMASTER_CROSSES` (hand-verified, provenance-noted,
+-      grown one real part at a time per the audit doc).
+-- [x] Historical: unknown-MPN pages used a live Zoro cross-reference card. Superseded; current pages provide supplier-search handoffs only.
+-      (supplier's own match: name/price/link, honestly labeled) + family-level series decoding
+-      for 9 real McMaster series — no fabricated size claims anywhere
+-- [x] Imperial length regex fix (TPI digits no longer misread as length)
+-- [x] **BOM quote form** ("Request Sourcing Quote" → prefilled email + clipboard)
+-- [x] **Reference library**: 12 deep pages (DIN 912/7991/933/934/125/127 + ISO 7380 size
+-      charts, computed torque tables, pitch/tap-drill, property classes, MPN decoding guide,
+-      metric-vs-imperial ID) — cross-linked with catalog parts
+-- [x] Red-flag sweep: removed unused deps (@google/genai, express) & AI Studio leftovers,
+-      real catalog count in footer, compliance verify-per-order caveat, admin Demo badge,
+-      honest sidebar actions
+-- [x] 23 unit tests + 14-check browser smoke, green locally and on production
+-
+----
+-
+-## 2. Remaining — Launch Blockers
+-
+-- [ ] **Buy partsource.io** → GitHub Pages custom domain + CNAME → flip vite build `base` to `/`
+-      (sitemap + embed snippets already resolve correctly once on the domain)
+-- [x] **Remove production pricing claims**: supplier destinations are searches; users verify commercial data on supplier sites.
+-
+-## 3. Remaining — V1 Plan (per `mcmaster-tool-audit-and-v1-plan`)
+-
+-- [ ] Grow `MCMASTER_CROSSES` by hand: verify each MPN against a part in hand or the
+-      supplier's own listing before adding (2 entries seeded; unknown MPNs remain
+-      unindexed unless supported by verified evidence). NEVER bulk-generate crosses again.
+-- [ ] Email eProcurement@mcmaster.com about the cross-reference API use case (expect "no", closes ambiguity)
+-- [ ] Ask Zoro/Fastenal/Grainger partnerships about affiliate/data-feed programs
+-- [ ] Outreach in Eng-Tips / r/engineering threads where the demand quotes came from
+-- [ ] Indexing gate before any SEO push: on partsource.io + ≥20 organic backlinks +
+-      content floor per `research/pseo-risk-audit.md` (NO bulk page-per-SKU indexing)
+-
+-## 4. Backlog / Polish
+-
+-- [ ] Imperial (ASME B18.3 / B18.2.1) generated catalog coverage (#4-40 … 1/2"-13)
+-- [ ] Verify legacy prototype features still unproven: currency propagation everywhere,
+-      admin ↔ customer order sync, compliance toggles ↔ SVG chart sync, BOM optimizer
+-      split modes ($9.99/warehouse consolidation math)
+-- [ ] Decide fate of prototype-era leftovers not in the Vite app: CAD/STEP download, torque calculator
+-- [ ] Regenerate sitemap for partsource.io after domain purchase (respect indexing gate)
+-- [ ] Order data still localStorage-only (no DB/auth) — fine for MVP, revisit with brokerage
+-
+----
+-
+-## 5. Log
+-
+-| Date | What happened |
+-|---|---|
+-| 2026-07-07 | Base-path commit broke routing; site deployed but rendered blank |
+-| 2026-07-09 | Routing fixed, local + Pages verified, scraper live on Render, `VITE_SCRAPER_URL` wired; Zoro 403s Render IP → honest estimated fallback in prod |
+-| 2026-07-10 | Audit-doc pivot: 585-part standards catalog, honest unindexed UX, fake stock/photos removed, disclaimer added, Fastener Superstore ruled out, 19/19 prod checks |
+-| 2026-07-10 | V1 push: fabricated crosses purged (live data disproved them), hand-verified cross table + live Zoro cross card, BOM quote form, 12-page reference library, dep cleanup — 13/13 prod checks |
+diff --git a/research/business-plan.md b/research/business-plan.md
+index a324393..1538538 100644
+--- a/research/business-plan.md
++++ b/research/business-plan.md
+@@ -79,6 +79,8 @@ Runs independently                 Benefits from PartSource's traffic
+
+ ## 5. Build Phases
+
++Implementation correction (2026-07-11): Phase 0 is complete in Vite/React, not Next.js. The current MVP is the trusted static catalog/search/BOM/export/quote-lead tool; backend commerce remains demand-gated. The diagram below is retained as the original business phasing.
++
+ ```
+ ┌────────────────────────────────┐
+ │   Phase 0: Proof of Concept    │  ← (CURRENT PHASE) Setup Next.js flat mockup.
+diff --git a/research/competitive-matrix.md b/research/competitive-matrix.md
+index 49947ec..0854a79 100644
+--- a/research/competitive-matrix.md
++++ b/research/competitive-matrix.md
+@@ -161,7 +161,7 @@ All competitor sources below are official public pages. Retrieved: 2026-07-13.
+ ## Internal authority sources
+
+ - [P1 — Authoritative product contract](product-contract.md) — current authority read 2026-07-13.
+-- [P2 — Master plan](master-plan.md) — phase ownership read 2026-07-13.
++- [P2 — Archived master plan](archive/paused-2026-07-31/master-plan.md) — historical phase ownership read 2026-07-13.
+
+ ## Research limitation
+
+diff --git a/research/details.md b/research/details.md
+index 9b653e3..8820f5a 100644
+--- a/research/details.md
++++ b/research/details.md
+@@ -112,8 +112,8 @@ No page is listed in `sitemap.xml` or indexable unless:
+
+ ## 5. Technical & Design Specifications
+
+-- **Framework**: Next.js (App Router, SSG export-friendly).
+-- **Styling**: Vanilla CSS. High-density, high-contrast light-mode utility layout (light gray backgrounds, thin borders, monospace data tables).
++- **Framework**: Vite + React SPA on GitHub Pages, with build-time static metadata for catalog part routes.
++- **Styling**: Tailwind CSS with Radix/shadcn components. High-density, high-contrast light-mode utility layout (light gray backgrounds, thin borders, monospace data tables).
+ - **Libraries**:
+   - `fuse.js` (fuzzy search).
+   - `papaparse` (CSV handling).
+diff --git a/research/grill-decisions.md b/research/grill-decisions.md
+index 238f092..3fd4f94 100644
+--- a/research/grill-decisions.md
++++ b/research/grill-decisions.md
+@@ -15,15 +15,13 @@ These are the finalized requirements and configuration options decided during th
+
+
+ ## 3. Architecture & Tech Specs
+-- **Tech Stack**: Next.js (App Router, SSG export-friendly).
++- **Tech Stack**: Vite + React SPA on GitHub Pages, with build-time static metadata generated for catalog part routes.
+ - **Utility Libraries**: Fuse.js (for client-side fuzzy-searching of part numbers) and PapaParse (for CSV import/export parsing).
+ - **User Authentication**: Client-side storage (LocalStorage/IndexedDB) only. No registration/login required for basic usage or local BOM lists. Auth is deferred for future cloud-sharing or brokerage phases.
+-- **Styling**: Vanilla CSS. Clean, high-contrast light-mode theme mimicking the high-information-density layouts of McMaster-Carr and Octopart. No external UI component libraries.
++- **Styling**: Tailwind CSS with Radix/shadcn components and the existing high-density light-mode design system.
+
+
+ ## 4. User Experience & Flows
+ - **Search & Decode Flow**: Single-page utility/widget flow for the prototype. Search, decoding, spec display, and supplier links all happen in-place on the homepage to validate the core loop (decode → specs → links) quickly.
+ - **BOM View**: A dedicated tab/view on the main screen. Toggling between the "Search/Decoder" view and a full-page "BOM List" table. In the BOM view, users can accumulate parts, edit quantities, see total estimated costs, and upload/export CSV files.
+-- **Post-Prototype Migration**: Plan to migrate to a fully routable, indexable path structure (e.g. `/parts/[part-number]`) to support programmatic SEO once the prototype loop is validated.
+-
+-
++- **Part Routes**: Routable `/parts/:partNumber` pages and build-time static metadata are implemented; sitemap inclusion remains gated by catalog validity.
+diff --git a/research/master-plan-checklist.md b/research/master-plan-checklist.md
+deleted file mode 100644
+index 4676d4e..0000000
+--- a/research/master-plan-checklist.md
++++ /dev/null
+@@ -1,233 +0,0 @@
+-# PartSource Master Plan Execution Tracker
+-
+-This file is the cross-session source of truth. Agents must update it only after verification.
+-
+-## Phase Status
+-
+-| Phase | Status | Started | Completed | Evidence |
+-|---|---|---|---|---|
+-| 0 — Contain Current Production Risk | complete | 2026-07-11 | 2026-07-12 | commits through `ec4a003`; CI `29203431947`; deploy/smoke `29203432018`; clean rehearsal + independent review pass |
+-| 1 — Product, Users, Business Boundaries | complete | 2026-07-13 | 2026-07-13 | MP-1.1–MP-1.7 complete; exact-head verification and independent exit review pass at `210d365` |
+-| 2 — Mechanical Domain Foundation | ready | — | — | Unlocked by Phase 1 exit; MP-2.10 deferred study remains 0/12 and must pass before Phase 3 |
+-| 3 — UI Foundation | blocked | — | — | Locked until Phase 2 and MP-2.10 pass |
+-| 4 — Search and Catalog Discovery | blocked | — | — | — |
+-| 5 — Detail, Equivalence, Reference | blocked | — | — | — |
+-| 6 — Personal and Local BOM | blocked | — | — | — |
+-| 7 — Branded Launch and Operations | blocked | — | — | — |
+-| 8 — Company Workspace and Backend | blocked | — | — | — |
+-| 9 — Sanctioned Supplier Data | blocked | — | — | — |
+-| 10 — Controlled SEO and Growth | blocked | — | — | — |
+-| 11 — Brokerage and Commerce | blocked | — | — | — |
+-| 12 — Production Hardening and Final Audit | blocked | — | — | — |
+-
+-Valid phase statuses: `blocked`, `ready`, `in_progress`, `verification`, `complete`.
+-
+-## Phase 0
+-
+-- [x] MP-0.1 Release truth
+-- [x] MP-0.2 Routing and canonical URLs
+-- [x] MP-0.3 SEO containment
+-- [x] MP-0.4 Structured-data containment
+-- [x] MP-0.5 Unsupported-claim removal
+-- [x] MP-0.6 CI, deployment, smoke, rollback
+-- [x] MP-0.7 Legacy ingestion isolation
+-- [x] Phase 0 independent review
+-- [x] Phase 0 exit gate passed
+-
+-## Phase 1
+-
+-- [x] MP-1.1 Authoritative product source
+-- [x] MP-1.2 MVP boundary
+-- [x] MP-1.3 Capability tiers
+-- [x] MP-1.4 Monetization validation
+-- [x] MP-1.5 Legal boundary
+-- [x] MP-1.6 Primary research readiness kit
+-- [x] MP-1.7 Competitive matrix
+-- [x] Phase 1 independent review
+-- [x] Phase 1 exit gate passed
+-
+-## Phase 2
+-
+-- [ ] MP-2.1 Taxonomy
+-- [ ] MP-2.2 Standards registry
+-- [ ] MP-2.3 Units
+-- [ ] MP-2.4 Material semantics
+-- [ ] MP-2.5 Provenance
+-- [ ] MP-2.6 Cross-reference policy
+-- [ ] MP-2.7 Catalog migration
+-- [ ] MP-2.8 Reference verification
+-- [ ] MP-2.9 Publishing lifecycle
+-- [ ] MP-2.10 Moderated primary research execution and decisions
+-- [ ] Phase 2 independent review
+-- [ ] Phase 2 exit gate passed
+-
+-## Phase 3
+-
+-- [ ] MP-3.1 Public shell
+-- [ ] MP-3.2 Remove fake product theatre
+-- [ ] MP-3.3 Responsive navigation
+-- [ ] MP-3.4 Design tokens
+-- [ ] MP-3.5 Component states
+-- [ ] MP-3.6 Accessibility foundation
+-- [ ] MP-3.7 State catalogue
+-- [ ] MP-3.8 Visual regression baseline
+-- [ ] Phase 3 independent review
+-- [ ] Phase 3 exit gate passed
+-
+-## Phase 4
+-
+-- [ ] MP-4.1 Query normalization
+-- [ ] MP-4.2 Identifier namespaces
+-- [ ] MP-4.3 Metric parser
+-- [ ] MP-4.4 Imperial parser
+-- [ ] MP-4.5 Hard-constraint safety
+-- [ ] MP-4.6 Broad discovery
+-- [ ] MP-4.7 Results page
+-- [ ] MP-4.8 Facets
+-- [ ] MP-4.9 Accessible autocomplete
+-- [ ] MP-4.10 Ranking explanations
+-- [ ] MP-4.11 Persistent query URLs
+-- [ ] MP-4.12 Golden corpus
+-- [ ] Phase 4 independent review
+-- [ ] Phase 4 exit gate passed
+-
+-## Phase 5
+-
+-- [ ] MP-5.1 Detail hierarchy
+-- [ ] MP-5.2 Diagram policy
+-- [ ] MP-5.3 Equivalence states
+-- [ ] MP-5.4 Supplier handoff truth
+-- [ ] MP-5.5 Offer provenance
+-- [ ] MP-5.6 Related-item compatibility
+-- [ ] MP-5.7 Reference library
+-- [ ] MP-5.8 Truthful SEO schema
+-- [ ] Phase 5 independent review
+-- [ ] Phase 5 exit gate passed
+-
+-## Phase 6
+-
+-- [ ] MP-6.1 Named local BOMs
+-- [ ] MP-6.2 Requirement versus selection
+-- [ ] MP-6.3 Import preview
+-- [ ] MP-6.4 No-fabrication rules
+-- [ ] MP-6.5 Editing and Undo
+-- [ ] MP-6.6 Storage health
+-- [ ] MP-6.7 Exports
+-- [ ] MP-6.8 Mobile BOM
+-- [ ] MP-6.9 Offline behavior
+-- [ ] Phase 6 independent review
+-- [ ] Phase 6 exit gate passed
+-
+-## Phase 7
+-
+-- [ ] MP-7.1 Custom domain and headers
+-- [ ] MP-7.2 Legal launch pack
+-- [ ] MP-7.3 Privacy-friendly analytics
+-- [ ] MP-7.4 Funnel instrumentation
+-- [ ] MP-7.5 Monitoring
+-- [ ] MP-7.6 Quote validation workflow
+-- [ ] MP-7.7 Support operations
+-- [ ] MP-7.8 Controlled launch cohort
+-- [ ] Phase 7 independent review
+-- [ ] Phase 7 exit gate passed
+-
+-## Phase 8
+-
+-- [ ] MP-8.1 Backend ADR and threat model
+-- [ ] MP-8.2 Tenant and identity model
+-- [ ] MP-8.3 RBAC
+-- [ ] MP-8.4 Versioned BOM storage
+-- [ ] MP-8.5 Approval state machine
+-- [ ] MP-8.6 Quote intake and outbox
+-- [ ] MP-8.7 Audit logging
+-- [ ] MP-8.8 Security, backup, restore, abuse controls
+-- [ ] MP-8.9 Staff administration
+-- [ ] MP-8.10 Anonymous-to-account migration
+-- [ ] Phase 8 independent review
+-- [ ] Phase 8 exit gate passed
+-
+-## Phase 9
+-
+-- [ ] MP-9.1 Supplier partnership matrix
+-- [ ] MP-9.2 Adapter contract
+-- [ ] MP-9.3 Listing identity
+-- [ ] MP-9.4 Commercial normalization
+-- [ ] MP-9.5 Availability and freshness
+-- [ ] MP-9.6 Reliability controls
+-- [ ] MP-9.7 Equivalence review
+-- [ ] MP-9.8 Stale-data demotion
+-- [ ] Phase 9 independent review
+-- [ ] Phase 9 exit gate passed
+-
+-## Phase 10
+-
+-- [ ] MP-10.1 Keyword/page map
+-- [ ] MP-10.2 Publishing manifest
+-- [ ] MP-10.3 Category/family pages
+-- [ ] MP-10.4 Configuration pilot
+-- [ ] MP-10.5 Canonical/robots/schema/sitemap
+-- [ ] MP-10.6 Content quality workflow
+-- [ ] MP-10.7 Indexed cohort
+-- [ ] MP-10.8 Rollback/deindex
+-- [ ] MP-10.9 Growth playbook
+-- [ ] Phase 10 independent review
+-- [ ] Phase 10 exit gate passed
+-
+-## Phase 11
+-
+-- [ ] Commercial entry requirements passed
+-- [ ] Quote and supplier workflow
+-- [ ] PO and order states
+-- [ ] Server-owned totals
+-- [ ] Payment, invoicing, and tax
+-- [ ] Fulfilment and tracking
+-- [ ] Cancellation, returns, and reconciliation
+-- [ ] Compliance and traceability
+-- [ ] End-to-end transaction simulation
+-- [ ] Phase 11 independent review
+-- [ ] Phase 11 exit gate passed
+-
+-## Phase 12
+-
+-- [ ] Complete implementer evidence packs
+-- [ ] Independent agent reviews complete
+-- [ ] All phase gates re-run against production
+-- [ ] GPT-5.6 Sol clean-context audit complete
+-- [ ] Original exhaustive audit repeated
+-- [ ] Zero P0/P1 findings
+-- [ ] Accepted P2 register
+-- [ ] Human product-owner sign-off
+-- [ ] Phase 12 exit gate passed
+-
+-## Evidence Log
+-
+-Append one row per completed packet.
+-
+-| Packet | Date | Implementer | Reviewer | Commit/PR | Tests | Evidence | Result |
+-|---|---|---|---|---|---|---|---|
+-| MP-0.2 | 2026-07-11 | implement_routes_seo | review_routes_seo | `fe9ed75`, `0854194` | lint; unit 24/24 + safety scripts; build; browser 8/8 | direct/refresh routes, Not Found, canonical navigation, JSON-LD cleanup | pass; production HTTP deferred to exit gate |
+-| MP-0.3 | 2026-07-11 | implement_routes_seo | review_routes_seo | `fe9ed75`, `0854194` | static metadata; build audit; browser 8/8 | 589/589 part pages `noindex,follow`; root-only sitemap; robots policy | pass |
+-| MP-0.4 | 2026-07-11 | implement_routes_seo | review_routes_seo | `fe9ed75`, `0854194` | safety tests; static metadata; dist audit | no `AggregateOffer`/offer-price schema; navigation cleanup | pass |
+-| MP-0.5 | 2026-07-12 | implement_claims + resume_claims | review_claims | `598833c`, `936b6a0` | clean-dist tests; lint; build + bundle truth; browser 8/8 | Product Truth source/docs/bundle guards; BOM no-fabrication behavior | pass |
+-| MP-0.6 | 2026-07-12 | implement_ci_deploy | review_ci_deploy | `6fb17e3`, `4343d30` | clean rehearsal: lint, tests, build, browser 9/9; YAML/PowerShell contracts | `.superpowers/evidence/rollback-rehearsal-4343d300fa2b-20260712-094840.log` | pass; deployment and live smoke pending exit gate |
+-| MP-0.7 | 2026-07-12 | implement_legacy_isolation + resume_legacy_isolation | review_legacy_isolation | `86046c5`, `ecfa44b` | exact isolated lint, tests, build, browser 9/9; runtime guard matrix | repo-wide active-path scanner; archived configs/tools/plans; exact opt-in guards | pass |
+-| MP-0.1 | 2026-07-12 | implement_release_truth | review_release_truth | `ee89bf0`, `ec4a003`; deploy run `29203432018` | CI success; deploy + transport/rendered smoke success; clean rehearsal lint/tests/build/browser 9/9 | live `release.json` = local HEAD = `origin/master` = `ec4a0032d140ad627c52a8e74778bbd124e8934d` | pass |
+-| Phase 0 exit gate | 2026-07-12 | root | review_phase0_exit | commits `adc1977` through `ec4a003` | production SHA/routes/schema/sitemap; clean rehearsal; full 13-commit review | zero P0/P1; final reviewer approved completion and Phase 1 unlock | pass |
+-| MP-1.1 | 2026-07-13 | implement_mp_1_1 | review_mp_1_1 | `42fa553`, `ee6ec56`, `f2a34a7` | focused contract RED→GREEN; CRLF fixture; clean-clone lint; unit/safety 24/24; build + 589 static pages | authoritative contract, precedence, decision/phase ownership, current runtime truth; zero review findings | pass |
+-| MP-1.2 | 2026-07-13 | implement_mp_1_2 | review_mp_1_2 | `725b8e8`, `16f9f4f` | focused boundary RED→GREEN; LF/CRLF; clean-clone lint; unit/safety 24/24; build + 589 pages | current-vs-target MVP, fastener/quote/enterprise exclusions, exact phase ownership; zero review findings | pass |
+-| MP-1.7 | 2026-07-13 | implement_mp_1_7 | review_mp_1_7 | `319da79`, `a381435` | focused matrix RED→GREEN; 27 official URLs host-validated; clean-clone lint; unit/safety 24/24; build + 589 pages | 7 competitors + PartSource by 11 tasks/4 personas; controlled evidence states; zero review findings | pass |
+-| MP-1.4 | 2026-07-13 | implement_mp_1_4 | review_mp_1_4 | `1dbbee8`, `8c520f1` | focused economics RED→GREEN; 12/12 scenario + 6/6 sensitivity rows; corruption fixture; clean-clone lint/unit/build | bottom-up SOM/CAC/LTV/margin/kill gates; commercial inputs remain hypotheses; zero review findings | pass |
+-| MP-1.3 | 2026-07-13 | implement_mp_1_3 | review_mp_1_3 | `926faa1` | focused tiers RED→GREEN; LF/CRLF; clean-clone lint; unit/safety 24/24; build + 589 pages | 4 tiers, 9 dimensions, exact triggers/gates, presentation bans; zero review findings | pass |
+-| MP-1.5 | 2026-07-13 | implement_mp_1_5 | review_mp_1_5 | `1c842fb`, `e1d06b0` | focused legal RED→GREEN; official-source URL/host guards; live source correction; clean-clone lint/unit/build | operator/data/privacy/liability/affiliate/supplier-use boundaries; zero blocking review findings | pass |
+-| MP-1.6 | 2026-07-13 | implement_mp_1_6 | review_mp_1_6_kit | `ffa1770`, `db6db0b`, `cddc4cb`, `435f6e9` | focused RED→GREEN; evidence-state and privacy fixtures | approved primary-research readiness kit only; real-session execution remains 0/12 and is deferred to MP-2.10 | pass |
+-| Phase 1 exit gate | 2026-07-13 | root | review_phase1_exit; Fable two-round independent exit review | commits `42fa553` through `6ac2c74` | clean reconciliation head: 7/7 Phase 1 focused; lint; `npm test`; build + 589 static pages; browser 9/9 | master and Fable exit evidence reconciled; P1-R1 citation fix `6ac2c74`; both independent reviews; zero remaining P0/P1; Phase 2 ready, with MP-2.10 0/12 blocking only Phase 2 exit and Phase 3 | pass |
+-
+-## Open Risks and Blockers
+-
+-| ID | Phase | Risk/blocker | Owner | Resolution condition | Status |
+-|---|---|---|---|---|---|
+-| P2-0-1 | 1 | `research/master-plan.md` Current Readiness still describes the pre-Phase-0 audit snapshot | Phase 1 | Reconcile into the authoritative product source without erasing historical audit context | resolved by MP-1.1 (`42fa553`) |
+-| P2-0-2 | 1 | `research/prd.md` still names obsolete Next.js/Vanilla CSS architecture | Phase 1 | Update authoritative architecture description to match the shipped Vite/React/Tailwind runtime | resolved by authoritative precedence and runtime contract in MP-1.1 (`42fa553`) |
+-| P1-2.10 | 2 | MP-2.10 deferred study has 0/12 qualifying moderated sessions, 0/12 unaided passes, and pending decisions; Phase 2 exit is blocked | Product owner / research recruiter | Complete MP-2.10 with the exact 12-session quota set, at least 10/12 unaided comprehension, evidence-linked decisions, and surviving verdicts required by the Phase 2 exit gate | open |
+-| P2-1-1 | 2 | The seven `test-phase1-*.ts` governance suites are not wired into `npm test` or CI and only run manually | Phase 2 | Wire the focused Phase 1 suites into `npm test` or a CI step before Phase 2 packet work starts | open |
+-| P2-1-2 | 3 | Runtime ships a currency selector with hardcoded EUR/GBP/CAD display; the contract classifies it as unsourced prototype display, and no packet explicitly owns its removal | Phase 3 | Remove or truthfully label the selector during MP-3.2 prototype-theatre removal | open |
+diff --git a/research/master-plan.md b/research/master-plan.md
+deleted file mode 100644
+index dea4da1..0000000
+--- a/research/master-plan.md
++++ /dev/null
+@@ -1,405 +0,0 @@
+-# PartSource End-to-End Master Plan
+-
+-**Status:** Approved execution roadmap
+-**Execution tracker:** `research/master-plan-checklist.md`
+-**Session prompt:** `research/phase-execution-prompt.md`
+-**Current product contract:** `research/product-contract.md`
+-
+-## Outcome
+-
+-Build PartSource into a trustworthy, standards-first mechanical hardware discovery and sourcing platform that:
+-
+-1. Resolves exact identifiers reliably.
+-2. Turns broad queries into product families and engineering filters.
+-3. Separates configurations, real products, supplier listings, offers, equivalents, and company approvals.
+-4. Supports useful anonymous personal BOM work.
+-5. Adds company collaboration only with a secure backend.
+-6. Adds live supplier data and commerce only through sanctioned partnerships.
+-7. Scales SEO only after quality and business validation.
+-
+-Work proceeds one phase at a time. No phase starts until the prior exit gate passes.
+-
+-## Current Readiness — Pre-Phase-0 Audit Snapshot
+-
+-The findings below are preserved as the audit snapshot that initiated Phase 0; they are not a statement of current production readiness. Phase 0 completion evidence is recorded in `research/master-plan-checklist.md`. Current product claims and boundaries live in `research/product-contract.md`.
+-
+-Technical checks pass, but the product is not production-ready:
+-
+-- 24 tests, TypeScript, and the production build pass.
+-- UX audit score: **8/20 — Poor**.
+-- Deployed direct part routes can return 404.
+-- Mobile is structurally unusable because of the fixed sidebar.
+-- Search has no proper category, family, results, or facet architecture.
+-- Broad searches can suggest arbitrary configurations.
+-- Explicit pitch and units can be silently changed or lost.
+-- Standards-derived configurations are presented like real products.
+-- Supplier search links appear like confirmed offers or equivalents.
+-- Synthetic prices can enter structured data as `AggregateOffer`.
+-- Approval, equivalence, live-data, and savings claims lack evidence.
+-- Data lacks field-level sources, revisions, reviewers, licences, and freshness.
+-- BOM imports can invent supplier, material, price, or quantity assumptions.
+-- Personal/local and company/team capabilities are visually mixed.
+-- Quote submission is not dependable or operationally traceable.
+-- Privacy, terms, liability, affiliate, retention, and operator policies are absent.
+-- Analytics, error monitoring, performance budgets, accessibility coverage, and cross-browser QA are incomplete.
+-- SEO policy says indexing is gated, but hundreds of part URLs are published.
+-- Deployment protection exists mostly as untracked local work.
+-- Brokerage, pricing, supplier relationships, unit economics, and primary customer demand remain unvalidated.
+-
+-## Product Truth Contract
+-
+-| Term | Meaning |
+-|---|---|
+-| Configuration | Standards-defined combination of dimensions and attributes; not necessarily manufactured or stocked. |
+-| Manufacturer part | Real product with a manufacturer and manufacturer part number. |
+-| Supplier listing | Supplier-specific listing or SKU for a manufacturer part. |
+-| Offer | Observed price or availability with currency, unit basis, pack, source, timestamp, and expiry. |
+-| Candidate match | Possibly relevant result requiring verification. |
+-| Cross-reference | Relationship explicitly supported by evidence. |
+-| Exact equivalent | Fit, form, function, material, grade, standard, and required certifications match. |
+-| Approved alternate | A particular organization approved the item for a defined use. |
+-
+-Non-negotiable rules:
+-
+-- Never describe a configuration as stocked.
+-- Never describe a search URL as an offer.
+-- Never describe a candidate as an equivalent.
+-- Never describe an equivalent as approved without organizational approval.
+-- Never display live price, inventory, certification, or lead time without a sanctioned source and timestamp.
+-- Never silently substitute thread pitch, measurement system, standard, material, or strength class.
+-
+-## Phase 0 — Contain Current Production Risk
+-
+-**Objective:** Make the existing MVP truthful, reachable, reversible, and safe before redesign work.
+-
+-Work packets:
+-
+-- **MP-0.1 Release truth:** Reconcile tracked, untracked, local, and deployed state.
+-- **MP-0.2 Routing:** Make direct routes, refreshes, unknown routes, and canonical URLs work.
+-- **MP-0.3 SEO containment:** Noindex generated part pages and remove them from the sitemap until later gates pass.
+-- **MP-0.4 Structured-data containment:** Remove synthetic prices and `AggregateOffer`.
+-- **MP-0.5 Claim audit:** Remove unsupported approval, equivalence, live, stock, savings, profile, notification, login, and compliance language.
+-- **MP-0.6 CI/deployment:** Require type-check, tests, build, browser tests, immutable artifact, production smoke, and rollback instructions.
+-- **MP-0.7 Legacy ingestion:** Disable or isolate scrapers and resolvers that conflict with current sourcing policy.
+-
+-Exit gate:
+-
+-- Production and source match.
+-- Deep links return the intended page.
+-- No synthetic commercial claim reaches users or crawlers.
+-- Sitemap exposes only approved routes.
+-- Deployment cannot bypass required checks.
+-- Rollback has been rehearsed.
+-
+-## Phase 1 — Lock Product, Users, and Business Boundaries
+-
+-**Objective:** Replace contradictory documents with one authoritative product contract.
+-
+-Work packets:
+-
+-- **MP-1.1 Product source of truth:** Reconcile PRD, decisions, sourcing policy, business plan, SEO audit, and shipping checklist.
+-- **MP-1.2 MVP boundary:** Standard fasteners, discovery, reference, local BOM, exports, supplier handoffs, and controlled quote validation.
+-- **MP-1.3 Capability tiers:** Personal/local, company/team, enterprise, and brokerage/commerce.
+-- **MP-1.4 Monetization validation:** Affiliate, quote lead, SaaS, and brokerage assumptions with bottom-up SOM, CAC, LTV, gross margin, and kill thresholds.
+-- **MP-1.5 Legal boundary:** Operator entity, privacy, liability, sourcing disclaimers, affiliate disclosure, retention, and acceptable supplier data use.
+-- **MP-1.6 Primary research readiness kit:** Maintain the approved moderated-study protocol and evidence ledger in `research/user-research-plan.md` and `research/user-research-results.md`; real-session execution belongs to MP-2.10.
+-- **MP-1.7 Competitive matrix:** Compare McMaster, Grainger, Fastenal, MISUMI, RS, Bolt Depot, and Amazon Business by user task.
+-
+-Exit gate:
+-
+-- One authoritative product contract exists.
+-- Every promised capability is assigned to a phase.
+-- No unresolved contradiction remains about scraping, pricing, pins, imperial coverage, currency, accounts, or commerce.
+-- The MP-1.6 primary-research readiness kit exists, its focused test passes, and its evidence plus prior independent kit review are recorded.
+-- Phase 1 independent review confirms the authoritative contract, phase ownership, contradiction resolution, readiness kit, tests, and evidence. Real moderated sessions and finalized study decisions are not Phase 1 exit dependencies.
+-
+-## Phase 2 — Build the Mechanical Domain Foundation
+-
+-**Objective:** Separate engineering truth from catalog, supplier, and commercial truth.
+-
+-Canonical model:
+-
+-- `Taxon`, `ProductFamily`, `Standard`, `StandardCrosswalk`
+-- `ThreadSpec`, `Configuration`, `ManufacturerPart`
+-- `SupplierListing`, `Offer`, `CrossReferenceAssertion`
+-- `CatalogAlias`, `BOMRequirement`, `BOMCandidate`, `ProvenanceRecord`
+-
+-Work packets:
+-
+-- **MP-2.1 Taxonomy:** Category → family → subtype → applicable facets.
+-- **MP-2.2 Standards registry:** Issuer, number, part, edition, status, and source.
+-- **MP-2.3 Units:** Exact metric/imperial representation, fractions, pitch/TPI, conversion, and display.
+-- **MP-2.4 Material semantics:** Separate material, specification, strength/property class, finish, and treatment.
+-- **MP-2.5 Provenance:** Source, permission, evidence, retrieval date, reviewer, confidence, and field coverage.
+-- **MP-2.6 Cross-reference policy:** Exact, conditional, superseded, related, and rejected.
+-- **MP-2.7 Catalog migration:** Relabel generated entries as theoretical configurations.
+-- **MP-2.8 Reference verification:** Named standard editions, citations, and mechanical SME review.
+-- **MP-2.9 Publishing lifecycle:** Draft, reviewed, approved, published, stale, withdrawn.
+-- **MP-2.10 Moderated primary research execution and decisions:** Execute exactly 12 qualifying decision-set sessions—three engineers, three procurement users, two maintenance users, two small-company buyers, one student/hobbyist, and one enterprise procurement user—using the MP-1.6 readiness kit; require at least 10 of 12 locked unaided comprehension passes and evidence-linked core-problem and monetization decisions.
+-
+-Initial complete scope: socket-head, button-head, flat/countersunk, hex-head, nuts, and washers. Pins, bearings, rivets, and other hardware remain unsupported until their taxonomy and evidence exist.
+-
+-Exit gate:
+-
+-- Every published technical field has a unit, provenance, edition/revision, and validation status.
+-- No generated configuration masquerades as a supplier SKU.
+-- DIN/ISO differences are explicit.
+-- Two-person review is required for cross-references.
+-- Integrity tests reject missing provenance and impossible combinations.
+-- MP-2.10 is complete with exactly 12 qualifying decision-set sessions, at least 10 of 12 locked unaided comprehension passes, and finalized evidence-linked decisions.
+-- Core-problem and monetization verdicts survive. `REVISE_RETEST` or `KILL` blocks Phase 2 exit even when the MP-2.10 research record is complete.
+-
+-## Phase 3 — Rebuild the UI Foundation
+-
+-**Objective:** Create a responsive, accessible catalog application instead of a fake signed-in dashboard.
+-
+-Target routes:
+-
+-- `/` — scope, dominant search, category entry, local BOM continuation.
+-- `/catalog` — categories.
+-- `/catalog/:family` — family explanation and valid facets.
+-- `/search?q=` — interpretation, results, filters, and comparison.
+-- `/parts/:id` — evidence-backed detail.
+-- `/bom` — personal workspace.
+-- `/reference` and `/reference/:slug`.
+-- `/quote` only after dependable submission exists.
+-
+-Work packets:
+-
+-- **MP-3.1 Public shell:** Logo, search, Catalog, Reference, BOM count.
+-- **MP-3.2 Remove theatre:** No fake avatar, logout, unread notification, “Index Active,” or mock shortcut.
+-- **MP-3.3 Responsive navigation:** Compact mobile navigation, collapsible tablet rail, compact desktop navigation.
+-- **MP-3.4 Design tokens:** Semantic colors, spacing, typography, states, and elevation.
+-- **MP-3.5 Component states:** Default, hover, focus, active, disabled, loading, success, warning, error, empty.
+-- **MP-3.6 Accessibility foundation:** Landmarks, skip link, focus, labels, live regions, tables, forced colors, reduced motion.
+-- **MP-3.7 State catalogue:** Loading, empty, ambiguous, partial, offline, failure, permission, and stale-data states.
+-- **MP-3.8 Visual regression baseline:** Desktop, tablet, and mobile references.
+-
+-Exit gate:
+-
+-- WCAG 2.2 AA foundation.
+-- No horizontal page overflow at 320px.
+-- 200% text and 400% zoom preserve task completion.
+-- Touch targets are at least 44×44px.
+-- One page scroll owner.
+-- Specifications remain selectable and copyable.
+-
+-## Phase 4 — Search and Catalog Discovery
+-
+-**Objective:** Make search safe, explainable, and engineering-aware.
+-
+-Pipeline: `normalize → classify intent → parse constraints → retrieve → hard-filter → rank → explain`.
+-
+-Intent classes: exact PartSource ID; manufacturer/supplier ID; standard plus dimensions; structured specification; broad family/category; natural language; typo/synonym; unsupported/unknown.
+-
+-Work packets:
+-
+-- **MP-4.1 Query normalization:** Whitespace, punctuation, plurals, aliases, Unicode multiplication, fractions, units, standards.
+-- **MP-4.2 Identifier namespaces:** Never fuzzy-match identifier-like input.
+-- **MP-4.3 Metric parser:** Diameter, pitch, length, standard, family, material, finish.
+-- **MP-4.4 Imperial parser:** Numbered threads, UNC/UNF, TPI, fractions, inches.
+-- **MP-4.5 Constraint safety:** Explicit pitch, unit, grade, and standard are hard constraints.
+-- **MP-4.6 Broad discovery:** `M4 screw` returns family choices with M4 preselected.
+-- **MP-4.7 Results page:** Exact, verified, complete specification, partial, unsupported groups.
+-- **MP-4.8 Facets:** System, family, thread, pitch, length, material, finish, strength, standard.
+-- **MP-4.9 Autocomplete:** Accessible grouped combobox with a relevance threshold.
+-- **MP-4.10 Ranking explanation:** Why matched, confidence, missing constraints, evidence tier.
+-- **MP-4.11 Query URLs:** Interpretation and filters survive refresh, sharing, and history.
+-- **MP-4.12 Golden corpus:** At least 200 positive, ambiguous, negative, typo, unit, standard, and identifier queries.
+-
+-Acceptance targets:
+-
+-- 100% exact-identifier correctness.
+-- Zero silent metric/imperial or fine/coarse substitutions.
+-- Zero arbitrary redirects from broad queries.
+-- At least 95% correct top-five result on the approved golden corpus.
+-- Unsupported categories remain explicitly unsupported.
+-- Search p95 below 100ms for the approved client catalog target.
+-
+-Exit gate: a user can move from `M4 screw` to a valid family and specification without an invented product.
+-
+-## Phase 5 — Trusted Detail, Equivalence, and Reference
+-
+-**Objective:** Show evidence and uncertainty clearly.
+-
+-Work packets:
+-
+-- **MP-5.1 Detail hierarchy:** Identity, family, standard, dimensions, material, grade, finish, provenance.
+-- **MP-5.2 Diagram policy:** Accurate family-specific diagrams or none; no false “1:1.”
+-- **MP-5.3 Equivalence states:** Candidate, externally cross-referenced, verified equivalent, approved alternate.
+-- **MP-5.4 Supplier handoff:** Label search links as searches unless a listing is known.
+-- **MP-5.5 Offer display:** Source, timestamp, currency, UOM, pack, MOQ, and expiry required.
+-- **MP-5.6 Related items:** Explain compatibility and differences.
+-- **MP-5.7 Reference library:** Task-grouped search, standards editions, citations, print view, catalog links.
+-- **MP-5.8 SEO schema:** Engineering facts only; offers only when observed and valid.
+-
+-Exit gate: a procurement user can explain what is verified, inferred, unknown, related, and commercially observed.
+-
+-## Phase 6 — Personal and Local BOM Workflow
+-
+-**Objective:** Deliver a complete workflow without requiring an account.
+-
+-Work packets:
+-
+-- **MP-6.1 Named local BOMs:** Project name, revision, notes, target date, destination, save status.
+-- **MP-6.2 Requirement model:** Requested engineering item remains separate from supplier selection.
+-- **MP-6.3 Import preview:** Mapping, validation, duplicates, unresolved rows, partial success.
+-- **MP-6.4 No fabrication:** Never invent supplier, material, price, or quantity.
+-- **MP-6.5 Editing:** Bulk selection, quantities, sorting, filters, alternates, Undo.
+-- **MP-6.6 Storage health:** Quota, corruption, migration, recovery, backup, device-only disclosure.
+-- **MP-6.7 Exports:** CSV and accessible PDF with revision, source, caveats, and currency basis.
+-- **MP-6.8 Mobile BOM:** Stacked editable rows and sticky primary action.
+-- **MP-6.9 Offline state:** Clear supported behavior and limitations.
+-
+-Exit gate:
+-
+-- Import/export round-trip preserves original data.
+-- Unresolved rows never enter pricing totals.
+-- Storage failure cannot silently erase a BOM.
+-- Personal use needs no fake identity or signup.
+-- Exact search → detail → add → BOM → export passes mobile, keyboard, and screen-reader testing.
+-
+-## Phase 7 — Branded Launch, Quote Validation, and Operations
+-
+-**Objective:** Launch the trustworthy personal product and validate demand.
+-
+-Work packets:
+-
+-- **MP-7.1 Custom domain and controllable security headers.**
+-- **MP-7.2 Legal launch pack:** Privacy, terms, liability, affiliation, affiliate disclosure, retention.
+-- **MP-7.3 Privacy-friendly analytics:** Collect event metadata, never BOM contents.
+-- **MP-7.4 Funnel:** Search → result → detail → supplier/BOM → export → quote intent.
+-- **MP-7.5 Monitoring:** Uptime, content assertions, Web Vitals, frontend errors, domain/TLS expiry, link health.
+-- **MP-7.6 Quote validation:** Frozen BOM snapshot, consent, ownership, acknowledgement, SLA, status, deletion.
+-- **MP-7.7 Support operations:** Owner, response standard, correction workflow, incident workflow.
+-- **MP-7.8 Controlled launch cohort.**
+-
+-Backend trigger—remain static until one occurs:
+-
+-- Five qualified quote attempts in one month.
+-- Evidence of lost submissions or mailto/URL-size failure.
+-- Need for attachments or multiple staff handlers.
+-- Three target companies request shared/cross-device workflows.
+-
+-Exit gate:
+-
+-- No lost quote can be mistaken for success.
+-- Funnel and reliability are measurable.
+-- Named owners exist for alerts, support, corrections, and quotes.
+-- Zero P0/P1 launch issues.
+-
+-## Phase 8 — Company Workspace and Backend
+-
+-**Objective:** Support company use without compromising tenant isolation or auditability.
+-
+-Architecture: modular API, managed Postgres, encrypted object storage, transactional email, and queue/outbox. Staff authentication first; customer accounts only when required.
+-
+-Minimum company capabilities: organizations, roles, shared/versioned BOMs, immutable submissions, comments, approvals, supplier policies, audit history, attachments, conflicts, retention, deletion.
+-
+-Work packets:
+-
+-- **MP-8.1 Backend ADR and threat model.**
+-- **MP-8.2 Tenant and identity model.**
+-- **MP-8.3 RBAC and authorization tests.**
+-- **MP-8.4 Versioned BOM storage.**
+-- **MP-8.5 Approval state machine.**
+-- **MP-8.6 Quote intake and outbox.**
+-- **MP-8.7 Audit logging.**
+-- **MP-8.8 Encryption, backups, restore, rate limits, and abuse controls.**
+-- **MP-8.9 Protected staff administration.**
+-- **MP-8.10 Anonymous-to-account migration.**
+-
+-Enterprise extensions remain gated: SSO/SAML, SCIM, punchout/cXML, ERP/PO fields, contractual security, customer retention, restricted supplier and compliance policies.
+-
+-Exit gate: two-user edit, approval, conflict, permission, audit, deletion, backup, restore, and cross-tenant simulations pass with zero authorization failures.
+-
+-## Phase 9 — Sanctioned Supplier Data
+-
+-**Objective:** Move from supplier search assistance to real commercial comparison.
+-
+-Entry requirements: written permission or agreement, legal approval, rate limits, attribution, freshness, and redistribution rules.
+-
+-Work packets:
+-
+-- **MP-9.1 Supplier partnership matrix.**
+-- **MP-9.2 Adapter contract.**
+-- **MP-9.3 Listing identity resolution.**
+-- **MP-9.4 Price/UOM/pack/MOQ normalization.**
+-- **MP-9.5 Availability and freshness.**
+-- **MP-9.6 Retry, circuit breaker, caching, queue, and dead-letter handling.**
+-- **MP-9.7 Equivalence review workflow.**
+-- **MP-9.8 Expiry and stale-data demotion.**
+-
+-Exit gate: every displayed listing and offer is traceable, permitted, timestamped, and refreshable. No public scraper or unsanctioned bulk ingestion.
+-
+-## Phase 10 — Controlled SEO and Growth
+-
+-**Objective:** Earn search visibility without creating thin or misleading pages.
+-
+-Entry requirements: custom domain, keyword/SERP validation, backlink threshold, publishing manifest, noindex kill switch, provenance, Search Console, and Bing Webmaster Tools.
+-
+-Work packets:
+-
+-- **MP-10.1 Keyword-to-page-type map.**
+-- **MP-10.2 Publishing/indexability manifest.**
+-- **MP-10.3 Category and family pages first.**
+-- **MP-10.4 Manually reviewed configuration-page pilot.**
+-- **MP-10.5 Canonical, robots, schema, sitemap, and alias policy.**
+-- **MP-10.6 Content-quality score and review workflow.**
+-- **MP-10.7 Small indexed cohort and measurement period.**
+-- **MP-10.8 Rollback and deindex procedure.**
+-- **MP-10.9 Community, content, partnership, and backlink playbook.**
+-
+-Exit gate: pilot pages show useful engagement, no misleading rich results, no index leakage, and no thin-content pattern. Never put hundreds of thousands of records in the SPA bundle.
+-
+-## Phase 11 — Brokerage and Commerce
+-
+-**Objective:** Add transactions only after commercial and operational proof.
+-
+-Entry requirements: repeat qualified customers, proven economics, signed suppliers, legal entity, banking, tax process, insurance, terms, returns/quality process, traceability, staff capacity, and support SLA.
+-
+-Capabilities: vendor quotes, accepted quotes, PO/order, server-owned totals, payment/invoicing, tax, fulfilment, tracking, cancellation, returns, reconciliation, immutable financial snapshots, restricted-party review, and certificate traceability.
+-
+-Exit gate: quote → acceptance → PO → fulfilment → reconciliation → return simulation passes with immutable totals, audit history, and named operational ownership.
+-
+-## Phase 12 — Production Hardening and Final Audit
+-
+-Verification layers:
+-
+-1. **Implementer evidence:** Tests, before/after evidence, screenshots, accessibility, performance, docs, and limitations.
+-2. **Independent agent review:** Requirement coverage, truth, regression risk, tests, evidence, and scope.
+-3. **Phase acceptance:** Run the complete phase gate against deployment, not just localhost.
+-4. **GPT-5.6 Sol audit:** Clean-context verification of plan coverage, claims, data, UX, accessibility, backend, security, company workflows, SEO, business, operations, and P0–P3 findings. The verifier does not edit code.
+-5. **Final production audit:** Repeat every route, control, persona, viewport, query class, state, data sample, external link, SEO check, security check, monitoring check, backup, rollback, and incident workflow.
+-
+-Final release gate:
+-
+-- Zero P0 and P1 findings.
+-- Accepted P2 register with owners.
+-- WCAG 2.2 AA.
+-- Core Web Vitals green.
+-- Exact-search accuracy 100%.
+-- No hard-constraint search violations.
+-- No unsupported commercial or equivalence claims.
+-- Production rollback proven.
+-- GPT-5.6 Sol recommends launch or explicitly bounded limited launch.
+-- Human product-owner sign-off.
+-
+-## Agent Execution Protocol
+-
+-Each checklist item records ID, objective, dependencies, exact scope, allowed files/systems, exclusions, deliverables, acceptance criteria, commands, evidence, implementer, reviewer, status, risks, and follow-ups.
+-
+-State machine:
+-
+-`blocked → ready → in_progress → self_verified → independent_review → complete → deployed → production_verified`
+-
+-Rules:
+-
+-- Only one phase is active.
+-- Dependent work packets cannot start early.
+-- Parallel agents may work only on independent packets.
+-- Implementers cannot approve their own work.
+-- Failed verification returns the item to `in_progress`.
+-- A checked box requires evidence, not an agent claim.
+-- No phase closes with unresolved P0/P1 findings.
+-- Documents, tests, runtime behavior, and production must agree.
+diff --git a/research/mvp-boundary.md b/research/mvp-boundary.md
+index bdd7267..631d993 100644
+--- a/research/mvp-boundary.md
++++ b/research/mvp-boundary.md
+@@ -1,8 +1,8 @@
+ # PartSource MVP Boundary
+
+-**Status:** Target MVP supporting contract
++**Status:** Historical phase-mapping input; superseded by `research/production-readiness-plan.md`
+
+-**Authority:** This is a supporting contract subordinate to `research/product-contract.md`. If they conflict, the product contract wins. The current shipped state is evidence, not the target launch promise.
++**Authority:** Historical input only. `research/product-contract.md` and `research/production-readiness-plan.md` control current scope and launch gates.
+
+ ## Target MVP capabilities
+
+diff --git a/research/phase-execution-prompt.md b/research/phase-execution-prompt.md
+deleted file mode 100644
+index c6ac969..0000000
+--- a/research/phase-execution-prompt.md
++++ /dev/null
+@@ -1,97 +0,0 @@
+-# PartSource Phase Execution Prompt
+-
+-Copy this prompt into a fresh Codex task for every execution session.
+-
+----
+-
+-You are the phase executor for `C:\Users\jayar\Projects\partsource`.
+-
+-Your job is to continue the PartSource master plan safely across sessions.
+-
+-## Required sources
+-
+-Read completely before acting:
+-
+-1. `AGENTS.md`
+-2. `research/master-plan.md`
+-3. `research/master-plan-checklist.md`
+-4. The current relevant product/research documents and source files named by the active phase
+-
+-Treat `research/master-plan-checklist.md` as the cross-session state source.
+-
+-## Select the phase
+-
+-1. Find the first phase in the Phase Status table whose status is not `complete`.
+-2. If its status is `ready`, change it to `in_progress` and record the start date.
+-3. If its status is `in_progress` or `verification`, resume it. Do not restart completed work.
+-4. Never work on a later phase.
+-5. If an entry condition or dependency is unmet, record the blocker and stop without checking anything complete.
+-6. Phase 3 remains blocked until the Phase 2 exit gate and MP-2.10 both pass. A completed Phase 1 exit gate may make Phase 2 ready, but does not start it in the same session.
+-
+-## Execution method
+-
+-- Work only on the active phase.
+-- Break the phase into its listed `MP-X.Y` packets.
+-- Use subagents for independent packets when safe.
+-- Keep one agent responsible for integration and source-of-truth decisions.
+-- Before each packet, inspect current code and existing changes. Preserve unrelated user work.
+-- Use test-driven development for behavior changes.
+-- Make surgical changes. Do not add later-phase features.
+-- Keep product claims within the Product Truth Contract.
+-- Commit coherent verified packets separately when authorized by the environment.
+-
+-## Packet completion rule
+-
+-Do not check a packet complete until all are true:
+-
+-1. Its deliverable exists.
+-2. Relevant tests were added or updated.
+-3. Tests pass.
+-4. Type-check/build passes where applicable.
+-5. UI changes were visually checked at required viewports.
+-6. Accessibility was checked where applicable.
+-7. Documentation agrees with runtime behavior.
+-8. A separate reviewer agent reviewed scope, correctness, and regressions.
+-9. Evidence was appended to the checklist Evidence Log.
+-10. No unresolved P0/P1 issue remains inside that packet.
+-
+-Only then change `- [ ]` to `- [x]`.
+-
+-## Phase completion rule
+-
+-After all phase packets are checked:
+-
+-1. Run the complete phase exit gate from `research/master-plan.md`.
+-2. Run the repository-wide verification appropriate to the phase.
+-3. Verify the deployed environment when the phase affects production behavior.
+-4. Summon an independent review agent with no implementation responsibility.
+-5. Fix all P0/P1 findings and repeat verification.
+-6. Mark `Phase X independent review` complete.
+-7. Mark `Phase X exit gate passed` complete.
+-8. Change Phase X status to `complete` and record completion date plus evidence links.
+-9. Change Phase X+1 from `blocked` to `ready` only if every dependency and entry condition is satisfied.
+-10. Stop. Do not begin the next phase in the same session.
+-
+-## If the phase cannot finish in one session
+-
+-- Leave it `in_progress`.
+-- Check only genuinely completed packets.
+-- Record exact remaining work, failing checks, blockers, and evidence.
+-- The next session must resume the same phase.
+-
+-## Mandatory final response
+-
+-Report concisely:
+-
+-- Active phase.
+-- Packets completed this session.
+-- Verification run and results.
+-- Independent review result.
+-- Files changed.
+-- Current phase status.
+-- Blockers or remaining packets.
+-- The next session’s exact starting packet.
+-
+-Do not claim success without fresh evidence. Do not start the next phase.
+-
+----
+diff --git a/research/prd.md b/research/prd.md
+index c3ed8d1..52b9ae9 100644
+--- a/research/prd.md
++++ b/research/prd.md
+@@ -65,7 +65,7 @@ Future-only concept, not current MVP behavior. It remains blocked until PartSour
+ ## Implementation Decisions
+
+ ### 1. Architectural Decisions & Tech Stack
+-- **Framework**: Next.js (App Router, SSG export-friendly to allow high-speed hosting and pre-rendered programmatic SEO pages).
++- **Framework**: Vite + React SPA on GitHub Pages. The production build emits static per-part HTML metadata from the catalog; React handles the interactive UI.
+ - **Styling**: Pure Vanilla CSS following the **Quiet Technical Light** design system lane for a lightweight, high-contrast, high-density layout inspired by McMaster-Carr and Octopart. No heavy UI component libraries.
+   - **Canvas & Ink**: Light-first canvas using cool neutrals for base surfaces (low-chroma gray scale). High-readability near-black ink instead of pure black.
+   - **Typography**: Sans-serif-led hierarchy paired with monospace font for all part numbers, dimensions, mechanical specifications, and comparative data tables.
+@@ -117,19 +117,19 @@ A high-quality test must verify **external behavioral outcomes** rather than int
+
+ To maintain high coverage with minimal complexity, we will implement testing at two key seams:
+
+-1. **Seam 1: Decoder Engine Unit/Integration Tests (Module Seam)**
++1. **Seam 1: Decoder Engine Unit/Integration Tests (Module Seam; implemented)**
+    - **Target**: The parsing module (`decodePartNumber` function).
+    - **Approach**: Feed a suite of test part numbers (both from the static lookup catalog and simulated fallback regex patterns) and verify the returned specifications match expected dimensions, materials, and sizes.
+-   - **Verification**: Run unit tests in Vitest/Jest to assert input-output correctness without rendering a browser.
++   - **Verification**: Run the TypeScript assertion suites with `npm test`.
+
+-2. **Seam 2: User Action DOM Integration Tests (UI Seam - Highest Seam)**
++2. **Seam 2: User Action Browser Tests (UI Seam; implemented)**
+    - **Target**: Main single-page interactive container.
+-   - **Approach**: Use a JSDOM or E2E browser context (e.g., Playwright or React Testing Library) to simulate:
++   - **Approach**: Use Playwright to simulate:
+      - Searching for a part number and verifying the supplier table updates.
+      - Clicking "Add to BOM", modifying quantity, and verifying totals update.
+      - Persisting data to LocalStorage (mocked) and confirming it reloads.
+      - Simulating a CSV upload and verifying table rows populate correctly.
+-   - **Prior Art**: This is a greenfield implementation; these seams will serve as the initial testing blueprint.
++   - **Verification**: Run `npm run test:browser`; CI runs the same launch-critical flow suite.
+
+ ---
+
+diff --git a/research/product-contract.md b/research/product-contract.md
+index fafeb7c..3681ca4 100644
+--- a/research/product-contract.md
++++ b/research/product-contract.md
+@@ -2,23 +2,24 @@
+
+ **Status:** Authoritative — sole current source of truth
+
+-**Effective:** 2026-07-13
++**Effective:** 2026-07-31
+
+-**Roadmap owner:** `research/master-plan.md`
++**Execution-plan owner:** `research/production-readiness-plan.md`
+
+-**Execution evidence:** `research/master-plan-checklist.md`
++**Execution evidence:** `research/production-readiness-checklist.md`
+
+ When current product or research documents conflict, this contract wins. Earlier PRDs, grill decisions, business plans, audits, checklists, prototype prompts, and implementation notes remain useful inputs and history; they do not override this contract.
+
+ ## Authority and precedence
+
+ 1. This contract controls current product purpose, users, terminology, capability claims, boundaries, and resolved decisions.
+-2. `research/master-plan.md` controls phase sequence, entry requirements, work-packet ownership, and exit gates.
++2. `research/production-readiness-plan.md` controls implementation sequence, scope, and launch gates.
+ 3. `research/release-truth.md` controls candidate, release, and production-verified identity.
+-4. `research/master-plan-checklist.md` controls execution status and recorded evidence.
++4. `research/production-readiness-checklist.md` controls execution status and recorded evidence.
+ 5. The shipped runtime and its tests prove what is implemented. A mismatch with this contract is a defect to reconcile, not permission to expand a claim.
+-6. `research/prd.md`, `research/grill-decisions.md`, `research/data-sourcing-decision.md`, `research/business-plan.md`, `research/pseo-risk-audit.md`, `research/aistudio_checklist.md`, and other research documents are subordinate decision inputs or historical snapshots.
+-7. Files under `research/archive/` and `archive/` are historical only.
++6. `research/data-source-register.md` controls whether a source may be ingested or published.
++7. `research/prd.md`, `research/grill-decisions.md`, `research/data-sourcing-decision.md`, `research/business-plan.md`, `research/pseo-risk-audit.md`, and other research documents are subordinate decision inputs or historical snapshots.
++8. Files under `research/archive/` and `archive/` are historical only.
+
+ No historical file is deleted or rewritten merely because this contract supersedes one of its claims.
+
+@@ -41,7 +42,7 @@ PartSource is not currently a supplier catalog, marketplace, price-comparison en
+ - Browser-local BOM persistence through `localStorage`; CSV import/export and PDF export run client-side.
+ - The retained legacy ingestion tools are fail-closed, non-production historical experiments.
+
+-`partsource.io` is a future custom domain. Until Phase 7 changes the deployment contract, GitHub Pages and the `/partsource/` base path remain authoritative.
++`partsource.io` is a future custom domain. Until the R5 launch gate changes the deployment contract, GitHub Pages and the `/partsource/` base path remain authoritative.
+
+ ## Current production capabilities
+
+@@ -54,7 +55,7 @@ PartSource is not currently a supplier catalog, marketplace, price-comparison en
+ - Open a prefilled email and copy BOM text for a sourcing-help lead. This is not dependable quote submission, acknowledgement, order creation, or quote status.
+ - Keep generated part routes `noindex,follow` and outside the sitemap; only approved root/reference content may be indexable.
+
+-Current limitations are part of the product contract: metric catalog coverage is incomplete; imperial decoding/reference support is partial; pins are unsupported; and technical facts do not imply manufacture, stock, listing, equivalence, approval, or availability.
++Current limitations are part of the product contract: metric catalog coverage is incomplete; imperial decoding/reference support is partial; pins are unsupported; and technical facts do not imply manufacture, stock, listing, equivalence, approval, or availability. The local prototype may additionally load validated hex-head and rounded-head configuration records; they are non-published prototype data, excluded from generated routes, and do not expand production catalog or commercial claims.
+
+ ## Product Truth Contract
+
+@@ -83,61 +84,54 @@ Non-negotiable boundaries:
+
+ | Data class | Current permitted source and treatment |
+ |---|---|
+-| Standards-defined configuration | Public technical standards or permitted technical references; label as a configuration and retain provenance requirements for Phase 2. |
++| Standards-defined configuration | Public technical standards or permitted technical references; label as a configuration and retain reviewed provenance. |
+ | Manufacturer part | Only claim when manufacturer identity and part number are supported by explicit evidence. |
+-| Supplier listing | Not provided by the current MVP. Requires a sanctioned source, identity resolution, permission, and freshness controls in Phase 9. |
+-| Offer | Not provided by the current MVP. Requires listing identity plus observed commercial fields, source, timestamp, and expiry in Phases 5 and 9. |
++| Supplier listing | Not provided by the current MVP. Requires an approved source record, identity resolution, permission, and freshness controls. |
++| Offer | Not provided by the current MVP. Requires an approved listing identity plus observed commercial fields, source, timestamp, and expiry. |
+ | Candidate match | A supplier-site URL is only a search handoff; a result may become a candidate match only after inspection and still requires verification. |
+ | Cross-reference | May be shown only with explicit evidence and relationship type; never bulk-generated from dimensional similarity. |
+-| Exact equivalent | Requires the complete Product Truth definition and the Phase 5 review policy. No current blanket equivalence claim exists. |
+-| Approved alternate | Requires a named organization's approval for a defined use and Phase 8 authorization/audit controls. |
++| Exact equivalent | Requires the complete Product Truth definition and independent review under the production-readiness plan. No current blanket equivalence claim exists. |
++| Approved alternate | Requires a named organization's approval for a defined use and future authorization/audit controls outside the current plan. |
+
+ Prohibited current sources and claims:
+
+ - No McMaster-Carr scraping, login-wall circumvention, gray-area third-party scraping, or unsanctioned distributor bulk ingestion.
+ - No production use of the retained Zoro ingestion experiment.
+ - No live or synthetic supplier pricing, inventory, availability, lead time, confirmed listing, or match status.
+-- A sanctioned official API or partner feed may be evaluated only under the Phase 9 entry requirements.
++- A sanctioned official API or partner feed may be evaluated only after its source record is approved.
+
+ ## Resolved-decision register
+
+ | Decision | Current resolution | Owner |
+ |---|---|---|
+-| **Scraping** | Unapproved public scraping and gray-area third-party scraping are rejected. Legacy tools remain isolated and fail-closed. Future supplier data must come from written, sanctioned access. | Rejected now; sanctioned adapters only in Phase 9 (MP-9.1–MP-9.8). |
+-| **Commercial pricing and offers** | PartSource supplies no current price, inventory, availability, or offer. BOM totals use only user-entered/imported costs. | Current boundary; evidence-backed display in Phase 5 (MP-5.5) and sanctioned data in Phase 9. |
+-| **Pins** | Pins are not in the supported catalog scope despite the early grill aspiration. | Rejected from current scope; reconsider after Phase 2 taxonomy and evidence gates (MP-2.1, MP-2.8). |
+-| **Imperial coverage** | Partial reference/decoder assistance may produce candidates, but complete imperial catalog/search coverage is unsupported. | Current limitation; exact representation in Phase 2 (MP-2.3) and parsing in Phase 4 (MP-4.4). |
+-| **Currency** | USD is the sole supported cost basis. Any legacy client-side EUR/GBP/CAD formatting is an unsourced prototype display, not commercial data or a conversion promise. | Current USD boundary; explicit export basis in Phase 6 (MP-6.7), offer normalization in Phase 9 (MP-9.4). |
+-| **Accounts and authentication** | No registration, login, identity, cloud sync, or customer account exists. Anonymous local use remains the default. | Current anonymous MVP; staff/customer identity only in Phase 8 (MP-8.1–MP-8.3, MP-8.10). |
+-| **Company and team features** | No organizations, roles, shared BOMs, approvals, comments, audit history, or cross-device collaboration exist. | Current exclusion; Phase 8 after a backend trigger. |
+-| **Enterprise features** | SSO/SAML, SCIM, punchout/cXML, ERP/PO fields, contractual security, retention, restricted-supplier, and compliance policies are not promised. | Rejected from current scope; individually demand-gated after the Phase 8 foundation. |
+-| **Quote validation** | The current mailto/clipboard action is a sourcing-help lead only; it has no dependable submission, acknowledgement, SLA, ownership, frozen snapshot, or status. | Current lead only; controlled validation in Phase 7 (MP-7.6). |
+-| **Brokerage and commerce** | No checkout, consolidated ordering, supplier routing, payment, invoicing, tax, fulfilment, tracking, returns, or brokerage transaction exists. | Rejected now; Phase 11 only after all commercial entry requirements pass. |
+-| **pSEO indexing** | Generated part routes remain `noindex,follow` and excluded from the sitemap. No bulk page-per-SKU indexing is approved. | Current containment; controlled cohorts only in Phase 10 (MP-10.1–MP-10.9). |
+-| **Styling and runtime stack** | The shipped stack is Vite + React SPA, TypeScript, Tailwind CSS 4, Radix UI/shadcn, and GitHub Pages—not Next.js, Vanilla CSS, a server-rendered app, or an AI Studio runtime. | Current runtime; UI-system changes belong to Phase 3. |
+-
+-## Phase ownership register
+-
+-Every capability promised by the reconciled inputs is either assigned below or rejected in the decision register.
+-
+-| Master-plan phase | Owned promises |
++| **Scraping** | Unapproved public scraping and gray-area third-party scraping are rejected. Legacy tools remain isolated and fail-closed. Future supplier data must come from written, sanctioned access. | `research/data-source-register.md`; R1-R2. |
++| **Commercial pricing and offers** | PartSource supplies no current price, inventory, availability, or offer. BOM totals use only user-entered/imported costs. | Deferred outside the current plan until a sanctioned, fresh commercial feed exists. |
++| **Pins** | Pins are not in the supported catalog scope despite the early grill aspiration. | Rejected from the current socket-head-cap-screw scope. |
++| **Imperial coverage** | Partial reference/decoder assistance may produce candidates, but complete imperial catalog/search coverage is unsupported. | Preserved research capability; not a verified-equivalence promise. |
++| **Currency** | USD is the sole supported cost basis. Any legacy client-side EUR/GBP/CAD formatting is an unsourced prototype display, not commercial data or a conversion promise. | Current US/USD boundary. |
++| **Accounts and authentication** | No registration, login, identity, cloud sync, or customer account exists. Anonymous local use remains the default. | Explicitly out of scope; R4 owns named local BOMs. |
++| **Company and team features** | No organizations, roles, shared BOMs, approvals, comments, audit history, or cross-device collaboration exists. | Deferred outside the current plan. |
++| **Enterprise features** | SSO/SAML, SCIM, punchout/cXML, ERP/PO fields, contractual security, retention, restricted-supplier, and compliance policies are not promised. | Deferred and demand-gated. |
++| **Quote validation** | The current mailto/clipboard action is a sourcing-help lead only; it has no dependable submission, acknowledgement, SLA, ownership, frozen snapshot, or status. | Managed lead capture is deferred outside the current plan. |
++| **Brokerage and commerce** | No checkout, consolidated ordering, supplier routing, payment, invoicing, tax, fulfilment, tracking, returns, or brokerage transaction exists. | Rejected from the current plan. |
++| **pSEO indexing** | Generated part routes remain `noindex,follow` and excluded from the sitemap. No bulk page-per-SKU indexing is approved. | Remains contained; bulk SEO is deferred. |
++| **Styling and runtime stack** | The shipped stack is Vite + React SPA, TypeScript, Tailwind CSS 4, Radix UI/shadcn, and GitHub Pages—not Next.js, Vanilla CSS, a server-rendered app, or an AI Studio runtime. | Preserve the current stack; change UI only where the core workflow requires it. |
++
++## Production ownership register
++
++| Restart stage | Owned promises |
+ |---|---|
+-| Phase 0 | Release identity, routing, SEO/structured-data containment, unsupported-claim removal, CI/deploy/rollback, and legacy-ingestion isolation. Complete; its original readiness findings are historical. |
+-| Phase 1 | Current MVP boundary, capability tiers, monetization evidence and kill thresholds, legal boundary, the approved primary-research readiness kit, and competitive validation. Real-session execution is deferred to Phase 2. |
+-| Phase 2 | Fastener taxonomy; standards and editions; metric/imperial units; material semantics; provenance; cross-reference policy; configuration relabeling; reference verification; publishing lifecycle; moderated primary research execution and evidence-linked decisions under MP-2.10; pins only after taxonomy/evidence approval. |
+-| Phase 3 | Public responsive shell, removal of prototype theatre, design tokens, complete component/state treatment, accessibility foundation, and visual regression baselines. Phase 3 remains blocked until Phase 2 and MP-2.10 pass. |
+-| Phase 4 | Safe exact/broad search, identifier namespaces, metric and imperial parsing, hard constraints, results/facets/autocomplete, explanations, persistent queries, and golden corpus. |
+-| Phase 5 | Evidence-backed detail, accurate diagrams, candidate/cross-reference/equivalence states, truthful supplier handoffs, sourced offer display, compatibility, references, and engineering-only schema. |
+-| Phase 6 | Named local BOMs, requirement/selection separation, safe import, no fabrication, editing, storage health, CSV/PDF exports with currency basis, mobile use, and offline limits. SmartCart/split-BOM optimization is not owned here and remains blocked pending sanctioned data and commercial validation. |
+-| Phase 7 | Custom domain, legal launch pack, privacy-safe analytics, funnel/monitoring, dependable quote validation, support operations, and a controlled launch cohort. |
+-| Phase 8 | Secure backend, organizations, roles, shared/versioned BOMs, approvals, comments, policies, audit history, attachments, staff admin, and anonymous-to-account migration. Enterprise extensions remain separately demand-gated. |
+-| Phase 9 | Sanctioned supplier partnerships/adapters, listing identity, price/currency/UOM/pack/MOQ normalization, availability/freshness, reliability controls, equivalence review, and stale-data demotion. |
+-| Phase 10 | Keyword/page map, publishing manifest, category/family pages, reviewed configuration pilot, canonical/robots/schema/sitemap policy, quality workflow, small indexed cohort, deindex rollback, and growth playbook. Historical 10,000/100,000/600,000-page targets are not approvals. |
+-| Phase 11 | Vendor quotes, accepted quotes, PO/order, server-owned totals, payments/invoicing/tax, fulfilment/tracking, cancellation/returns/reconciliation, and compliance/traceability—only after the phase entry requirements pass. |
+-| Phase 12 | Production hardening, independent audits, complete production gates, accepted risk register, and human product-owner sign-off. |
+-
+-Historical prototype promises without a current master-plan owner—CAD/STEP downloads, torque calculators as product tools, material-substitution tools, embedded commerce widgets, admin portals, localization, and automatic split-order optimization—are rejected from the current roadmap unless a later approved contract revision assigns them to a phase.
++| R0 | Recoverable repository reset, reviewed-code reconciliation, and clean verification baseline. |
++| R1 | Source audit, commercial reuse permission, permitted fields, attribution, refresh, and takedown controls. |
++| R2 | Canonical configuration, evidence-backed cross-reference records, disabled-by-default adapters, review lifecycle, and a 25-record verified pilot. |
++| R3 | Exact McMaster lookup with either a reviewed equivalent or an explicit unsupported result; no guessed alternatives. |
++| R4 | Multiple named local BOMs, stable identity, safe migration, CSV import/export, and JSON backup/restore. |
++| R5 | Legal launch pack, privacy-safe analytics, custom domain, monitoring, rollback, complete verification, independent audit, and controlled US pilot. |
++
++Accounts, company collaboration, enterprise controls, live commercial feeds and prices, bulk SEO, quote operations, brokerage, and commerce have no owner in the current plan and remain deferred.
++
++Historical prototype promises without a current production-plan owner—CAD/STEP downloads, torque calculators as product tools, material-substitution tools, embedded commerce widgets, admin portals, localization, and automatic split-order optimization—are rejected unless a later approved contract revision assigns them.
+
+ ## Change rule
+
+-Change this contract only through a reviewed master-plan packet. A future idea, prototype artifact, archived prompt, or implemented leftover does not become a supported capability until this contract and its phase ownership are deliberately updated.
++Change this contract only through a reviewed production-readiness packet. A future idea, prototype artifact, archived prompt, or implemented leftover does not become a supported capability until this contract and its execution ownership are deliberately updated.
+diff --git a/research/production-refactor-checklist.md b/research/production-refactor-checklist.md
+deleted file mode 100644
+index 4dcbabb..0000000
+--- a/research/production-refactor-checklist.md
++++ /dev/null
+@@ -1,157 +0,0 @@
+-# PartSource Production Refactor Checklist
+-
+-Created: 2026-07-11
+-
+-Purpose: handoff checklist for a new session to execute the production-readiness refactor from the engineering review.
+-
+-## North Star
+-
+-Ship PartSource as a trusted catalog, search, BOM, export, and quote-lead tool first.
+-
+-Do not ship fake commerce, fake admin, fake tracking, fake compliance, or unverified live supplier data.
+-
+-## Source Review Artifacts
+-
+-- Full visual review: `C:\Users\jayar\AppData\Local\Temp\architecture-review-partsource-20260711-023042.html`
+-- Key product docs:
+-  - `research/prd.md`
+-  - `research/grill-decisions.md`
+-  - `research/aistudio_checklist.md`
+-  - `research/business-plan.md`
+-  - `research/pseo-risk-audit.md`
+-
+-## Facts From Code
+-
+-- Frontend is Vite/React, not Next/SSG.
+-- Production `base` is `/partsource/`.
+-- Public routes include parts/search/BOM/admin/widget flows.
+-- BOM, orders, and quote-like state are browser-local only.
+-- `/admin` is client-side and unauthenticated.
+-- Live scraper exists as a public Python service.
+-- Current live scrape can return `403`/estimated data while UI still presents supplier-like results.
+-- Sitemap generator can produce hundreds of URLs, but tracked sitemap is stale.
+-
+-## Inferences
+-
+-- The product has drifted from trusted MVP into a demo-commerce facade.
+-- Biggest production risk is not missing features; it is false confidence.
+-- The safest refactor is deletion/de-risking first, then deeper catalog/BOM correctness.
+-- A rewrite is not justified yet. A simpler modular monolith is enough.
+-
+-## Assumptions
+-
+-- MVP goal is still buyer trust and lead generation, not full checkout.
+-- Compliance claims require SKU/order-level evidence before visible use.
+-- Live supplier data should be disabled unless source permission, identity validation, and rate limits exist.
+-- User wants next session to implement incrementally, not re-analyze from scratch.
+-
+-## Needs Verification
+-
+-- Business decision: exact MVP promise on homepage and CTAs.
+-- Domain decision: whether `partsource.io` should be live now or GitHub Pages remains canonical.
+-- Scraper decision: remove entirely vs keep disabled for internal experiments.
+-- Backend decision: only after real brokerage/quote workflow demand is validated.
+-
+-## P0 Checklist: Stop Unsafe Promises
+-
+-- [x] Remove or hide public `/admin`.
+-  - Success: no unauthenticated admin UI reachable from production navigation or direct route.
+-
+-- [x] Remove mock order/tracking behavior from brokerage flow.
+-  - Success: no random tracking IDs, no simulated order creation, no language implying placed orders.
+-
+-- [x] Convert checkout/brokerage UI into quote-lead capture or export-only flow.
+-  - Success: UI says quote/request/export, not order/buy/track.
+-
+-- [x] Fix order total math if any quote summary remains.
+-  - Success: one shared calculation path; brokerage/duty/tax values cannot change between UI surfaces.
+-
+-- [x] Disable live scraper usage in production UI.
+-  - Success: supplier offers are labeled catalog/estimated only unless verified by approved data source.
+-
+-- [x] Remove visible compliance/verified claims that are not evidence-backed.
+-  - Success: no DFARS/ISO/USA/verified badges drive ranking or locking without per-SKU evidence.
+-
+-- [x] Fix route/domain contradictions.
+-  - Success: app base, widget links, canonical URLs, and sitemap target one chosen production host.
+-
+-- [x] Refresh sitemap from the current generator after host decision.
+-  - Success: sitemap URL count matches generated catalog routes and resolves to canonical host.
+-
+-## P1 Checklist: Make Trusted MVP Coherent
+-
+-- [x] Centralize part identity resolution.
+-  - Success: exact, suggested, decoded, and unknown states are explicit and reused by Home/Header/PartDetail.
+-
+-- [ ] Tighten fuzzy matching thresholds.
+-  - Success: unknown or low-confidence query never silently maps to the wrong SKU.
+-
+-- [ ] Version and validate local persisted BOM data.
+-  - Success: bad/stale local JSON cannot crash or corrupt BOM totals.
+-
+-- [ ] Replace index-based BOM/order identity with stable IDs.
+-  - Success: delete/update/reorder cannot mutate the wrong line item.
+-
+-- [ ] Move BOM totals into pure shared functions with tests.
+-  - Success: pricing, quantities, multipliers, and export totals have deterministic unit coverage.
+-
+-- [ ] Make CSV/PDF/export the primary conversion path.
+-  - Success: buyer can complete useful work without fake checkout.
+-
+-- [ ] Add browser tests for launch-critical flows.
+-  - Success: tests cover search, part page, BOM add/edit/export, and bad-query handling.
+-
+-- [ ] Make CI run typecheck/lint/build/tests/browser smoke.
+-  - Success: main branch cannot pass with TypeScript or launch-flow breakage.
+-
+-## P2 Checklist: Publishing And Operations
+-
+-- [x] Choose canonical deployment target.
+-  - Success: GitHub Pages/custom domain/config/docs agree.
+-  - Decision: GitHub Pages at `https://jrambackup1-lgtm.github.io/partsource/`
+-    remains canonical. `partsource.io` is deferred until purchased and configured.
+-
+-- [ ] Generate static metadata per part page where possible.
+-  - Success: crawlers receive canonical title/description/schema without relying only on client runtime.
+-
+-- [ ] Add lightweight production monitoring.
+-  - Success: uptime, build status, and broken route checks are visible.
+-
+-- [ ] Write runbook.
+-  - Success: new owner can deploy, regenerate sitemap, verify core flows, and rollback.
+-
+-- [ ] Reconcile research docs with implementation state.
+-  - Success: checklist/docs stop claiming browser tests, Next, auth, or live APIs that do not exist.
+-
+-## Demand-Gated Backend Checklist
+-
+-Only start this if quote/brokerage demand is validated.
+-
+-- [ ] Define quote/order state machine.
+-  - Success: quote requested, supplier contacted, quoted, accepted, ordered, fulfilled, cancelled are distinct.
+-
+-- [ ] Add auth and role model.
+-  - Success: admin/customer access is server-enforced.
+-
+-- [ ] Add persistent database.
+-  - Success: quote/order/BOM state survives devices and has migration path.
+-
+-- [ ] Server-own all totals and immutable snapshots.
+-  - Success: final quote/order totals cannot be altered by client storage.
+-
+-- [ ] Add idempotency and audit log.
+-  - Success: duplicate submit cannot create duplicate quote/order; admin actions are traceable.
+-
+-- [ ] Use sanctioned supplier feeds only.
+-  - Success: no public arbitrary scraper endpoint powers production buyer promises.
+-
+-## Recommended Target Architecture
+-
+-- Keep: React UI, static catalog, exact search, part pages, BOM, export, quote lead capture.
+-- Deepen: catalog resolver, BOM domain module, publishing/sitemap pipeline, CI.
+-- Delete/defer: fake checkout, fake orders, fake tracking, fake admin, fake compliance, public scraper.
+-- Add backend later only for real quote/order operations.
+-
+-## Suggested First Session Prompt
+-
+-Start with `research/production-refactor-checklist.md`. Execute P0 only. Do not rewrite architecture. Make surgical changes. Before edits, identify exact files/routes/components for each P0 item. After edits, verify with tests/build and a quick production-flow smoke check.
+diff --git a/research/unit-economics.md b/research/unit-economics.md
+index 5d8b2e0..00f37e4 100644
+--- a/research/unit-economics.md
++++ b/research/unit-economics.md
+@@ -4,7 +4,7 @@
+
+ **Effective:** 2026-07-13
+
+-This document is subordinate to `research/product-contract.md`. If a model assumption conflicts with that contract or `research/master-plan.md`, the contract and phase gates win. This is a decision tool, not a forecast, valuation, or claim of product-market fit.
++This document is subordinate to `research/product-contract.md` and `research/production-readiness-plan.md`. If a model assumption conflicts with either, the product contract and current launch gates win. This is a decision tool, not a forecast, valuation, or claim of product-market fit.
+
+ ## Evidence and input policy
+
+diff --git a/web/.env.example b/web/.env.example
+index 2311475..4e49987 100644
+--- a/web/.env.example
++++ b/web/.env.example
+@@ -1,2 +1,5 @@
+ VITE_SUPABASE_URL=
+ VITE_SUPABASE_PUBLISHABLE_KEY=
++CATALOG_SEARCH_URL=
++CATALOG_SEARCH_ANON_KEY=
++SUPABASE_DB_URL=
+diff --git a/web/.gitignore b/web/.gitignore
+index 5a86d2a..75013ff 100644
+--- a/web/.gitignore
++++ b/web/.gitignore
+@@ -2,6 +2,8 @@ node_modules/
+ build/
+ dist/
+ coverage/
++playwright-report/
++test-results/
+ .DS_Store
+ *.log
+ .env*
+diff --git a/web/package-lock.json b/web/package-lock.json
+index c41e714..516eaf2 100644
+--- a/web/package-lock.json
++++ b/web/package-lock.json
+@@ -11,6 +11,7 @@
+         "@fontsource-variable/geist": "^5.2.9",
+         "@tailwindcss/vite": "^4.1.14",
+         "@types/papaparse": "^5.5.2",
++        "@types/pg": "^8.20.4",
+         "@vitejs/plugin-react": "^5.0.4",
+         "class-variance-authority": "^0.7.1",
+         "clsx": "^2.1.1",
+@@ -21,6 +22,7 @@
+         "lucide-react": "^0.546.0",
+         "motion": "^12.23.24",
+         "papaparse": "^5.5.4",
++        "pg": "^8.22.0",
+         "radix-ui": "^1.6.1",
+         "react": "^19.0.1",
+         "react-dom": "^19.0.1",
+@@ -3767,6 +3769,17 @@
+         "@types/node": "*"
+       }
+     },
++    "node_modules/@types/pg": {
++      "version": "8.20.4",
++      "resolved": "https://registry.npmjs.org/@types/pg/-/pg-8.20.4.tgz",
++      "integrity": "sha512-Jz7UDOlIiFJuacC0TlBoLyNtmwlA/wpIyPDd3tvUqlRM+HzkWy2xUgpFpaXtbfTAFF6sIGq5lsCDBdJnhky1Xg==",
++      "license": "MIT",
++      "dependencies": {
++        "@types/node": "*",
++        "pg-protocol": "*",
++        "pg-types": "^2.2.0"
++      }
++    },
+     "node_modules/@types/raf": {
+       "version": "3.4.3",
+       "resolved": "https://registry.npmjs.org/@types/raf/-/raf-3.4.3.tgz",
+@@ -6876,6 +6889,95 @@
+       "license": "MIT",
+       "optional": true
+     },
++    "node_modules/pg": {
++      "version": "8.22.0",
++      "resolved": "https://registry.npmjs.org/pg/-/pg-8.22.0.tgz",
++      "integrity": "sha512-8wih1vVIBMxoUM2oB4soJsD9tDnDpLv4OXBJ+EJzFsvycD+lfyIreC2gGHq78f8jbLLt+bvlPTFdFZfJkOuzAA==",
++      "license": "MIT",
++      "dependencies": {
++        "pg-connection-string": "^2.14.0",
++        "pg-pool": "^3.14.0",
++        "pg-protocol": "^1.15.0",
++        "pg-types": "2.2.0",
++        "pgpass": "1.0.5"
++      },
++      "engines": {
++        "node": ">= 16.0.0"
++      },
++      "optionalDependencies": {
++        "pg-cloudflare": "^1.4.0"
++      },
++      "peerDependencies": {
++        "pg-native": ">=3.0.1"
++      },
++      "peerDependenciesMeta": {
++        "pg-native": {
++          "optional": true
++        }
++      }
++    },
++    "node_modules/pg-cloudflare": {
++      "version": "1.4.0",
++      "resolved": "https://registry.npmjs.org/pg-cloudflare/-/pg-cloudflare-1.4.0.tgz",
++      "integrity": "sha512-Vo7z/6rrQYxpNRylp4Tlob2elzbh+N/MOQbxFVWCxS7oEx6jF53GTJFxK2WWpKuBRkmiin4Mt+xofFDjx09R0A==",
++      "license": "MIT",
++      "optional": true
++    },
++    "node_modules/pg-connection-string": {
++      "version": "2.14.0",
++      "resolved": "https://registry.npmjs.org/pg-connection-string/-/pg-connection-string-2.14.0.tgz",
++      "integrity": "sha512-XwWDGcLRGCXAR8F/AM5bG7Q+A3Wm2s6QeEjlOKZLlH3UYcguiqCWKyWXVag5TLTIjR7oOJUY8kcADaZgWPyLeg==",
++      "license": "MIT"
++    },
++    "node_modules/pg-int8": {
++      "version": "1.0.1",
++      "resolved": "https://registry.npmjs.org/pg-int8/-/pg-int8-1.0.1.tgz",
++      "integrity": "sha512-WCtabS6t3c8SkpDBUlb1kjOs7l66xsGdKpIPZsg4wR+B3+u9UAum2odSsF9tnvxg80h4ZxLWMy4pRjOsFIqQpw==",
++      "license": "ISC",
++      "engines": {
++        "node": ">=4.0.0"
++      }
++    },
++    "node_modules/pg-pool": {
++      "version": "3.14.0",
++      "resolved": "https://registry.npmjs.org/pg-pool/-/pg-pool-3.14.0.tgz",
++      "integrity": "sha512-gKtPkFdQPU3DksooVLi9LsjZxrsBUZIpa+7aVx+LV5pNh0KzP4Zleud2po+ConrxbuXGBJ6Hfer6hdgpIBpBaw==",
++      "license": "MIT",
++      "peerDependencies": {
++        "pg": ">=8.0"
++      }
++    },
++    "node_modules/pg-protocol": {
++      "version": "1.15.0",
++      "resolved": "https://registry.npmjs.org/pg-protocol/-/pg-protocol-1.15.0.tgz",
++      "integrity": "sha512-cq9sECI5s0+uPUXjbz8ioyPJni6RzsRib0US67i5IoTZKw8fNeYlVE7u8F4dG7vEJJtc5wdD1K189lCCUwqWTQ==",
++      "license": "MIT"
++    },
++    "node_modules/pg-types": {
++      "version": "2.2.0",
++      "resolved": "https://registry.npmjs.org/pg-types/-/pg-types-2.2.0.tgz",
++      "integrity": "sha512-qTAAlrEsl8s4OiEQY69wDvcMIdQN6wdz5ojQiOy6YRMuynxenON0O5oCpJI6lshc6scgAY8qvJ2On/p+CXY0GA==",
++      "license": "MIT",
++      "dependencies": {
++        "pg-int8": "1.0.1",
++        "postgres-array": "~2.0.0",
++        "postgres-bytea": "~1.0.0",
++        "postgres-date": "~1.0.4",
++        "postgres-interval": "^1.1.0"
++      },
++      "engines": {
++        "node": ">=4"
++      }
++    },
++    "node_modules/pgpass": {
++      "version": "1.0.5",
++      "resolved": "https://registry.npmjs.org/pgpass/-/pgpass-1.0.5.tgz",
++      "integrity": "sha512-FdW9r/jQZhSeohs1Z3sI1yxFQNFvMcnmfuj4WBMUTxOrAyLMaTcE1aAMBiTlbMNaXvBCQuVi0R7hd8udDSP7ug==",
++      "license": "MIT",
++      "dependencies": {
++        "split2": "^4.1.0"
++      }
++    },
+     "node_modules/picocolors": {
+       "version": "1.1.1",
+       "resolved": "https://registry.npmjs.org/picocolors/-/picocolors-1.1.1.tgz",
+@@ -7010,6 +7112,45 @@
+       "dev": true,
+       "license": "MIT"
+     },
++    "node_modules/postgres-array": {
++      "version": "2.0.0",
++      "resolved": "https://registry.npmjs.org/postgres-array/-/postgres-array-2.0.0.tgz",
++      "integrity": "sha512-VpZrUqU5A69eQyW2c5CA1jtLecCsN2U/bD6VilrFDWq5+5UIEVO7nazS3TEcHf1zuPYO/sqGvUvW62g86RXZuA==",
++      "license": "MIT",
++      "engines": {
++        "node": ">=4"
++      }
++    },
++    "node_modules/postgres-bytea": {
++      "version": "1.0.1",
++      "resolved": "https://registry.npmjs.org/postgres-bytea/-/postgres-bytea-1.0.1.tgz",
++      "integrity": "sha512-5+5HqXnsZPE65IJZSMkZtURARZelel2oXUEO8rH83VS/hxH5vv1uHquPg5wZs8yMAfdv971IU+kcPUczi7NVBQ==",
++      "license": "MIT",
++      "engines": {
++        "node": ">=0.10.0"
++      }
++    },
++    "node_modules/postgres-date": {
++      "version": "1.0.7",
++      "resolved": "https://registry.npmjs.org/postgres-date/-/postgres-date-1.0.7.tgz",
++      "integrity": "sha512-suDmjLVQg78nMK2UZ454hAG+OAW+HQPZ6n++TNDUX+L0+uUlLywnoxJKDou51Zm+zTCjrCl0Nq6J9C5hP9vK/Q==",
++      "license": "MIT",
++      "engines": {
++        "node": ">=0.10.0"
++      }
++    },
++    "node_modules/postgres-interval": {
++      "version": "1.2.0",
++      "resolved": "https://registry.npmjs.org/postgres-interval/-/postgres-interval-1.2.0.tgz",
++      "integrity": "sha512-9ZhXKM/rw350N1ovuWHbGxnGh/SNJ4cnxHiM0rxE4VN41wsg8P8zWn9hv/buK00RP4WvlOyr/RBDiptyxVbkZQ==",
++      "license": "MIT",
++      "dependencies": {
++        "xtend": "^4.0.0"
++      },
++      "engines": {
++        "node": ">=0.10.0"
++      }
++    },
+     "node_modules/powershell-utils": {
+       "version": "0.1.0",
+       "resolved": "https://registry.npmjs.org/powershell-utils/-/powershell-utils-0.1.0.tgz",
+@@ -7887,6 +8028,15 @@
+         "node": ">=0.10.0"
+       }
+     },
++    "node_modules/split2": {
++      "version": "4.2.0",
++      "resolved": "https://registry.npmjs.org/split2/-/split2-4.2.0.tgz",
++      "integrity": "sha512-UcjcJOWknrNkF6PLX83qcHM6KHgVKNkV62Y8a5uYDVv9ydGQVwAHMKqHdJje1VTWpljG0WYpCDhrCdAOYH4TWg==",
++      "license": "ISC",
++      "engines": {
++        "node": ">= 10.x"
++      }
++    },
+     "node_modules/stackblur-canvas": {
+       "version": "2.7.0",
+       "resolved": "https://registry.npmjs.org/stackblur-canvas/-/stackblur-canvas-2.7.0.tgz",
+@@ -9025,6 +9175,15 @@
+         "url": "https://github.com/sponsors/sindresorhus"
+       }
+     },
++    "node_modules/xtend": {
++      "version": "4.0.2",
++      "resolved": "https://registry.npmjs.org/xtend/-/xtend-4.0.2.tgz",
++      "integrity": "sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==",
++      "license": "MIT",
++      "engines": {
++        "node": ">=0.4"
++      }
++    },
+     "node_modules/y18n": {
+       "version": "5.0.8",
+       "resolved": "https://registry.npmjs.org/y18n/-/y18n-5.0.8.tgz",
+diff --git a/web/package.json b/web/package.json
+index 66beedc..1eca769 100644
+--- a/web/package.json
++++ b/web/package.json
+@@ -5,19 +5,26 @@
+   "type": "module",
+   "scripts": {
+     "dev": "vite --port=3000 --host=0.0.0.0",
+-    "build": "vite build && tsx scripts/generate-static-part-pages.ts && tsx scripts/test-product-truth-bundle.ts",
++    "build": "npm run generate:prototype-catalogs && vite build && tsx scripts/generate-static-part-pages.ts && tsx scripts/test-product-truth-bundle.ts",
+     "preview": "vite preview",
+     "clean": "rm -rf dist server.js",
+     "sitemap": "tsx scripts/generate-sitemap.ts",
+     "lint": "tsc --noEmit",
+-    "test": "tsx scripts/test-decoder.ts && tsx scripts/test-p0-safety.ts && tsx scripts/test-product-truth.ts && tsx scripts/test-product-truth-behavior.ts && tsx scripts/test-static-metadata.ts",
++    "test": "npm run generate:prototype-catalogs && tsx scripts/test-catalog-import.ts && tsx scripts/test-catalog-api.ts && tsx scripts/test-decoder.ts && tsx scripts/test-offers.ts && tsx scripts/test-p0-safety.ts && tsx scripts/test-product-truth.ts && tsx scripts/test-product-truth-behavior.ts && tsx scripts/test-static-metadata.ts && tsx scripts/test-bom-storage.ts && tsx scripts/test-bom-domain.ts && tsx scripts/test-production-monitoring.ts && tsx scripts/test-socket-head-prototype-catalog.ts",
+     "test:supabase-catalog-foundation": "npx supabase test db --local ../supabase/tests/catalog_foundation.sql",
++    "test:catalog-search": "tsx scripts/test-catalog-search.ts",
++    "test:catalog-api": "tsx scripts/test-catalog-api.ts",
++    "test:catalog-boundary": "tsx scripts/test-catalog-boundary.ts",
++    "release:audit": "npm run lint && npm test && npm run test:catalog-search && npm run build && npm run test:catalog-boundary && npm run test:browser",
++    "generate:socket-catalog": "tsx scripts/generate-socket-head-prototype-catalog.ts",
++    "generate:prototype-catalogs": "npm run generate:socket-catalog && tsx scripts/generate-hex-head-prototype-catalog.ts && tsx scripts/generate-rounded-head-prototype-catalog.ts",
+     "test:browser": "playwright test"
+   },
+   "dependencies": {
+     "@fontsource-variable/geist": "^5.2.9",
+     "@tailwindcss/vite": "^4.1.14",
+     "@types/papaparse": "^5.5.2",
++    "@types/pg": "^8.20.4",
+     "@vitejs/plugin-react": "^5.0.4",
+     "class-variance-authority": "^0.7.1",
+     "clsx": "^2.1.1",
+@@ -28,6 +35,7 @@
+     "lucide-react": "^0.546.0",
+     "motion": "^12.23.24",
+     "papaparse": "^5.5.4",
++    "pg": "^8.22.0",
+     "radix-ui": "^1.6.1",
+     "react": "^19.0.1",
+     "react-dom": "^19.0.1",
+diff --git a/web/scripts/generate-static-part-pages.ts b/web/scripts/generate-static-part-pages.ts
+index 3f2c087..ee9de5f 100644
+--- a/web/scripts/generate-static-part-pages.ts
++++ b/web/scripts/generate-static-part-pages.ts
+@@ -76,7 +76,7 @@ function writeRouteShell(distDir: string, route: string[], html: string): void {
+ export function generateStaticPartPages(distDir: string): number {
+   const indexPath = path.join(distDir, 'index.html');
+   const template = fs.readFileSync(indexPath, 'utf8');
+-  const parts = db.filter(part => part.thread !== 'Unknown' && part.standard !== 'Unknown');
++  const parts = db.filter(part => !part.isPrototype && part.thread !== 'Unknown' && part.standard !== 'Unknown');
+   const fallback = template
+     .replace(/\s*<link rel="canonical"[^>]*>/s, '')
+     .replace(/\s*<meta name="robots"[^>]*>/s, '')
+diff --git a/web/scripts/legacy-ingestion/scraper_server.py b/web/scripts/legacy-ingestion/scraper_server.py
+index e871f43..8fee119 100644
+--- a/web/scripts/legacy-ingestion/scraper_server.py
++++ b/web/scripts/legacy-ingestion/scraper_server.py
+@@ -47,6 +47,19 @@ CB_FAILURE_THRESHOLD = int(os.environ.get("CB_FAILURE_THRESHOLD", 8))
+ CB_WINDOW_SECONDS = int(os.environ.get("CB_WINDOW_SECONDS", 5 * 60))     # 5 min
+ CB_COOLDOWN_SECONDS = int(os.environ.get("CB_COOLDOWN_SECONDS", 2 * 60))  # 2 min
+
++# CORS: only the frontend origins may call this service. Comma-separated env
++# override; defaults cover the GitHub Pages site + local dev.
++ALLOWED_ORIGINS = {
++    o.strip() for o in os.environ.get(
++        "ALLOWED_ORIGINS",
++        "https://jrambackup1-lgtm.github.io,http://localhost:3000,http://localhost:5173",
++    ).split(",") if o.strip()
++}
++
++# Per-IP rate limit (fixed window) on /api/scrape to cap compute abuse.
++RATE_LIMIT_MAX = int(os.environ.get("RATE_LIMIT_MAX", 30))
++RATE_LIMIT_WINDOW_SECONDS = int(os.environ.get("RATE_LIMIT_WINDOW_SECONDS", 60))
++
+ # Zoro's published price is ~15% below McMaster list. Invert to estimate list.
+ ZORO_DISCOUNT_FACTOR = 0.85
+
+@@ -58,6 +71,20 @@ _cb_lock = threading.Lock()
+ _cb_failures: list[float] = []  # timestamps of recent failures
+ _cb_open_until: float = 0.0     # epoch until which the breaker stays open
+
++_rl_lock = threading.Lock()
++_rl_hits: dict[str, list[float]] = {}  # client ip -> request timestamps in window
++
++
++def _rate_limited(client_ip: str) -> bool:
++    """True once a client exceeds RATE_LIMIT_MAX requests within the window."""
++    now = time.time()
++    cutoff = now - RATE_LIMIT_WINDOW_SECONDS
++    with _rl_lock:
++        hits = [t for t in _rl_hits.get(client_ip, []) if t > cutoff]
++        hits.append(now)
++        _rl_hits[client_ip] = hits
++        return len(hits) > RATE_LIMIT_MAX
++
+
+ def _circuit_open() -> bool:
+     """True if we should skip hitting Zoro and serve estimated data."""
+@@ -103,13 +130,25 @@ class ScraperHandler(BaseHTTPRequestHandler):
+     def log_message(self, fmt, *args):  # noqa: A003 - matches stdlib signature
+         print(f"[{self.log_date_time_string()}] {fmt % args}")
+
++    def _client_ip(self) -> str:
++        # Behind Cloudflare/Render; trust the left-most forwarded address.
++        fwd = self.headers.get("X-Forwarded-For", "")
++        return fwd.split(",")[0].strip() if fwd else self.client_address[0]
++
++    def _cors_headers(self):
++        origin = self.headers.get("Origin")
++        allow = origin if origin in ALLOWED_ORIGINS else None
++        if allow:
++            self.send_header("Access-Control-Allow-Origin", allow)
++            self.send_header("Vary", "Origin")
++            self.send_header("Access-Control-Allow-Methods", "GET, OPTIONS")
++            self.send_header("Access-Control-Allow-Headers", "Content-Type")
++
+     def _send_json(self, status: int, payload: dict):
+         body = json.dumps(payload).encode("utf-8")
+         self.send_response(status)
+         self.send_header("Content-Type", "application/json")
+-        self.send_header("Access-Control-Allow-Origin", "*")
+-        self.send_header("Access-Control-Allow-Methods", "GET, OPTIONS")
+-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
++        self._cors_headers()
+         self.send_header("Cache-Control", "public, max-age=300")
+         self.send_header("Content-Length", str(len(body)))
+         self.end_headers()
+@@ -117,9 +156,7 @@ class ScraperHandler(BaseHTTPRequestHandler):
+
+     def do_OPTIONS(self):
+         self.send_response(204)
+-        self.send_header("Access-Control-Allow-Origin", "*")
+-        self.send_header("Access-Control-Allow-Methods", "GET, OPTIONS")
+-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
++        self._cors_headers()
+         self.end_headers()
+
+     def do_GET(self):
+@@ -130,6 +167,9 @@ class ScraperHandler(BaseHTTPRequestHandler):
+             return
+
+         if parsed.path == "/api/scrape":
++            if _rate_limited(self._client_ip()):
++                self._send_json(429, {"error": "Too Many Requests"})
++                return
+             params = parse_qs(parsed.query)
+             part_number = params.get("partNumber", [None])[0]
+             if not part_number:
+diff --git a/web/scripts/test-decoder.ts b/web/scripts/test-decoder.ts
+index 124479a..733a0d8 100644
+--- a/web/scripts/test-decoder.ts
++++ b/web/scripts/test-decoder.ts
+@@ -16,6 +16,7 @@ import {
+   getSupplierSearchUrl,
+   parseCustomPart,
+   findCatalogPart,
++  fuse,
+   resolvePartIdentity,
+   MCMASTER_CROSSES,
+   type Part,
+@@ -149,6 +150,10 @@ test('parseCustomPart: washer category detected', () => {
+ // --- Catalog integrity -----------------------------------------------------
+ test('catalog: every entry has a valid partNumber and required fields', () => {
+   for (const p of db) {
++    if (p.isPrototype) {
++      assertEqual(p.mcmasterPrice, 0, `prototype has no price: ${p.partNumber}`);
++      continue;
++    }
+     // Own standards-based PN is always the identity; a McMaster PN may be
+     // attached as a verified reference field only.
+     assert(/^(DIN|ISO)\d+-M[\d.]+(X\d+)?(-A2)?$/.test(p.partNumber), `bad partNumber: ${p.partNumber}`);
+@@ -163,6 +168,10 @@ test('catalog: every entry has a valid partNumber and required fields', () => {
+   }
+ });
+
++test('catalog: browser fallback excludes generated prototype records', () => {
++  assertEqual(db.filter(p => p.partNumber.startsWith('PROTO-')).length, 0, 'prototype catalog count');
++});
++
+ test('crosses: every hand-verified McMaster cross maps to a real catalog entry', () => {
+   assert(MCMASTER_CROSSES.length >= 1, 'crosses table must not be empty');
+   for (const c of MCMASTER_CROSSES) {
+@@ -195,17 +204,30 @@ test('catalog: generated metric screws carry correct coarse pitch', () => {
+ });
+
+ // --- Catalog lookup ---------------------------------------------------------
+-test('findCatalogPart: verified cross and own PN resolve; unknown MPNs do not', () => {
++test('findCatalogPart: verified crosses resolve; prototype and unknown MPNs do not resolve locally', () => {
+   assertEqual(findCatalogPart('91290A115')?.partNumber, 'DIN912-M3X10', 'verified MPN cross resolves to own PN');
+   assertEqual(findCatalogPart('din912-m4x12')?.partNumber, 'DIN912-M4X12', 'own PN, case-insensitive');
+   assertEqual(findCatalogPart('99136A101'), null, 'unknown MPN must not fuzzy-match a wrong part');
+-  assertEqual(findCatalogPart('91251A242'), null, 'purged fabricated cross must no longer resolve');
++  assertEqual(findCatalogPart('91251A242'), null, 'private prototype MPNs are resolved through catalog-search, not local fallback');
++});
++
++test('prototype socket record is not bundled into local fallback', () => {
++  const result = resolvePartIdentity('93615A110');
++  assertEqual(result.state, 'unknown', 'prototype MPN is not a local exact lookup');
++  assertEqual(result.part.unindexed, true, 'prototype MPN falls back honestly');
++  assertEqual(result.part.offers, undefined, 'fallback has no supplier offer');
++});
++
++test('private prototype technical titles are not locally searchable', () => {
++  const result = fuse.search('low profile 18-8 stainless socket head 4-40');
++  assert(!result.some(hit => hit.item.partNumber.startsWith('PROTO-')), 'no prototype spec search result');
+ });
+
+ test('resolvePartIdentity: exposes exact, suggested, decoded, and unknown states', () => {
+   assertEqual(resolvePartIdentity('din912-m4x12').state, 'exact', 'own PN is exact');
+   assertEqual(resolvePartIdentity('91290A115').state, 'exact', 'verified cross is exact');
+-  assertEqual(resolvePartIdentity('DIN912-M4X13').state, 'suggested', 'close catalog typo is suggested');
++  assertEqual(resolvePartIdentity('DIN912-M4X12 A2').state, 'suggested', 'clear catalog match is suggested');
++  assertEqual(resolvePartIdentity('DIN912-M4X13').state, 'decoded', 'ambiguous unavailable size is not mapped to a neighboring SKU');
+   assertEqual(resolvePartIdentity('M5 socket head cap screw x 16mm').state, 'decoded', 'usable specs are decoded');
+   assertEqual(resolvePartIdentity('99136A101').state, 'unknown', 'unrecognized MPN is unknown');
+ });
+diff --git a/web/scripts/test-p0-safety.ts b/web/scripts/test-p0-safety.ts
+index 1d38328..4e003fa 100644
+--- a/web/scripts/test-p0-safety.ts
++++ b/web/scripts/test-p0-safety.ts
+@@ -50,11 +50,10 @@ function findActiveLegacyActivationViolations(scanRoot: string): string[] {
+     if (!textExtensions.has(path.extname(normalized).toLowerCase()) && path.basename(normalized) !== 'Dockerfile') continue;
+
+     const absoluteFile = path.join(scanRoot, relativeFile);
++    if (!fs.existsSync(absoluteFile)) continue;
+     if (!fs.statSync(absoluteFile).isFile()) continue;
+
+-    const activeLines = fs.readFileSync(absoluteFile, 'utf8')
+-      .split(/\r?\n/)
+-      .filter((line) => !(normalized === 'research/aistudio_checklist.md' && /^\|\s*\d{4}-\d{2}-\d{2}\s*\|/.test(line)));
++    const activeLines = fs.readFileSync(absoluteFile, 'utf8').split(/\r?\n/);
+     if (activeLines.some((line) => legacyActivationPattern.test(line))) violations.push(normalized);
+   }
+   return violations.sort();
+@@ -89,7 +88,7 @@ assert.match(app, /noindex,follow/);
+ assert.doesNotMatch(partDetail, /AggregateOffer|"offers"|lowPrice|highPrice|offerCount/);
+ assert.doesNotMatch(partDetail, /Supplier Pricing Matrix|Related Parts & Equivalents|mcmasterPrice \*|Equivalent Sourcing|Compare prices/);
+ assert.doesNotMatch(widget, /Equivalents Pricing Grid|mcmasterPrice \*|Est\. price/);
+-assert.match(partDetail, /return \(\) => document\.querySelector\('#json-ld-product'\)\?\.remove\(\)/);
++assert.match(partDetail, /document\.querySelector\('#json-ld-product'\)\?\.remove\(\)/);
+ assert.equal((sitemap.match(/<loc>/g) ?? []).length, 1);
+ assert.match(sitemap, /<loc>https:\/\/jrambackup1-lgtm\.github\.io\/partsource\/<\/loc>/);
+ assert.doesNotMatch(sitemap, /\/parts\//);
+diff --git a/web/scripts/test-phase1-mvp-boundary.ts b/web/scripts/test-phase1-mvp-boundary.ts
+index 2754052..f811de8 100644
+--- a/web/scripts/test-phase1-mvp-boundary.ts
++++ b/web/scripts/test-phase1-mvp-boundary.ts
+@@ -23,8 +23,8 @@ const extractSection = (value: string, heading: string, nextHeading: string) =>
+   return normalised.slice(start, end);
+ };
+
+-assert.match(boundary, /supporting contract subordinate to `research\/product-contract\.md`/i);
+-assert.match(boundary, /current shipped state is evidence, not the target launch promise/i);
++assert.match(boundary, /Historical phase-mapping input/i);
++assert.match(boundary, /product-contract\.md[^\r\n]+production-readiness-plan\.md[^\r\n]+control current scope/i);
+
+ const capabilities = extractSection(boundary, 'Target MVP capabilities', 'Supported hardware');
+ const requiredCapabilities = [
+diff --git a/web/scripts/test-phase1-user-research.ts b/web/scripts/test-phase1-user-research.ts
+index f002b06..808a31f 100644
+--- a/web/scripts/test-phase1-user-research.ts
++++ b/web/scripts/test-phase1-user-research.ts
+@@ -5,10 +5,11 @@ import path from 'node:path';
+ const repoRoot = path.resolve(import.meta.dirname, '..', '..');
+ const planPath = path.join(repoRoot, 'research', 'user-research-plan.md');
+ const resultsPath = path.join(repoRoot, 'research', 'user-research-results.md');
+-const checklistPath = path.join(repoRoot, 'research', 'master-plan-checklist.md');
+-const masterPlanPath = path.join(repoRoot, 'research', 'master-plan.md');
++const archivedPlanRoot = path.join(repoRoot, 'research', 'archive', 'paused-2026-07-31');
++const checklistPath = path.join(archivedPlanRoot, 'master-plan-checklist.md');
++const masterPlanPath = path.join(archivedPlanRoot, 'master-plan.md');
+ const productContractPath = path.join(repoRoot, 'research', 'product-contract.md');
+-const phasePromptPath = path.join(repoRoot, 'research', 'phase-execution-prompt.md');
++const phasePromptPath = path.join(archivedPlanRoot, 'phase-execution-prompt.md');
+
+ for (const [filePath, purpose] of [
+   [planPath, 'MP-1.6 readiness kit research plan'],
+@@ -499,9 +500,9 @@ assert.match(phase2Plan, /MP-2\.10 Moderated primary research execution and deci
+ assert.match(phase2Plan, /exactly 12[^\r\n]+three engineers[^\r\n]+three procurement users[^\r\n]+two maintenance users[^\r\n]+two small-company buyers[^\r\n]+one student\/hobbyist[^\r\n]+one enterprise procurement user/i);
+ assert.match(phase2Plan, /at least 10(?: of |\/)12[^\r\n]+unaided comprehension/i);
+ assert.match(phase2Plan, /REVISE_RETEST[^\r\n]+KILL[^\r\n]+block(?:s|ed)? Phase 2 exit/i);
+-assert.match(productContract, /\| Phase 1 \|[^\r\n]+primary-research readiness kit/i);
+-assert.match(productContract, /\| Phase 2 \|[^\r\n]+moderated primary research[^\r\n]+MP-2\.10/i);
+-assert.match(productContract, /\| Phase 3 \|[^\r\n]+blocked[^\r\n]+Phase 2[^\r\n]+MP-2\.10/i);
++assert.match(productContract, /production-readiness-plan\.md[^\r\n]+implementation sequence/i);
++assert.match(productContract, /production-readiness-checklist\.md[^\r\n]+execution status/i);
++assert.match(productContract, /\| R0 \|[^\r\n]+repository reset/i);
+ assert.match(phasePrompt, /Phase 3[^\r\n]+blocked[^\r\n]+Phase 2[^\r\n]+MP-2\.10/i);
+ assert.match(checklist, /^\| 1 [^|]+\| complete \|/m);
+ assert.match(checklist, /^\| 2 [^|]+\| ready \|/m);
+diff --git a/web/scripts/test-product-truth-bundle.ts b/web/scripts/test-product-truth-bundle.ts
+index 250616e..fe9b0b6 100644
+--- a/web/scripts/test-product-truth-bundle.ts
++++ b/web/scripts/test-product-truth-bundle.ts
+@@ -12,5 +12,7 @@ const bundle = fs.readdirSync(bundleDir)
+   .join('\n');
+
+ assert.doesNotMatch(bundle, /Consolidated Cost Simulation|Approved Suppliers|Est\. list|Estimated Savings|Simulated Savings|Zoro \(Auto\)|Jay Sourcing|live match|Tool-estimated total/i);
++assert.doesNotMatch(bundle, /SUPABASE_SERVICE_ROLE_KEY|service[_-]?role/i);
++assert.doesNotMatch(bundle, /PROTO-SHCS|PROTO-HEX|PROTO-ROUND|SOCKET_HEAD_PROTOTYPE_CATALOG|HEX_HEAD_PROTOTYPE_CATALOG|ROUNDED_HEAD_PROTOTYPE_CATALOG/);
+
+ console.log('Product Truth production-bundle checks passed.');
+diff --git a/web/scripts/test-product-truth.ts b/web/scripts/test-product-truth.ts
+index 42dfd7b..6d3fd38 100644
+--- a/web/scripts/test-product-truth.ts
++++ b/web/scripts/test-product-truth.ts
+@@ -17,6 +17,7 @@ const widget = readWeb('src/pages/WidgetEmbed.tsx');
+ const reference = readWeb('src/lib/reference.ts');
+ const decoder = readWeb('src/lib/decoder.ts');
+ const packageJson = JSON.parse(readWeb('package.json')) as { scripts?: Record<string, string> };
++const prototypeNotice = partDetail.match(/const prototypeNotice = (?:'([^']+)'|CONFIGURATION_NOTICE);/);
+
+ const uiSourceFiles = [
+   'src/App.tsx',
+@@ -46,6 +47,9 @@ for (const source of [partDetail, widget]) {
+ }
+
+ assert.doesNotMatch(reference, /live match|an equivalent is|surfaces that live match/i);
++assert.ok(prototypeNotice, 'PartDetail must define a prototype-specific notice');
++assert.equal(prototypeNotice[1] ?? 'Configuration — verify before sourcing', 'Configuration — verify before sourcing');
++assert.doesNotMatch(prototypeNotice[1] ?? 'Configuration — verify before sourcing', /offer|listing|price|stock|supplier|equivalen/i);
+
+ const activeDocs = [
+   readRepo('README.md'),
+diff --git a/web/scripts/test-static-metadata.ts b/web/scripts/test-static-metadata.ts
+index 07f8556..72f20f7 100644
+--- a/web/scripts/test-static-metadata.ts
++++ b/web/scripts/test-static-metadata.ts
+@@ -38,6 +38,9 @@ const distDir = fs.mkdtempSync(path.join(os.tmpdir(), 'partsource-static-'));
+ try {
+   fs.writeFileSync(path.join(distDir, 'index.html'), template);
+   generateStaticPartPages(distDir);
++  const prototypePartNumber = 'PROTO-SHCS-93615A110';
++  assert.equal(fs.existsSync(path.join(distDir, 'parts', prototypePartNumber)), false);
++  assert.equal(fs.existsSync(path.join(distDir, 'embed', prototypePartNumber)), false);
+   const fallbackPath = path.join(distDir, '404.html');
+   assert.equal(fs.existsSync(fallbackPath), true);
+   const fallback = fs.readFileSync(fallbackPath, 'utf8');
+diff --git a/web/src/components/Header.tsx b/web/src/components/Header.tsx
+index 394e8da..9a3dcf0 100644
+--- a/web/src/components/Header.tsx
++++ b/web/src/components/Header.tsx
+@@ -1,7 +1,8 @@
+ import React, { useState, useRef, ChangeEvent } from 'react';
+ import { useNavigate, Link, useLocation } from 'react-router-dom';
+ import { Search, ArrowRight } from 'lucide-react';
+-import { fuse, resolvePartIdentity, Part } from '../lib/decoder';
++import { type Part } from '../lib/decoder';
++import { useCatalogSearch } from '../hooks/useCatalogSearch';
+ import { useCurrency } from '../contexts/CurrencyContext';
+
+ export function Header() {
+@@ -9,7 +10,7 @@ export function Header() {
+   const navigate = useNavigate();
+   const location = useLocation();
+   const [query, setQuery] = useState('');
+-  const [dropdownResults, setDropdownResults] = useState<{ item: Part; score?: number }[]>([]);
++  const { status: searchStatus, results: dropdownResults, message: searchMessage, runSearch, clear: clearSearch, resolveSearchTarget } = useCatalogSearch();
+   const [showDropdown, setShowDropdown] = useState(false);
+   const [activeDropdownIndex, setActiveDropdownIndex] = useState(-1);
+   const dropdownRef = useRef<HTMLDivElement>(null);
+@@ -26,17 +27,11 @@ export function Header() {
+
+     if (!val.trim()) {
+       setShowDropdown(false);
+-      setDropdownResults([]);
++      clearSearch();
+       return;
+     }
+-
+-    const results = fuse.search(val);
+-    if (results.length > 0) {
+-      setDropdownResults(results.slice(0, 5) as { item: Part; score?: number }[]);
+-    } else {
+-      setDropdownResults([]);
+-    }
+     setShowDropdown(true);
++    runSearch(val);
+   };
+
+   const performSearch = (searchQuery: string) => {
+@@ -44,15 +39,14 @@ export function Header() {
+     setShowDropdown(false);
+     setQuery('');
+
+-    const resolution = resolvePartIdentity(searchQuery);
+-    navigate(`/parts/${encodeURIComponent(resolution.part.partNumber)}`);
++    navigate(`/parts/${encodeURIComponent(resolveSearchTarget(searchQuery))}`);
+   };
+
+   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+     if (e.key === 'Enter') {
+       e.preventDefault();
+       if (activeDropdownIndex >= 0 && dropdownResults[activeDropdownIndex]) {
+-        performSearch(dropdownResults[activeDropdownIndex].item.partNumber);
++        performSearch(dropdownResults[activeDropdownIndex].partNumber);
+       } else {
+         performSearch(query);
+       }
+@@ -104,15 +98,19 @@ export function Header() {
+                   <div
+                     key={i}
+                     className={`px-4 py-3.5 cursor-pointer border-b border-slate-50 text-xs text-slate-500 last:border-b-0 flex items-center justify-between transition-colors ${activeDropdownIndex === i ? 'bg-slate-50 text-slate-900' : 'hover:bg-slate-50 hover:text-slate-900'}`}
+-                    onMouseDown={() => performSearch(res.item.partNumber)}
++                    onMouseDown={() => performSearch(res.partNumber)}
+                   >
+                     <div className="flex flex-col gap-0.5">
+-                      <span className="font-bold text-slate-950 text-sm mono">{res.item.partNumber}</span>
+-                      <span className="text-[11px] font-medium text-slate-400">{res.item.type} &middot; {res.item.thread} x {res.item.length !== 'N/A' ? res.item.length : 'N/A'}</span>
++                      <span className="font-bold text-slate-950 text-sm mono">{res.partNumber}</span>
++                      <span className="text-[11px] font-medium text-slate-400">{res.type} &middot; {res.thread} x {res.length !== 'N/A' ? res.length : 'N/A'}</span>
+                     </div>
+                     <ArrowRight className="w-4 h-4 text-slate-400" />
+                   </div>
+                 ))
++              ) : searchStatus === 'loading' ? (
++                <div className="px-4 py-3.5 text-xs text-slate-400 font-medium">Searching private catalog…</div>
++              ) : searchStatus === 'error' ? (
++                <div className="px-4 py-3.5 text-xs text-red-650 font-medium">{searchMessage || 'Catalog search unavailable'}</div>
+               ) : query ? (
+                 <div
+                   className="px-4 py-3.5 text-xs text-slate-400 italic hover:bg-slate-50 hover:text-slate-900 cursor-pointer flex items-center justify-between"
+diff --git a/web/src/hooks/useBOM.ts b/web/src/hooks/useBOM.ts
+index 928f4d5..4f88770 100644
+--- a/web/src/hooks/useBOM.ts
++++ b/web/src/hooks/useBOM.ts
+@@ -1,15 +1,16 @@
+ import { useState, useEffect } from 'react';
+ import Papa from 'papaparse';
+-import { fuse, parseCustomPart } from '../lib/decoder';
++import { parseCustomPart } from '../lib/decoder';
++import {
++  BOM_STORAGE_KEY,
++  parseStoredBOM,
++  serializeBOM,
++  validateBOMItems,
++  type BOMItem,
++} from '../lib/bomStorage';
++import { buildBOMExportRows, calculateBOMTotals, createBOMItemId, deleteBOMItem, updateBOMQuantity } from '../lib/bom';
+
+-export interface BOMItem {
+-  partNumber: string;
+-  description: string;
+-  material: string;
+-  supplier: string;
+-  qty: number;
+-  unitCost: number;
+-}
++export type { BOMItem } from '../lib/bomStorage';
+
+ export function createCatalogCommercialFields() {
+   return { supplier: 'Unselected', unitCost: 0 } as const;
+@@ -27,47 +28,47 @@ export function useBOM() {
+   const [bomList, setBomList] = useState<BOMItem[]>([]);
+
+   useEffect(() => {
+-    const saved = localStorage.getItem('partsource_bom');
+-    if (saved) {
+-      try {
+-        setBomList(JSON.parse(saved));
+-      } catch (e) {
+-        console.error("Failed to parse BOM from local storage", e);
++    try {
++      const stored = parseStoredBOM(localStorage.getItem(BOM_STORAGE_KEY));
++      setBomList(stored.items);
++      if (stored.needsMigration) {
++        localStorage.setItem(BOM_STORAGE_KEY, serializeBOM(stored.items));
+       }
++    } catch {
++      setBomList([]);
+     }
+   }, []);
+
+   const saveBOM = (newList: BOMItem[]) => {
+-    setBomList(newList);
+-    localStorage.setItem('partsource_bom', JSON.stringify(newList));
++    const validList = validateBOMItems(newList);
++    setBomList(validList);
++    try {
++      localStorage.setItem(BOM_STORAGE_KEY, serializeBOM(validList));
++    } catch {
++      // Keep the in-memory BOM usable when browser storage is unavailable.
++    }
+   };
+
+   const clearBom = () => saveBOM([]);
+
+
+-  const addToBOM = (item: BOMItem) => {
++  const addToBOM = (item: Omit<BOMItem, 'id'>) => {
+     const existingIndex = bomList.findIndex(b => b.partNumber === item.partNumber && b.supplier === item.supplier);
+-    const newList = [...bomList];
+     if (existingIndex >= 0) {
+-      newList[existingIndex].qty += item.qty;
++      saveBOM(updateBOMQuantity(bomList, bomList[existingIndex].id, bomList[existingIndex].qty + item.qty));
+     } else {
+-      newList.push(item);
++      saveBOM([...bomList, { ...item, id: createBOMItemId() }]);
+     }
+-    saveBOM(newList);
+   };
+
+-  const updateBomQty = (index: number, qty: number) => {
++  const updateBomQty = (id: string, qty: number) => {
+     if (qty > 0) {
+-      const newList = [...bomList];
+-      newList[index].qty = qty;
+-      saveBOM(newList);
++      saveBOM(updateBOMQuantity(bomList, id, qty));
+     }
+   };
+
+-  const deleteBomItem = (index: number) => {
+-    const newList = [...bomList];
+-    newList.splice(index, 1);
+-    saveBOM(newList);
++  const deleteBomItem = (id: string) => {
++    saveBOM(deleteBOMItem(bomList, id));
+   };
+
+   const exportBOM = () => {
+@@ -75,7 +76,7 @@ export function useBOM() {
+       alert('BOM is empty.');
+       return;
+     }
+-    const csv = Papa.unparse(bomList);
++    const csv = Papa.unparse(buildBOMExportRows(bomList));
+     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+     const url = URL.createObjectURL(blob);
+     const link = document.createElement('a');
+@@ -101,9 +102,7 @@ export function useBOM() {
+       // We have to cast jsPDF to any to access autoTable, or rely on it extending the prototype
+       const doc = new jsPDF() as any;
+
+-      const totalCost = bomList.reduce((sum, item) => sum + (item.qty * item.unitCost), 0);
+-      const totalItems = bomList.length;
+-      const totalQty = bomList.reduce((acc, item) => acc + item.qty, 0);
++      const { totalCost, lineCount: totalItems, totalQuantity: totalQty } = calculateBOMTotals(bomList);
+
+       // Add Branding Header
+       doc.setFontSize(22);
+@@ -287,10 +286,11 @@ export function useBOM() {
+             }
+
+             const bomItem: BOMItem = {
++              id: createBOMItemId(),
+               partNumber: cleanPartNumber,
+               description: description || 'Imported Part',
+               material: material || 'Steel',
+-              supplier: row.supplier || 'Imported',
++              supplier: row.supplier || 'Unselected',
+               qty,
+               unitCost
+             };
+@@ -312,18 +312,12 @@ export function useBOM() {
+               // Ignore matches that are just the header string
+               if (potentialPn.toUpperCase() === 'PARTNUMBER') return;
+
+-              let searchRes = fuse.search(potentialPn);
+-              let item;
+-
+-              if (searchRes.length > 0 && searchRes[0].score! < 0.5) {
+-                item = searchRes[0].item;
+-              } else {
+-                item = parseCustomPart(potentialPn);
+-              }
++              const item = parseCustomPart(potentialPn);
+
+               if (item && (item.type !== "Custom Fastener" || potentialPn.length > 5)) {
+                 const description = `${item.type} ${item.thread} x ${item.length !== 'N/A' ? item.length : ''}`;
+                 const bomItem: BOMItem = {
++                  id: createBOMItemId(),
+                   partNumber: item.partNumber,
+                   description,
+                   material: item.material,
+diff --git a/web/src/lib/decoder.ts b/web/src/lib/decoder.ts
+index f74dd17..a288338 100644
+--- a/web/src/lib/decoder.ts
++++ b/web/src/lib/decoder.ts
+@@ -1,4 +1,35 @@
+ import Fuse from 'fuse.js';
++import { OFFERS } from '../data/offers';
++
++/**
++ * A real, sourced supplier offer for one of our catalog parts (contract term
++ * "Offer": an observed price/availability with source and timestamp). An Offer
++ * may ONLY exist when it carries a real supplier product URL and a retrieval
++ * timestamp — never a fabricated SKU, price, or a search URL dressed up as an
++ * offer. Parts with no verified offer fall back to honest spec-search links.
++ */
++export interface Offer {
++  /** Distributor name, e.g. "Zoro". */
++  distributor: string;
++  /** The distributor's own SKU / item number for this listing (a listing field, never the page identity). */
++  distributorSku: string;
++  /** Deep link to the EXACT supplier product page (not a search). Required. */
++  productUrl: string;
++  /** Observed price for the listed pack, in `currency`. */
++  price: number;
++  /** ISO 4217 currency of `price`, e.g. "USD". */
++  currency: string;
++  /** Unit of measure the price is quoted in, e.g. "PK" (pack) or "EA". */
++  uom: string;
++  /** Number of pieces in the priced pack. */
++  packQty: number;
++  /** In-stock at retrieval time, when known. */
++  inStock?: boolean;
++  /** ISO date the price/URL was observed. Required — a price has no meaning without it. */
++  retrievedAt: string;
++  /** Provenance of the observation (how the price/URL was captured). */
++  note?: string;
++}
+
+ export interface Part {
+   partNumber: string;
+@@ -15,8 +46,16 @@ export interface Part {
+   appNote: string;
+   /** Verified McMaster-Carr cross-reference PN (reference field only). */
+   mcmaster?: string;
++  /** Technical title supplied by a prototype catalog record. */
++  title?: string;
++  /** Source-system SKU supplied by a prototype catalog record. */
++  sourceSku?: string;
++  /** True for generated prototype catalog records without commercial data. */
++  isPrototype?: true;
+   /** True when this object was guessed from user input, not read from the catalog. */
+   unindexed?: boolean;
++  /** Real, sourced supplier offers for this part. Empty/absent → honest search fallback. */
++  offers?: Offer[];
+ }
+
+ // ---------------------------------------------------------------------------
+@@ -433,22 +472,39 @@ function generateStandardsCatalog(): Part[] {
+ }
+
+ // Build the catalog and attach hand-verified McMaster crosses to their
+-// corresponding entries (own PN stays the identity; MPN is a reference field).
+-export const db: Part[] = (() => {
++// corresponding entries (own PN stays the identity; MPN is a reference field),
++// plus any real, sourced supplier offers seeded for that part.
++export const standardsDb: Part[] = (() => {
+   const parts = generateStandardsCatalog();
+   const byPn = new Map(parts.map(p => [p.partNumber, p]));
+   for (const cross of MCMASTER_CROSSES) {
+     const part = byPn.get(cross.partNumber);
+     if (part) part.mcmaster = cross.mcmaster;
+   }
++  for (const [partNumber, offers] of Object.entries(OFFERS)) {
++    const part = byPn.get(partNumber);
++    if (part) part.offers = offers;
++  }
+   return parts;
+ })();
+
++// Browser fallback catalog only. Private/generated prototype records live in
++// Supabase and are fetched through the catalog-search Edge Function, never
++// bundled into client assets.
++export const db = standardsDb;
++
++const fuseKeys = ['partNumber', 'mcmaster', 'type', 'thread', 'length', 'standard'];
++
+ export const fuse = new Fuse(db, {
+-  keys: ['partNumber', 'mcmaster', 'type', 'thread', 'length', 'standard'],
++  keys: fuseKeys,
+   threshold: 0.3,
+   ignoreLocation: true,
+-  includeScore: true
++  includeScore: true,
++  useExtendedSearch: true,
++  getFn: (part, path) => {
++    const key = Array.isArray(path) ? path.join('.') : path;
++    return Fuse.config.getFn(part, path);
++  }
+ });
+
+ export type PartResolution = {
+@@ -465,8 +521,12 @@ export function resolvePartIdentity(query: string): PartResolution {
+   );
+   if (exact) return { state: 'exact', query: normalized, part: exact };
+
+-  const suggestion = normalized ? fuse.search(normalized)[0] : undefined;
+-  if (suggestion?.score !== undefined && suggestion.score < 0.15) {
++  const suggestions = normalized ? fuse.search(normalized, { limit: 2 }) : [];
++  const suggestion = suggestions[0];
++  const runnerUp = suggestions[1];
++  const hasClearLead = runnerUp?.score === undefined
++    || (runnerUp.score - suggestion.score!) >= 0.03;
++  if (suggestion?.score !== undefined && suggestion.score < 0.15 && hasClearLead) {
+     return { state: 'suggested', query: normalized, part: suggestion.item };
+   }
+
+diff --git a/web/src/pages/Home.tsx b/web/src/pages/Home.tsx
+index e10ac23..4c853e3 100644
+--- a/web/src/pages/Home.tsx
++++ b/web/src/pages/Home.tsx
+@@ -1,4 +1,4 @@
+-import React, { useState, ChangeEvent, useMemo } from 'react';
++import React, { useState, ChangeEvent } from 'react';
+ import { useNavigate, useLocation, Link } from 'react-router-dom';
+ import {
+   Plus,
+@@ -12,8 +12,10 @@ import {
+   X,
+   Search
+ } from 'lucide-react';
+-import { fuse, resolvePartIdentity, Part, db } from '../lib/decoder';
++import { Part, db } from '../lib/decoder';
+ import { useBOM } from '../hooks/useBOM';
++import { useCatalogSearch } from '../hooks/useCatalogSearch';
++import { calculateBOMTotals, calculateLineTotal } from '../lib/bom';
+ import { useCurrency } from '../contexts/CurrencyContext';
+
+ // ----------------------------------------------------
+@@ -100,7 +102,7 @@ export function Home() {
+
+   // Search states for the page-level center search bar
+   const [query, setQuery] = useState('');
+-  const [dropdownResults, setDropdownResults] = useState<{ item: Part; score?: number }[]>([]);
++  const { status: searchStatus, results: dropdownResults, message: searchMessage, runSearch, clear: clearSearch, resolveSearchTarget } = useCatalogSearch();
+   const [showDropdown, setShowDropdown] = useState(false);
+   const [activeDropdownIndex, setActiveDropdownIndex] = useState(-1);
+   const dropdownRef = React.useRef<HTMLDivElement>(null);
+@@ -112,32 +114,25 @@ export function Home() {
+
+     if (!val.trim()) {
+       setShowDropdown(false);
+-      setDropdownResults([]);
++      clearSearch();
+       return;
+     }
+-
+-    const results = fuse.search(val);
+-    if (results.length > 0) {
+-      setDropdownResults(results.slice(0, 5) as { item: Part; score?: number }[]);
+-    } else {
+-      setDropdownResults([]);
+-    }
+     setShowDropdown(true);
++    runSearch(val);
+   };
+
+   const performSearch = (searchQuery: string) => {
+     if (!searchQuery.trim()) return;
+     setShowDropdown(false);
+
+-    const resolution = resolvePartIdentity(searchQuery);
+-    navigate(`/parts/${encodeURIComponent(resolution.part.partNumber)}`);
++    navigate(`/parts/${encodeURIComponent(resolveSearchTarget(searchQuery))}`);
+   };
+
+   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+     if (e.key === 'Enter') {
+       e.preventDefault();
+       if (activeDropdownIndex >= 0 && dropdownResults[activeDropdownIndex]) {
+-        performSearch(dropdownResults[activeDropdownIndex].item.partNumber);
++        performSearch(dropdownResults[activeDropdownIndex].partNumber);
+       } else {
+         performSearch(query);
+       }
+@@ -170,16 +165,14 @@ export function Home() {
+     }
+   };
+
+-  const totalBomCost = bomList.reduce((sum, item) => sum + (item.qty * item.unitCost), 0);
+-  const totalItems = bomList.length;
+-  const totalQty = bomList.reduce((acc, item) => acc + item.qty, 0);
++  const { totalCost: totalBomCost, lineCount: totalItems, totalQuantity: totalQty } = calculateBOMTotals(bomList);
+
+   // "Quote my BOM" lead capture: zero-backend — prefilled mailto, with the
+   // full BOM copied to the clipboard (mailto bodies get truncated by clients).
+   const [quoteCopied, setQuoteCopied] = useState(false);
+   const requestQuote = () => {
+     const lines = bomList.map(i =>
+-      `${i.qty} × ${i.partNumber} — ${i.description} (${i.material}) — preferred supplier: ${i.supplier}`);
++      `${i.qty} × ${i.partNumber} — ${i.description} (${i.material}) — supplier: ${i.supplier}`);
+     const body = [
+       'Hi Jay,', '', 'Please quote the following BOM:', '',
+       ...lines, '',
+@@ -268,11 +261,11 @@ export function Home() {
+                         </tr>
+                       </thead>
+                       <tbody>
+-                        {bomList.slice(0, 3).map((item, i) => (
+-                          <tr key={i} className="border-b border-slate-100 last:border-none hover:bg-slate-50/50 transition-colors">
++                        {bomList.slice(0, 3).map((item) => (
++                          <tr key={item.id} className="border-b border-slate-100 last:border-none hover:bg-slate-50/50 transition-colors">
+                             <td className="py-3 text-xs font-mono font-bold text-slate-800 tracking-wider">{item.partNumber}</td>
+                             <td className="py-3 text-xs text-slate-650 text-right font-medium">{item.qty}</td>
+-                            <td className="py-3 text-xs text-slate-900 text-right font-semibold">{formatPrice(item.qty * item.unitCost)}</td>
++                            <td className="py-3 text-xs text-slate-900 text-right font-semibold">{formatPrice(calculateLineTotal(item))}</td>
+                           </tr>
+                         ))}
+                       </tbody>
+@@ -373,15 +366,19 @@ export function Home() {
+                       <div
+                         key={i}
+                         className={`px-4 py-3 cursor-pointer border-b border-slate-100 text-xs text-slate-500 last:border-b-0 flex items-center justify-between transition-colors ${activeDropdownIndex === i ? 'bg-slate-50 text-slate-900' : 'hover:bg-slate-50 hover:text-slate-900'}`}
+-                        onMouseDown={() => performSearch(res.item.partNumber)}
++                        onMouseDown={() => performSearch(res.partNumber)}
+                       >
+                         <div className="flex flex-col gap-0.5">
+-                          <span className="font-mono font-bold text-slate-950 text-xs tracking-wider">{res.item.partNumber}</span>
+-                          <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">{res.item.type} &middot; {res.item.thread} x {res.item.length !== 'N/A' ? res.item.length : 'N/A'}</span>
++                          <span className="font-mono font-bold text-slate-950 text-xs tracking-wider">{res.partNumber}</span>
++                          <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">{res.type} &middot; {res.thread} x {res.length !== 'N/A' ? res.length : 'N/A'}</span>
+                         </div>
+                         <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
+                       </div>
+                     ))
++                  ) : searchStatus === 'loading' ? (
++                    <div className="px-4 py-3 text-xs text-slate-450 font-medium">Searching private catalog…</div>
++                  ) : searchStatus === 'error' ? (
++                    <div className="px-4 py-3 text-xs text-red-650 font-medium">{searchMessage || 'Catalog search unavailable'}</div>
+                   ) : query ? (
+                     <div
+                       className="px-4 py-3 text-xs text-slate-450 hover:bg-slate-50 hover:text-slate-900 cursor-pointer flex items-center justify-between font-medium"
+@@ -428,24 +425,26 @@ export function Home() {
+           ---------------------------------------------------- */}
+       {activeTab === 'bom' && (
+         <div className="flex flex-col gap-8 w-full max-w-[1200px] mx-auto text-left">
+-          {/* Quote Hero */}
++          {/* Export Hero */}
+           <div className="bg-slate-900 text-white rounded-xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden shadow-xs">
+             <div className="z-10 text-left">
+               <h3 className="m-0 text-white text-sm font-semibold uppercase tracking-wider flex items-center gap-2">
+                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+-                BOM Quote & Export
++                BOM Export
+               </h3>
+               <p className="m-0 text-xs text-slate-300 mt-1.5 max-w-[500px] leading-relaxed">
+-                Send the active BOM for a manual sourcing quote, or export it for your own procurement workflow.
++                Download the active BOM for your procurement workflow. Manual sourcing help remains optional.
+               </p>
+             </div>
+             <div className="flex flex-col sm:flex-row gap-2 z-10">
+-              <button
+-                className="bg-emerald-500 hover:bg-emerald-400 text-white border-none py-2.5 px-6 rounded-md text-xs font-semibold cursor-pointer transition-all active:scale-[0.98] whitespace-nowrap shadow-sm"
+-                onClick={requestQuote}
+-                title="Opens an email with your BOM prefilled (also copied to clipboard)"
+-              >
+-                {quoteCopied ? 'BOM copied — email opened' : 'Request Sourcing Quote'}
++              <button className="bg-emerald-500 hover:bg-emerald-400 text-white border-none py-2.5 px-6 rounded-md text-xs font-semibold cursor-pointer transition-all active:scale-[0.98] whitespace-nowrap shadow-sm" onClick={exportBOM}>
++                Export CSV
++              </button>
++              <button className="bg-white/10 hover:bg-white/20 text-white border border-white/20 py-2.5 px-4 rounded-md text-xs font-semibold cursor-pointer transition-all whitespace-nowrap" onClick={exportPDF}>
++                Save PDF
++              </button>
++              <button className="bg-transparent hover:bg-white/10 text-slate-300 border-none py-2.5 px-3 rounded-md text-xs font-medium cursor-pointer transition-all whitespace-nowrap" onClick={requestQuote} title="Opens an email with your BOM prefilled (also copied to clipboard)">
++                {quoteCopied ? 'Email opened' : 'Request sourcing help'}
+               </button>
+             </div>
+           </div>
+@@ -495,8 +494,8 @@ export function Home() {
+                 </thead>
+                 <tbody className="text-xs">
+                   {bomList.length > 0 ? (
+-                    bomList.map((item, i) => (
+-                      <tr key={i} className="border-b border-slate-100 last:border-0 hover:bg-slate-50/30 transition-colors">
++                    bomList.map((item) => (
++                      <tr key={item.id} className="border-b border-slate-100 last:border-0 hover:bg-slate-50/30 transition-colors">
+                         <td className="p-4 pl-6 font-mono font-bold text-slate-900 tracking-wider whitespace-nowrap">{item.partNumber}</td>
+                         <td className="p-4 text-slate-500 font-medium truncate max-w-[250px]" title={item.description}>{item.description}</td>
+                         <td className="p-4 text-slate-500">
+@@ -506,7 +505,7 @@ export function Home() {
+                           <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-lg p-0.5 w-fit shadow-xs">
+                             <button
+                               className="bg-transparent border-none text-slate-400 hover:text-slate-950 p-1 cursor-pointer hover:bg-slate-50 transition-colors"
+-                              onClick={() => updateBomQty(i, Math.max(1, item.qty - 1))}
++                              onClick={() => updateBomQty(item.id, Math.max(1, item.qty - 1))}
+                             >
+                               <Minus className="w-2.5 h-2.5" />
+                             </button>
+@@ -515,22 +514,22 @@ export function Home() {
+                               className="w-10 text-center border-none bg-transparent font-mono text-xs font-bold outline-none"
+                               value={item.qty}
+                               min="1"
+-                              onChange={(e) => updateBomQty(i, parseInt(e.target.value) || 1)}
++                              onChange={(e) => updateBomQty(item.id, parseInt(e.target.value) || 1)}
+                             />
+                             <button
+                               className="bg-transparent border-none text-slate-400 hover:text-slate-950 p-1 cursor-pointer hover:bg-slate-50 transition-colors"
+-                              onClick={() => updateBomQty(i, item.qty + 1)}
++                              onClick={() => updateBomQty(item.id, item.qty + 1)}
+                             >
+                               <Plus className="w-2.5 h-2.5" />
+                             </button>
+                           </div>
+                         </td>
+                         <td className="p-4 text-right text-slate-500 font-semibold tracking-wider font-mono">{formatPrice(item.unitCost)}</td>
+-                        <td className="p-4 font-bold text-slate-900 text-right tracking-wider font-mono">{formatPrice(item.qty * item.unitCost)}</td>
++                        <td className="p-4 font-bold text-slate-900 text-right tracking-wider font-mono">{formatPrice(calculateLineTotal(item))}</td>
+                         <td className="p-4 pr-6 text-right">
+                           <button
+                             className="text-slate-350 bg-transparent border-none p-1.5 cursor-pointer hover:text-red-650 hover:bg-red-50 transition-colors rounded-md"
+-                            onClick={() => deleteBomItem(i)}
++                            onClick={() => deleteBomItem(item.id)}
+                             title="Delete item"
+                           >
+                             <X className="w-3.5 h-3.5" />
+diff --git a/web/src/pages/PartDetail.tsx b/web/src/pages/PartDetail.tsx
+index ad18ab1..6801ba7 100644
+--- a/web/src/pages/PartDetail.tsx
++++ b/web/src/pages/PartDetail.tsx
+@@ -1,7 +1,9 @@
+ import { useState, useEffect } from 'react';
+ import { useParams, useNavigate, Link } from 'react-router-dom';
+-import { ArrowLeft, ExternalLink, Search } from 'lucide-react';
+-import { resolvePartIdentity, Part, PartResolution, suppliers, db, getSupplierSearchUrl } from '../lib/decoder';
++import { ArrowLeft, ExternalLink, Search, ChevronDown, ShoppingCart } from 'lucide-react';
++import { parseCustomPart, resolvePartIdentity, Part, Offer, suppliers, db, getSupplierSearchUrl } from '../lib/decoder';
++import { catalogResultToPart, CONFIGURATION_NOTICE, searchCatalog } from '../lib/catalogApi';
++import { offerBuyUrl } from '../data/offers';
+ import { REF_PAGES } from '../lib/reference';
+
+ // ----------------------------------------------------
+@@ -110,16 +112,109 @@ function FastenerSchematic({ item }: { item: Part }) {
+   );
+ }
+
++// ----------------------------------------------------
++// Octopart-style supplier offer row (expandable, buyable)
++// ----------------------------------------------------
++function formatAsOf(iso: string): string {
++  const d = new Date(iso + 'T00:00:00');
++  return isNaN(d.getTime())
++    ? iso
++    : d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
++}
++
++function money(value: number, currency: string): string {
++  return new Intl.NumberFormat('en-US', { style: 'currency', currency, minimumFractionDigits: 2 }).format(value);
++}
++
++// `key` is declared in props because this repo ships no @types/react, so JSX
++// does not auto-inject `key` for a locally-typed component; React still strips
++// it before the component runs, so it is never read here.
++export function OfferRow({ offer }: { offer: Offer; key?: string }) {
++  const [open, setOpen] = useState(true);
++  const [packs, setPacks] = useState(1);
++  const perEach = offer.price / offer.packQty;
++  const extended = offer.price * packs;
++
++  return (
++    <div className="border-b border-slate-100 last:border-b-0">
++      <button
++        onClick={() => setOpen(o => !o)}
++        className="w-full flex items-center justify-between gap-3 py-3 px-4 bg-transparent border-none cursor-pointer hover:bg-slate-50/70 transition-colors text-left"
++      >
++        <div className="flex items-center gap-3 min-w-0">
++          <ChevronDown className={`w-4 h-4 text-slate-400 shrink-0 transition-transform ${open ? '' : '-rotate-90'}`} />
++          <div className="flex flex-col min-w-0">
++            <span className="text-xs font-bold text-slate-900">{offer.distributor}</span>
++            <span className="text-[10px] font-mono text-slate-400 truncate">SKU {offer.distributorSku}</span>
++          </div>
++        </div>
++        <div className="flex items-center gap-4 shrink-0">
++          <div className="flex flex-col items-end">
++            <span className="text-sm font-bold text-slate-900 tracking-tight">{money(perEach, offer.currency)}<span className="text-[10px] font-semibold text-slate-400"> /ea</span></span>
++            <span className="text-[10px] font-semibold text-slate-500">{money(offer.price, offer.currency)} / {offer.packQty} pk</span>
++          </div>
++          {offer.inStock !== undefined && (
++            <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${offer.inStock ? 'text-emerald-700 bg-emerald-50' : 'text-slate-500 bg-slate-100'}`}>
++              {offer.inStock ? 'In stock' : 'Check stock'}
++            </span>
++          )}
++        </div>
++      </button>
++
++      {open && (
++        <div className="px-4 pb-4 pt-1 flex flex-col gap-3">
++          <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-2 text-[11px]">
++            <div className="flex flex-col"><span className="text-slate-400 font-semibold uppercase tracking-wider text-[10px]">Price / ea</span><span className="text-slate-900 font-bold">{money(perEach, offer.currency)}</span></div>
++            <div className="flex flex-col"><span className="text-slate-400 font-semibold uppercase tracking-wider text-[10px]">Price / pack</span><span className="text-slate-900 font-bold">{money(offer.price, offer.currency)}</span></div>
++            <div className="flex flex-col"><span className="text-slate-400 font-semibold uppercase tracking-wider text-[10px]">Pack qty</span><span className="text-slate-900 font-bold">{offer.packQty} ({offer.uom})</span></div>
++            <div className="flex flex-col"><span className="text-slate-400 font-semibold uppercase tracking-wider text-[10px]">As of</span><span className="text-slate-900 font-bold">{formatAsOf(offer.retrievedAt)}</span></div>
++          </div>
++
++          <div className="flex items-center justify-between gap-3 flex-wrap">
++            <label className="flex items-center gap-2 text-[11px] font-semibold text-slate-600">
++              Packs
++              <input
++                type="number"
++                min={1}
++                value={packs}
++                onChange={e => setPacks(Math.max(1, Number(e.target.value) || 1))}
++                className="w-16 border border-slate-200 rounded-md px-2 py-1 text-xs font-bold text-slate-900 text-center focus:outline-none focus:border-slate-400"
++              />
++              <span className="text-slate-400 font-medium">= {money(extended, offer.currency)} ({packs * offer.packQty} pcs)</span>
++            </label>
++            <a
++              href={offerBuyUrl(offer)}
++              target="_blank"
++              rel="noreferrer nofollow sponsored"
++              className="bg-slate-900 text-white hover:bg-slate-800 py-2 px-4 rounded-md no-underline font-semibold text-xs flex items-center gap-1.5 transition-all active:scale-[0.98] shadow-xs"
++            >
++              <ShoppingCart className="w-3.5 h-3.5" /> Buy on {offer.distributor} <ExternalLink className="w-3 h-3.5" />
++            </a>
++          </div>
++
++          <p className="text-[10px] text-slate-400 leading-relaxed m-0">
++            Price shown as of {formatAsOf(offer.retrievedAt)}, source {offer.distributor}. Confirm live price, stock, and specification on the supplier page before ordering.
++            {offer.note ? ` ${offer.note}` : ''}
++          </p>
++        </div>
++      )}
++    </div>
++  );
++}
++
+ export function PartDetail() {
++  const prototypeNotice = CONFIGURATION_NOTICE;
+   const { partNumber } = useParams();
+   const navigate = useNavigate();
+   const [item, setItem] = useState<Part | null>(null);
+-  const [resolution, setResolution] = useState<PartResolution | null>(null);
++  const [resolution, setResolution] = useState<{ state: 'exact' | 'suggested' | 'decoded' | 'unknown'; query: string; part: Part } | null>(null);
+   useEffect(() => {
++    let cancelled = false;
+     if (partNumber) {
+       const decoded = decodeURIComponent(partNumber);
+-      const resolved = resolvePartIdentity(decoded);
+-      const foundItem = resolved.part;
++      const applyFoundItem = (foundItem: Part, state: 'exact' | 'suggested' | 'decoded' | 'unknown') => {
++      if (cancelled) return;
++      const resolved = { state, query: decoded, part: foundItem };
+       setResolution(resolved);
+       setItem(foundItem);
+
+@@ -186,8 +281,28 @@ export function PartDetail() {
+       console.groupEnd();
+       }
+
++      };
++
++      void searchCatalog(decoded).then(results => {
++        const exact = results.find(result =>
++          result.reference_number?.toUpperCase() === decoded.toUpperCase()
++          || result.source_sku?.toUpperCase() === decoded.toUpperCase()
++        );
++        if (exact) {
++          applyFoundItem(catalogResultToPart(exact), 'exact');
++          return;
++        }
++        const fallback = resolvePartIdentity(decoded);
++        applyFoundItem(fallback.part, fallback.state);
++      }).catch(() => {
++        const fallback = resolvePartIdentity(decoded);
++        applyFoundItem(fallback.part, fallback.state);
++      });
+     }
+-    return () => document.querySelector('#json-ld-product')?.remove();
++    return () => {
++      cancelled = true;
++      document.querySelector('#json-ld-product')?.remove();
++    };
+   }, [partNumber]);  if (!item || !resolution) return <div className="p-8 text-xs font-medium text-slate-500">Loading specifications...</div>;
+
+   const specs = [
+@@ -204,6 +319,9 @@ export function PartDetail() {
+   ];
+
+   const isUnindexed = !!item.unindexed;
++  const isPrototype = item.isPrototype === true;
++  const offers: Offer[] = item.offers ?? [];
++  const hasOffers = offers.length > 0;
+   const refChart = REF_PAGES.find(r => r.catalogStandard === item.standard);
+
+   return (
+@@ -283,18 +401,40 @@ export function PartDetail() {
+                 {' '}<a className="font-bold underline" href={`mailto:jayaram.h@afterconcept.com?subject=${encodeURIComponent('PartSource indexing request: ' + item.partNumber)}`}>Request this part</a>
+               </div>
+             )}
++            {isPrototype && (
++              <div className="text-xs text-amber-800 bg-amber-50 border border-amber-200 p-4 rounded-lg leading-relaxed mb-3">
++                <strong>{prototypeNotice}</strong>
++              </div>
++            )}
+             <div className="text-xs text-slate-650 bg-slate-50 border border-slate-150 p-4 rounded-lg leading-relaxed">
+               <strong className="text-slate-800">Application Note:</strong> {item.appNote}
+             </div>
+           </div>
+
++          {hasOffers && (
++            <div className="bg-white border border-slate-200 rounded-xl flex flex-col shadow-xs overflow-hidden">
++              <div className="flex items-center justify-between py-3.5 px-4 border-b border-slate-150 bg-slate-50">
++                <h2 className="m-0 text-xs font-semibold text-slate-800">Supplier Offers</h2>
++                <span className="text-[10px] font-semibold text-slate-500">{offers.length} listing{offers.length > 1 ? 's' : ''} &middot; compare side by side</span>
++              </div>
++              <div className="flex flex-col">
++                {offers.map((offer, i) => (
++                  <OfferRow key={`${offer.distributor}-${offer.distributorSku}-${i}`} offer={offer} />
++                ))}
++              </div>
++              <p className="text-[10px] text-slate-400 leading-relaxed m-0 py-2.5 px-4 border-t border-slate-100 bg-slate-50/50">
++                Offers link to the exact supplier product page. Each price carries its source and "as of" date; confirm live figures on the supplier site.
++              </p>
++            </div>
++          )}
++
+           <div className="bg-white border border-slate-200 rounded-xl flex flex-col shadow-xs overflow-hidden">
+             <h2 className="m-0 py-3.5 px-4 text-xs font-semibold text-slate-800 border-b border-slate-150 bg-slate-50">
+               Search Suppliers
+             </h2>
+             <div className="p-5 flex flex-col gap-4">
+               <p className="text-xs text-slate-500 m-0 leading-relaxed">
+-                These links run supplier-site searches, not offers or listings. Verify identity, price, availability, and specifications directly on the supplier site.
++                These links run supplier-site <strong>searches</strong>, not offers or listings. Verify identity, price, availability, and specifications directly on the supplier site.
+               </p>
+               <div className="flex flex-wrap gap-2">
+                 {suppliers.map(sup => (
+@@ -303,7 +443,7 @@ export function PartDetail() {
+                     href={getSupplierSearchUrl(sup.urlTemplate, item)}
+                     target="_blank"
+                     rel="noreferrer"
+-                    className="bg-slate-900 text-white hover:bg-slate-800 py-1.5 px-3.5 rounded-md no-underline font-semibold text-xs flex items-center gap-1.5 transition-all active:scale-[0.98] shadow-xs"
++                    className={`${hasOffers ? 'bg-white text-slate-700 border border-slate-200 hover:border-slate-400 hover:bg-slate-50' : 'bg-slate-900 text-white hover:bg-slate-800'} py-1.5 px-3.5 rounded-md no-underline font-semibold text-xs flex items-center gap-1.5 transition-all active:scale-[0.98] shadow-xs`}
+                   >
+                     <Search className="w-3.5 h-3.5" /> {sup.name} <ExternalLink className="w-3 h-3.5" />
+                   </a>
+@@ -312,22 +452,26 @@ export function PartDetail() {
+             </div>
+           </div>
+
+-          <div className="bg-white border border-slate-200 rounded-xl flex flex-col shadow-xs overflow-hidden">
+-            <h2 className="m-0 py-3.5 px-4 text-xs font-semibold text-slate-800 border-b border-slate-150 bg-slate-50">
+-              Related Configurations
+-            </h2>
++          {/* Divider — related configurations are de-emphasized below the buy section */}
++          <div className="flex items-center gap-3 pt-2">
++            <div className="h-px bg-slate-200 flex-grow" />
++            <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Related configurations</span>
++            <div className="h-px bg-slate-200 flex-grow" />
++          </div>
++
++          <div className="bg-slate-50/50 border border-slate-150 rounded-xl flex flex-col overflow-hidden">
+             <div className="flex flex-col">
+               {db.filter(p => p.partNumber !== item.partNumber && (p.thread === item.thread || p.type === item.type)).slice(0, 5).map((related, idx) => (
+-                <Link
+-                  key={idx}
++                <Link
++                  key={idx}
+                   to={`/parts/${encodeURIComponent(related.partNumber)}`}
+-                  className="flex items-center justify-between py-3 px-4 border-b border-slate-100 hover:bg-slate-50/50 transition-colors no-underline text-slate-900 last:border-b-0 group"
++                  className="flex items-center justify-between py-3 px-4 border-b border-slate-100 hover:bg-white transition-colors no-underline text-slate-900 last:border-b-0 group"
+                 >
+                   <div className="flex flex-col text-left font-sans">
+-                    <span className="text-xs font-mono font-bold text-slate-900 tracking-wider mb-0.5">{related.partNumber}</span>
++                    <span className="text-xs font-mono font-bold text-slate-700 tracking-wider mb-0.5">{related.partNumber}</span>
+                     <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">{related.type} &middot; {related.thread} x {related.length !== 'N/A' ? related.length : 'N/A'}</span>
+                   </div>
+-                  <div className="text-[10px] font-semibold text-slate-600 bg-slate-50 py-1 px-2.5 rounded-md border border-slate-200 group-hover:border-slate-400 group-hover:bg-slate-100 transition-all flex items-center gap-1">
++                  <div className="text-[10px] font-semibold text-slate-500 bg-white py-1 px-2.5 rounded-md border border-slate-200 group-hover:border-slate-400 transition-all flex items-center gap-1">
+                     Inspect <ArrowLeft className="w-2.5 h-2.5 rotate-180" />
+                   </div>
+                 </Link>

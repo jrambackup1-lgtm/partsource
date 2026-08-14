@@ -1,39 +1,42 @@
 # PartSource.io
 
-[![CI](https://github.com/jrambackup1-lgtm/partsource/actions/workflows/ci.yml/badge.svg)](https://github.com/jrambackup1-lgtm/partsource/actions/workflows/ci.yml)
-[![Production monitoring](https://github.com/jrambackup1-lgtm/partsource/actions/workflows/production-monitoring.yml/badge.svg)](https://github.com/jrambackup1-lgtm/partsource/actions/workflows/production-monitoring.yml)
+PartSource is a deterministic mechanical-component catalog navigator.
 
-Industrial hardware research tool. Review standard-fastener specifications, build Bills of Materials, export, and hand off searches to supplier sites for independent verification.
+`query → catalog level → family → filters → result list`
 
-## Quick Start
+Exact ID keeps catalog context, opens the relevant result list, and highlights the matching item. The user selects what to open. Non-exact search never auto-selects.
+
+## Current product documents
+
+- `research/product-contract.md` — product authority.
+- `research/prd.md` — current product requirements.
+- `SPEC_CONFIRMATION.md` — concise current product specification.
+- `CONTEXT.md` — current domain language.
+- `research/data-source-register.md` — source permission gate.
+- `.wayfinder/poc-ship/poc-ship-map.md` — decision history and current planning frontier.
+
+Old plans, prototypes, and dated research are historical evidence. They do not define current product behavior.
+
+## Quick start
 
 ```bash
 cd web
-npm ci                       # one-time bootstrap
-npm run dev                  # start frontend
+npm ci
+npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
 
-See [`web/README.md`](web/README.md) for full documentation.
+The progressive synthetic POC is locally verified only. It is not authorized for deployment, publication, or external access.
 
-## Deployment
+## Repo layout
 
-The canonical production target is GitHub Pages:
-https://jrambackup1-lgtm.github.io/partsource/
-
-`partsource.io` is a future custom domain, not the current production host. Keep
-the `/partsource/` Vite base path and GitHub Pages URLs until the domain is
-purchased and configured.
-
-## Repo Layout
-
-```
+```text
 partsource/
-├── web/              # React app
-├── archive/          # Superseded, non-production experiments
-├── research/         # Product research, PRD, market analysis
-├── AGENTS.md         # Agent workspace reference
-├── DESIGN.md         # Design system tokens
-└── PRODUCT.md        # Product context
+├── web/              # Local progressive catalog POC
+├── archive/          # Superseded runtime and planning evidence
+├── research/         # Current authority plus preserved historical evidence
+├── AGENTS.md         # Workspace authority index
+├── DESIGN.md         # Design system
+└── PRODUCT.md        # Current product context
 ```

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ticket 25 blocked-first proxy POC</title>
+  <style>
+    :root { color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, sans-serif; background: #090b10; color: #edf0f7; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-width: 0; }
+    main { width: min(1080px, 100%); margin: 0 auto; padding: 24px; }
+    header, section { border: 1px solid #252a36; border-radius: 14px; background: #11151d; padding: 18px; margin-bottom: 16px; }
+    h1, h2 { margin: 0 0 8px; }
+    p { color: #aeb7ca; line-height: 1.45; }
+    .controls { display: grid; gap: 12px; grid-template-columns: minmax(180px, 0.35fr) minmax(0, 1fr); }
+    label { display: grid; gap: 6px; color: #cbd2df; font-weight: 650; }
+    select, textarea { width: 100%; border: 1px solid #333a49; border-radius: 9px; background: #0a0d12; color: #f5f7fb; padding: 10px; font: inherit; }
+    textarea { min-height: 150px; resize: vertical; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12px; overflow-wrap: anywhere; }
+    .state-line { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .badge { border-radius: 999px; padding: 4px 9px; background: #1f2632; color: #dce3f0; font-size: 12px; }
+    .blocked { border-color: #7a3c46; }
+    .candidate { border-color: #315e4c; }
+    pre { margin: 8px 0 0; padding: 12px; border-radius: 9px; background: #090c11; white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; }
+    .ledger { display: grid; gap: 6px; }
+    .claim { display: grid; grid-template-columns: minmax(140px, 0.8fr) minmax(80px, 0.4fr) minmax(80px, 0.4fr) minmax(0, 1fr); gap: 8px; padding: 8px; border-bottom: 1px solid #222834; overflow-wrap: anywhere; }
+    .muted { color: #8e99ae; }
+    :focus-visible { outline: 3px solid #7da2ff; outline-offset: 2px; }
+    @media (max-width: 680px) {
+      main { padding: 12px; }
+      .controls { grid-template-columns: 1fr; }
+      .claim { grid-template-columns: 1fr 1fr; }
+      .claim span:last-child { grid-column: 1 / -1; }
+    }
+  </style>
+</head>
+<body>
+  <main
+    data-ticket25-root
+    data-artifact-id="partsource-ticket25-proxy-poc"
+    data-build-id="ticket25-proxy-poc-2026-08-10-v1"
+    data-base-path="/ticket25/"
+    data-compiler-version="ticket25/result-v1"
+  >
+    <header>
+      <h1>Blocked-first proxy POC</h1>
+      <p>Throwaway Ticket 25 instrument. One synthetic socket-head-cap-screw profile. No engineering selection, public release, or human-validation claim.</p>
+    </header>
+
+    <section class="controls" data-instrument-controls>
+      <label>
+        Deterministic fixture
+        <select data-fixture-select></select>
+      </label>
+      <label>
+        Preserved clue
+        <textarea data-clue-input spellcheck="false"></textarea>
+      </label>
+    </section>
+
+    <section
+      data-current-state
+      data-request-key="initial"
+      data-phase="idle"
+      data-outcome="idle"
+      aria-live="polite"
+      aria-atomic="true"
+    >
+      <div class="state-line">
+        <strong data-state-title>Idle</strong>
+        <span class="badge" data-state-code>idle</span>
+      </div>
+      <div data-result></div>
+    </section>
+  </main>
+  <script type="module" src="./ui.mjs"></script>
+</body>
+</html>
