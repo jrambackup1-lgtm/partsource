@@ -1,6 +1,6 @@
 # PartSource Product Recovery Plan
 
-**Status:** Execution closeout current through 2026-08-16 — implementation/proxy gates recorded; adversarial re-verified; live deployment pending
+**Status:** Execution closeout current through 2026-08-16 — implementation/proxy gates recorded; adversarial re-verified; recovered candidate deployed and byte-verified in production
 **Authority boundary:** `research/product-contract.md` remains the sole current product contract until Jay explicitly approves a reviewed change.
 **Scope of this document:** Product archaeology, recovery decisions, target architecture, phased implementation order, and validation gates.
 **Not included:** Product authority changes, supplier integrations, runtime AI, or permission to ship BOM/workspace behavior. `research/product-contract.md` remains sole authority.
@@ -1088,7 +1088,7 @@ Status terms: **closed** = implemented and covered by repository evidence; **pro
 
 | User phase | Plan phase | Current status | Evidence and executable gate | External gap / current decision |
 |---:|---:|---|---|---|
-| 1 | 0 — authority and release truth | **closed locally; live deployment pending** | `research/product-contract.md` remains sole authority; `research/release-truth.md`; release schema/manifest/workflow tests in `npm run test:release`; release and catalog identities are separately surfaced | At 2026-08-15T14:00:25Z the public site still served the old POC and `/release.json` returned 404. Recovery deployment workflow is ready; live-byte verification pending actual deployment |
+| 1 | 0 — authority and release truth | **closed (production-verified)** | `research/product-contract.md` remains sole authority; `research/release-truth.md` records the verified deployment (run 31926209080, source `01a214b`, artifact digest `016698c7…bb9a`, 11/11 live bytes verified 2026-08-16); release and catalog identities separately surfaced | Catalog remains synthetic by design; real-family publication still external-blocked |
 | 2 | 1 — UX recovery | **proxy-closed** | `evidence/ux-prototype-decision.md`; production Home/Catalog Playwright scenarios in `npm run test:browser` (8/8 green, 2026-08-16) | No practicing-engineer or assistive-technology participant evidence |
 | 3 | 2 — catalog contracts | **closed for synthetic scope** | closed package parser, finalized catalog SHA-256, trusted approval boundary, adversarial/truth-state tests in `npm run test:catalog` | Contract self-consistency is not real mechanical truth or publication permission |
 | 4 | 3 — deterministic engine | **closed for synthetic scope** | engine, exact-revision, facets, URL v2/history and regression suites in `npm run test:catalog`; runtime boundary in `npm run test:boundary`; adversarial re-verification 2026-08-16 confirms zero forbidden vocab, fail-closed conflicts, strict URL allowlist, canonical digest, CI/local boundary | No external domain review; no runtime AI/network dependency |

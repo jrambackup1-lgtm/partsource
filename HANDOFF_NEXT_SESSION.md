@@ -20,7 +20,7 @@ Product recovery plan (`.wayfinder/product-recovery/partsource-product-recovery-
 
 ## Frontier
 
-Live deployment of the recovered candidate to GitHub Pages via `.github/workflows/deploy.yml` (workflow_dispatch on master). After deployment: verify `/partsource/release.json` and `/partsource/artifact-manifest.json` return 200 with exact-byte verification, then record the run URL + artifact digest in `research/release-truth.md`.
+**Deployment complete and production-verified (2026-08-16).** Workflow run 31926209080 deployed source `01a214b` (artifact digest `016698c7...bb9a`); `/partsource/release.json` returns the closed schema; all 11 deployed files byte-verified in-workflow and independently. The live site is the recovered Home/Catalog shell over the synthetic catalog. Next frontier: the external gates only - real-family mechanical review, the 6-8 engineer study, assistive-technology review. Nothing else is pending locally.
 
 ## Read first
 

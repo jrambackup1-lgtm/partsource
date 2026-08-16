@@ -5,7 +5,7 @@
 
 | Ticket | Recovery phase | Status | Closed/proxy evidence | Remaining gate |
 |---:|---|---|---|---|
-| R1 | 0 — authority and release truth | **CLOSED LOCALLY** | Authority hierarchy retained; closed app release schema, artifact manifest, deploy-byte verification contract, separate visible catalog identity; release tests pass | Actual production deployment and canonical live-byte verification are not claimed |
+| R1 | 0 — authority and release truth | **CLOSED — PRODUCTION-VERIFIED** | Authority hierarchy retained; closed app release schema, artifact manifest, deploy-byte verification contract, separate visible catalog identity; release tests pass; deployed 2026-08-16 (run 31926209080, source `01a214b`, digest `016698c7…bb9a`, 11/11 live bytes verified) | Catalog remains synthetic; real-family publication external-blocked |
 | R2 | 1 — UX recovery | **PROXY-CLOSED** | UX decision plus implemented Home/Catalog shell and browser scenarios | Practicing-engineer and assistive-technology observations remain open |
 | R3 | 2 — catalog contracts | **CLOSED — SYNTHETIC SCOPE** | Closed parser, finalized SHA-256 package digest, identity/revision/provenance/trusted-approval and adversarial tests | Real facts, mappings, permission packet, and qualified review absent |
 | R4 | 3 — deterministic engine | **CLOSED — SYNTHETIC SCOPE** | Query, exact revision, filter/facet, URL v2/history, projection, regression, and boundary tests | External mechanical/domain review absent |

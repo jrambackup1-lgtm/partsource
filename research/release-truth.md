@@ -8,7 +8,17 @@ Canonical site: `https://jrambackup1-lgtm.github.io/partsource/`
 
 ## Observed live state
 
-At `2026-08-15T14:00:25Z`, the canonical site returned HTTP 200 with the old `PartSource Progressive Catalog POC` document, while `/partsource/release.json` returned HTTP 404. Therefore the public site is **not** the recovered catalog candidate and is **not production-verified**. The repository recovery fixes the build/deploy contract, but publishing it requires a reviewed commit and an explicitly approved public deployment.
+**Current (production-verified, 2026-08-16):** The recovered catalog candidate is deployed and byte-verified.
+
+- Deployment workflow run: https://github.com/jrambackup1-lgtm/partsource/actions/runs/31926209080 (`verify` + `deploy` both succeeded)
+- Source commit: `01a214be089c3885e95b5a1ce07c1c8647b507e5`
+- Built at: `2026-08-16T04:16:39.658Z`
+- Artifact digest: `016698c75a34549041c1e3b58f83f68f0647afc9b59e7a96c72be3c56abbbb9a` (11 files)
+- Live checks: root HTTP 200 with title `PartSource | Structured Component Catalog`; `/partsource/release.json` HTTP 200 returning the closed schema pinned to the source SHA above; `/partsource/artifact-manifest.json` HTTP 200.
+- Independent post-deploy verification (local session, 2026-08-16): all 11 deployed files re-fetched and re-hashed — every byte count and SHA-256 matches the manifest (`11/11 ALL MATCH`).
+- The in-workflow verifier (`web/scripts/release/verify-deployed-release.mjs`) also completed successfully inside the deploy job.
+
+**Historical (superseded):** At `2026-08-15T14:00:25Z`, the canonical site returned HTTP 200 with the old `PartSource Progressive Catalog POC` document, while `/partsource/release.json` returned HTTP 404. That state was replaced by the reviewed deployment above, executed under the recovered release-truth workflow with explicit owner authorization in the recovery session.
 
 ## Versioned release identity
 
