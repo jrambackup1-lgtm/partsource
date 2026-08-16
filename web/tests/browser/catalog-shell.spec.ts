@@ -219,3 +219,20 @@ test('mobile uses stacked cards without horizontal table scrolling and traps/ret
   await expect(dialog).toHaveCount(0);
   await expect(row).toBeFocused();
 });
+
+test('default synthetic catalog: singular M4 reaches the chooser; PN-shaped input fails honestly', async ({ page }) => {
+  await page.goto(base);
+  // The owner's exact phrasing (f5): singular must behave exactly like plural.
+  await search(page, 'M4 screw');
+  await expect(page.getByText('3 matching families')).toBeVisible();
+  await expect(page.locator('.family-chooser .chooser-family')).toHaveCount(3);
+  await expect(page.locator('table')).toHaveCount(0);
+  // PN-shaped input on the synthetic catalog: no McMaster namespace is
+  // declared there, so recognition is impossible and the query fails closed
+  // as unrecognized search terms — the honest class for this catalog (u3's
+  // rule is namespace-relative; the exact PN path is covered against the
+  // real release by catalog-real-path.spec.ts).
+  await search(page, '92655A331');
+  await expect(page.getByRole('heading', { name: 'Search terms not recognized' })).toBeVisible();
+  await expect(page.locator('.family-chooser')).toHaveCount(0);
+});

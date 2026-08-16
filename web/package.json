@@ -19,7 +19,9 @@
     "release:audit": "npm run lint && npm test && npm run test:documents && npm run build && npm run test:browser && npm run test:boundary",
     "release:metadata": "tsx scripts/release/generate-release-metadata.ts",
     "release:verify": "tsx scripts/release/verify-release-metadata.ts",
-    "test:browser": "playwright test"
+    "test:browser": "playwright test",
+    "test:browser:real": "playwright test -c playwright.dev.config.ts",
+    "deploy:check": "tsx scripts/release/check-deployed-source.ts"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.2.9",

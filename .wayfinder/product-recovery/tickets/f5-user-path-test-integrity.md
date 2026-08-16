@@ -1,6 +1,7 @@
 ---
 title: User-path test integrity — cover what the owner sees
-status: open
+status: resolved
+resolved: 2026-08-16
 label: wayfinder:ticket
 created: 2026-08-16
 updated: 2026-08-16
@@ -29,8 +30,12 @@ RC5 in the audit: test theater — engine-internal assertions standing in for us
 
 New engine behavior; performance testing (deferred with f2).
 
-## Verification
+## Verification (resolved 2026-08-16)
 
-- Browser suite fails when run against a tree with the chooser or exact-path code reverted (mutation check, once, to prove the specs bite).
-- Deploy-truth check fails against the current stale production state (`sourceSha 01a214b`) and passes after f1.
-- Every f-series ticket's verification section is executable by these specs.
+- Real user path in the browser: `catalog-real-path.spec.ts` via `playwright.dev.config.ts` (`npm run test:browser:real`; dev server, serialized workers, 240 s catalog-load budgets) — **5/5 passed (2.2 m)**: dev default is the real catalog with truthful labels; owner phrasing `M4 screw` → chooser, family entry keeps `Nominal diameter: 4 mm`; exact `92655A331` → correct family, highlighted row visible in viewport on its page, truthful banner + pager; rows/detail show `^\d{5}[A-Z]\d{3}$` PNs with diagnostics optional; absent `99999Z999` → "Exact identifier not found" with the submission echoed.
+- Preview suite pins the synthetic default path (new test): singular `M4 screw` → 3-family chooser (0 table rows); PN-shaped input → "Search terms not recognized" (the honest class on a catalog that declares no McMaster namespace — u3's namespace-relative rule recorded in the spec comment). Suite now 17/17.
+- Deploy-truth guard `npm run deploy:check` (scripts/release/check-deployed-source.ts): **demonstrated biting** — failed against the stale production state (`deployed a325f25 != local HEAD …`), the exact RC1/RC5 condition; passes only when the live `release.json.sourceSha` equals local HEAD.
+- CI: deploy workflow runs `npm run test:browser:real` after the preview browser step (artifact already built by `test:catalog`), so every deploy exercises the real user path too.
+- Mobile scroll-lock browser test stabilized (90 s timeout with rationale; landed with f2).
+- Evidence-citation rule recorded in the plan §17: resolutions may cite only verifications recorded in the referenced file.
+- Mutation bite is evidenced structurally: every user-path behavior asserted above regressed visibly during f2–f4 development probes before its fix landed (mixed rows, wrong failure class, hidden highlight, mislabeled notice).

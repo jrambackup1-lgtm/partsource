@@ -5,6 +5,9 @@ const productionBaseURL = process.env.PRODUCTION_BASE_URL;
 export default defineConfig({
   testDir: './tests/browser',
   testMatch: /catalog-.*\.spec\.ts/,
+  // The real-path spec needs the dev server + release artifact — it runs via
+  // playwright.dev.config.ts (`npm run test:browser:real`), never here (f5).
+  testIgnore: /catalog-real-/,
   fullyParallel: true,
   retries: process.env.CI ? 2 : 0,
   reporter: process.env.CI ? 'github' : 'list',

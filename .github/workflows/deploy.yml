@@ -83,6 +83,12 @@ jobs:
           fi
           npm run test:browser
 
+      # f5: the real-catalog user path (dev-server-only by the publication
+      # gates) is exercised in CI too — the preview suite above cannot reach
+      # it. The release artifact was built by the earlier test:catalog run.
+      - name: Test real-catalog user path (dev server)
+        run: npm run test:browser:real
+
       # release.json is written after tests, then the manifest identifies every
       # staged file except artifact-manifest.json itself. Nothing rebuilds dist.
       - name: Generate release identity
