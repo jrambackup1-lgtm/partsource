@@ -1,6 +1,6 @@
 # PartSource Product Recovery Plan
 
-**Status:** Audit ticket set u1–u6 fully resolved (2026-08-16, see §16); `release:audit` green across both catalog packages with 16/16 browser tests. Prior closeout: eight-phase recovery complete; recovered candidate deployed and byte-verified in production.
+**Status:** u1–u6 committed and deployed (2026-08-16, f1: workflow run 31940995125, source `a325f25`, live-verified — see §17). Correction recorded by the second audit (`live-product-root-cause-2026-08-16.md`): the earlier "production-verified" deployment (run 31926209080, source `01a214b`) predated u1–u6 and verified only the pre-recovery build. f-series f2–f5 in progress. Prior closeout: eight-phase recovery complete.
 **Authority boundary:** `research/product-contract.md` remains the sole current product contract until Jay explicitly approves a reviewed change.
 **Scope of this document:** Product archaeology, recovery decisions, target architecture, phased implementation order, and validation gates.
 **Not included:** Product authority changes, supplier integrations, runtime AI, or permission to ship BOM/workspace behavior. `research/product-contract.md` remains sole authority.
@@ -1231,3 +1231,17 @@ A six-review user-perspective audit of the live product found the recovery's eng
 | u6 — accessibility and layout mechanics | **resolved** | Sticky topbar + rail reachability (overflow clip + `minmax(0,1fr)`); post-search focus announcement + assertive failures; contrast/size pass locked by computed-ratio regression test; ARIA cleanup; mobile scroll lock; `catalog-accessibility.spec.ts` |
 
 Repository verification remains `cd web && npm run release:audit` — now covering both packages (`test:catalog` builds and exercises the real release) — green 2026-08-16 with 16/16 browser tests after u1–u6. No external gate (mechanical review, field adjudication, publication approval, engineer participants) is claimed or closed by this work.
+
+---
+
+## 17. Live-product root-cause audit and f-series (2026-08-16)
+
+A second audit (`live-product-root-cause-2026-08-16.md`) found u1–u6 resolved in the working tree but **never committed or deployed** — the owner-visible product was still the pre-recovery build `01a214b` — and the real catalog gated behind `?catalog=real` by decision D5, so the default product experience was unchanged. Root causes RC1–RC5 are recorded in the report, including the test/evidence gaps that let "resolved + tests green + production-verified" coexist with a stale deployment. Fix tickets f1–f5 live in `tickets/f*.md`.
+
+| Ticket | Status | Evidence |
+|---|---|---|
+| f1 — commit/deploy u1–u6 + reconcile status claims | **resolved** | Commit `a325f25` (35 files, +2715/−221) after full local audit (lint, node suites incl. `test-real-package`, browser 16/16 — one load-flake re-verified green in isolation and full-suite rerun); workflow run 31940995125 verify+deploy green (full audit re-run in CI); deployed `release.json.sourceSha == a325f251…d35`; live probes: `M4 screw` → 3-family chooser, 0 mixed rows; family entry keeps `Nominal diameter: 4 mm`; `PSYN-SCR-0001` → family list + 1 highlighted row. Production stays on the synthetic catalog per the publication gates. |
+| f2 — real catalog active dev product | in progress | D6 amendment to u1 decisions (dev-server default real; production/preview always synthetic; `?catalog=synthetic` opt-out; labeled fail-closed fallback) |
+| f3 — main UI de-diagnose | open | — |
+| f4 — exact-match visibility at real scale + URL truth | open | — |
+| f5 — user-path test integrity | open | includes stabilizing the mobile scroll-lock browser test (≈23 s against a 30 s timeout under load) |

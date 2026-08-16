@@ -47,6 +47,14 @@ Basis: the 2026-08-16 dataset profile (27,009 rows; hex 8,850 / rounded 10,295 /
 - **Budgets re-scoped deliberately** (not just raised): bytes 2 MB → 256 MB, total rows 25k → 200k, per-array items 10k → 60k, structural nodes 100k → 12M — each sized ≥ 2× the measured authorized release shape (109.5 MB artifact, ~84k total array rows, 26,953-item arrays) and documented here. The parser's quadratic configuration-revision scan is fixed to a grouped map so 27k configurations validate in linear time.
 - **App default is unchanged:** the synthetic package remains the module-load default. The real package loads only through the explicit `?catalog=real` development affordance and fails closed with a visible error if it cannot be loaded or verified.
 
+## D6 — Dev-server default activation (f2 amendment, 2026-08-16)
+
+- **Decision:** in the Vite dev server (`import.meta.env.DEV`), the real release becomes the **default product catalog**; `?catalog=synthetic` opts out locally. This amends D5's "app default is unchanged" bullet, which left the owner-visible dev product on 30 synthetic records — the exact complaint the second audit was filed for. The audit's decision D2 already authorizes dev/local loading; publication gates are untouched.
+- **Production and preview builds never attempt the dev release**, regardless of URL parameter: the artifact is not served there, the selection function returns synthetic before reading the parameter, and `?catalog=real` is dropped from round-tripped URLs outside dev (no guaranteed-error affordance in production).
+- **Fail-closed fallback:** if the artifact is missing or fails verification in dev, the clearly labeled synthetic catalog stays active; user-facing copy contains no commands or file paths.
+- **Known cost accepted and recorded:** ~110 MB transfer and ~20–35 s load/verify on first open (measured: parse 20.4 s Node, ~34 s browser end-to-end). Performance work (chunking, streaming, caching) is deferred and is not a gate for activation.
+- **`catalog` parameter round-trip:** explicit `catalog=real|synthetic` values persist across navigation in dev only; the default stays param-free.
+
 ## Consequences
 
 - u3 (exact McMaster PN path) gets the `mcmaster_pn` namespace with unique mappings.

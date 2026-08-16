@@ -1,9 +1,19 @@
-# CURRENT: Product recovery executed; synthetic release candidate ready; live deployment pending
+# CURRENT: u1–u6 shipped to production; f-series recovery track in progress
 
 **Prepared:** 2026-08-16  
-**State:** Eight-phase product recovery implemented, audited, and committed
+**State:** u1–u6 committed (`a325f25`) and deployed (run 31940995125, `release.json.sourceSha` verified); f2–f5 fix tickets executing
 
 This block supersedes every historical handoff below.
+
+## f-series frontier (2026-08-16, second session)
+
+The second audit (`.wayfinder/product-recovery/live-product-root-cause-2026-08-16.md`) found u1–u6 resolved only in the working tree while production ran pre-recovery `01a214b`, and the real catalog gated behind `?catalog=real` (decision D5). Fix track in `.wayfinder/product-recovery/tickets/f*.md`:
+
+- **f1 resolved:** u1–u6 committed as `a325f25`, deployed, live-verified (`M4 screw` → 3-family chooser; family entry keeps M4; `PSYN-SCR-0001` → highlighted row in family context). Production remains synthetic per publication gates.
+- **f2:** dev server defaults to the real release (decision D6); production/preview always synthetic; `?catalog=synthetic` opt-out; labeled fail-closed fallback.
+- **f3:** main UI de-diagnose (optional evidence disclosure; no digest/npm/mapping IDs in default views).
+- **f4:** exact-match page jump + banner/url warning truth; chooser single-family symmetry.
+- **f5:** user-path browser coverage of the real catalog path; deploy-truth guard; stabilize the mobile scroll-lock browser test.
 
 ## Phase
 
