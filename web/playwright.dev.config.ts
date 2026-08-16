@@ -15,13 +15,16 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   reporter: process.env.CI ? 'github' : 'list',
   use: {
-    baseURL: 'http://127.0.0.1:3000',
+    baseURL: 'http://127.0.0.1:5173',
     trace: 'retain-on-failure',
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
-    command: 'npm run dev',
-    url: 'http://127.0.0.1:3000/',
+    // Dedicated port: the CI runner's preview server from the previous step
+    // can leave an orphan on 3000, and HMR-free strict binding makes any
+    // collision a loud failure instead of a wrong-server test.
+    command: 'npx vite --port 5173 --host 127.0.0.1 --strictPort',
+    url: 'http://127.0.0.1:5173/',
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
   },
