@@ -1,19 +1,23 @@
-# CURRENT: u1–u6 shipped to production; f-series recovery track in progress
+# CURRENT: f-series complete — u1–u6 + f1–f5 shipped; dev product runs the real 27k catalog
 
 **Prepared:** 2026-08-16  
-**State:** u1–u6 committed (`a325f25`) and deployed (run 31940995125, `release.json.sourceSha` verified); f2–f5 fix tickets executing
+**State:** u1–u6 deployed and live-verified (f1); f2–f5 resolved and committed; production deploy of the f-series follows this handoff
 
 This block supersedes every historical handoff below.
 
-## f-series frontier (2026-08-16, second session)
+## Where the product stands (2026-08-16, f-series closeout)
 
-The second audit (`.wayfinder/product-recovery/live-product-root-cause-2026-08-16.md`) found u1–u6 resolved only in the working tree while production ran pre-recovery `01a214b`, and the real catalog gated behind `?catalog=real` (decision D5). Fix track in `.wayfinder/product-recovery/tickets/f*.md`:
+The second audit (`.wayfinder/product-recovery/live-product-root-cause-2026-08-16.md`) found u1–u6 resolved only in the working tree while production ran pre-recovery `01a214b`, and the real catalog gated behind `?catalog=real`. All five fix tickets (`.wayfinder/product-recovery/tickets/f*.md`, ledger in plan §17) are resolved:
 
-- **f1 resolved:** u1–u6 committed as `a325f25`, deployed, live-verified (`M4 screw` → 3-family chooser; family entry keeps M4; `PSYN-SCR-0001` → highlighted row in family context). Production remains synthetic per publication gates.
-- **f2:** dev server defaults to the real release (decision D6); production/preview always synthetic; `?catalog=synthetic` opt-out; labeled fail-closed fallback.
-- **f3:** main UI de-diagnose (optional evidence disclosure; no digest/npm/mapping IDs in default views).
-- **f4:** exact-match page jump + banner/url warning truth; chooser single-family symmetry.
-- **f5:** user-path browser coverage of the real catalog path; deploy-truth guard; stabilize the mobile scroll-lock browser test.
+- **f1** — u1–u6 committed (`a325f25`), deployed (run 31940995125), `release.json.sourceSha` verified, live behavior probed.
+- **f2** — dev server defaults to the real 27k release (decision D6); `?catalog=synthetic` opts out; production/preview always synthetic, `catalog` param inert there; app-owned-only URLs hydrate as empty state; truthful notice/pill labels.
+- **f3** — main UI de-diagnosed: clean "Part number" identity + one-line source; mapping/provenance/revision/evidence strings in a collapsed optional disclosure; no digest text in the notice bar.
+- **f4** — exact-PN matches land on the page containing the highlighted row (manual paging never snaps back); truthful banner + URL; chooser narrows-to-one-family symmetry.
+- **f5** — `npm run test:browser:real` (dev-server Playwright, 5 user-path tests incl. owner phrasing `M4 screw` and exact-PN visibility); preview suite pins the synthetic default path (17/17); `npm run deploy:check` guards deployed-vs-HEAD truth; CI runs the real path on every deploy.
+
+**To see the real product catalog:** `cd web && npm run catalog:build-real && npm run dev` → open http://localhost:3000/ (real by default; ~110 MB, first load tens of seconds). Production stays synthetic until the publication gates clear.
+
+**Next frontier:** unchanged external gates — real-family mechanical review, the 6–8 engineer study, assistive-technology review; publication approval before any real data ships publicly. Catalog load performance (chunking/streaming/caching of the 109.5 MB release) is the largest known non-gate defect and is recorded as deferred in D6.
 
 ## Phase
 
