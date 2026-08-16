@@ -176,6 +176,8 @@ details { margin-top: 5px; font-weight: 400; color: #5d6c64; } summary { width: 
 .inspector-backdrop.is-complementary .inspector { pointer-events: auto; border-left: 1px solid #cbd5ce; }
 .close-button { width: 44px; height: 44px; border-color: #aebdb4; }
 .identity-list small { display: block; margin-top: 4px; color: #64736b; font-weight: 450; }
+.technical-evidence { margin-top: 10px; }
+.technical-evidence dl { margin: 8px 0 0; }
 @media (max-width: 700px) { .inspector-backdrop.is-modal { pointer-events: auto; background: #17231f99; } }
 @media (max-width: 560px) {
   .table-wrap { display: none; }

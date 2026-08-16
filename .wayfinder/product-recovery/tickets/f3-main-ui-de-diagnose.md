@@ -1,6 +1,7 @@
 ---
 title: Remove internal/diagnostic content from the main UI
-status: open
+status: resolved
+resolved: 2026-08-16
 label: wayfinder:ticket
 created: 2026-08-16
 updated: 2026-08-16
@@ -28,8 +29,10 @@ u5 (decision T4) deliberately relocated mapping/provenance/revision identifiers 
 
 Removing provenance from the data model (it stays; only presentation changes); the synthetic-package PSYN IDs themselves while synthetic remains a visible fallback (f2 decides defaults).
 
-## Verification
+## Verification (resolved 2026-08-16)
 
-- Inspector default view contains no `map-`, `prov.`, revision, or evidence-ref strings (string-assert via browser test on both catalogs).
-- Optional disclosure still exposes the full evidence for audit when opened.
-- Digest absent from default notice; present in optional disclosure.
+- Inspector identity section is now "Part number": the real PN (or PSYN id) plus one clean source label ("Cofounder dataset (local dev)" / "Synthetic fixture"). Mapping IDs, provenance IDs, source IDs, evidence refs, and the internal revision ID live in a **collapsed** "Technical identifiers" disclosure — recorded decision: optional disclosure, not removal, so audit evidence stays reachable.
+- Notice bar: digest text removed; "Catalog: {releaseId}" remains with the full digest on the chip's tooltip.
+- Browser spec updated to the disclosure-state contract: "Diagnostics" heading absent; "Part number" heading visible; technical disclosure closed by default (no `open` attribute), opens to reveal `synmap-…`/evidence refs/`Internal revision`, re-closes; per-fact `Evidence` disclosures unchanged (already optional). Note: Playwright `toContainText` reads `textContent`, which includes closed `<details>` content — absence is asserted via disclosure state, not raw text.
+- Real-catalog probe: inspector title `92655A687`; default identity line exactly "Part number | 92655A687 | Cofounder dataset (local dev)"; disclosure closed; notice shows no digest text.
+- Suites: lint green; browser 16/16 (shell 9/9 re-run after spec update).

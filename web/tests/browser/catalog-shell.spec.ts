@@ -10,7 +10,11 @@ async function search(page: import('@playwright/test').Page, query: string) {
 test('supports home examples, broad browse, current hierarchy, and family facets', async ({ page }) => {
   await page.goto(base);
   await expect(page).toHaveTitle('PartSource | Structured Component Catalog');
-  await expect(page.locator('.notice .release')).toContainText(/Catalog: partsource\.synthetic\.screws\.v1 · sha256:[a-f0-9]{12}/);
+  await expect(page.locator('.notice .release')).toContainText('Catalog: partsource.synthetic.screws.v1');
+  // The digest is optional provenance, not default text (f3): available on the
+  // release chip's tooltip, absent from the visible notice bar.
+  await expect(page.locator('.notice .release')).not.toContainText('sha256:');
+  await expect(page.locator('.notice .release')).toHaveAttribute('title', /^sha256:[a-f0-9]{64}$/);
   await expect(page.getByRole('button', { name: 'M4 screws' })).toBeVisible();
   // Broad browse lands on the explicit family step, never a flattened mixed table.
   await page.getByRole('button', { name: 'Browse all screws' }).click();
@@ -95,9 +99,22 @@ test('exact match banner stays honest across select-other-row and filter-exclusi
   await expect(banner).toContainText('matches — selected');
   await expect(page.getByRole('table').getByText('Exact match · selected')).toBeVisible();
   await expect(row).toHaveAttribute('aria-pressed', 'true');
-  // Mapping and provenance identifiers live in the inspector diagnostics, not above results.
-  await expect(inspector.getByRole('heading', { name: 'Diagnostics: identity and mapping evidence' })).toBeVisible();
-  await expect(inspector).toContainText('evidence:public:synthetic-identifier-mapping');
+  // Mapping and provenance identifiers live in the inspector's OPTIONAL technical
+  // disclosure, not in the default detail view and not above results (f3). The
+  // disclosure is closed by default — its content exists in the DOM but is not
+  // exposed, so the assertion is on the disclosure state, not raw text.
+  await expect(inspector.getByRole('heading', { name: 'Diagnostics: identity and mapping evidence' })).toHaveCount(0);
+  await expect(inspector.getByRole('heading', { name: 'Part number' })).toBeVisible();
+  await expect(inspector).toContainText('Synthetic fixture');
+  const technical = inspector.locator('details.technical-evidence');
+  await expect(technical).not.toHaveAttribute('open');
+  await technical.locator('summary').click();
+  await expect(technical).toHaveAttribute('open', '');
+  await expect(technical).toContainText('synmap-v1-01');
+  await expect(technical).toContainText('evidence:public:synthetic-identifier-mapping');
+  await expect(technical).toContainText('Internal revision');
+  await technical.locator('summary').click();
+  await expect(technical).not.toHaveAttribute('open');
   await inspector.getByText('Evidence', { exact: true }).first().click();
   await expect(inspector.getByText(/Synthetic fixture · PS-POC-SYNTHETIC-V1/).first()).toBeVisible();
   await inspector.getByRole('button', { name: 'Close inspector' }).click();
