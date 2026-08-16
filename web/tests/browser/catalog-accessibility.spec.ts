@@ -74,6 +74,11 @@ test('mobile browse rail: every family chip is reachable and the page does not c
 });
 
 test('mobile inspector locks background scroll while open', async ({ page }) => {
+  // This test re-renders the full result list at a changed viewport plus two
+  // computed-style polls; measured ≈23 s under full-suite load against the
+  // 30 s default (load-sensitive flake, f5) — allow headroom rather than
+  // weakening the assertions.
+  test.setTimeout(90_000);
   await page.setViewportSize({ width: 390, height: 720 });
   await page.goto(base);
   await search(page, 'socket head cap screws');

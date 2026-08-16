@@ -137,12 +137,14 @@ function sortRecords(records: readonly CatalogRecordProjection[], sort: Readonly
 }
 
 export default function CatalogApp() {
-  // Synthetic stays the module-load default; ?catalog=real swaps in the
-  // dev-only release through the app-layer source seam (u1 decision D5).
-  const [catalog, setCatalog] = useState<{ index: CatalogIndex; pill: string }>({
+  // Synthetic stays the module-load default; the dev-only real release swaps
+  // in through the app-layer source seam. In the dev server the real release
+  // is the default selection (u1 D5 amended by D6/f2); production and
+  // preview builds always keep synthetic.
+  const [catalog, setCatalog] = useState<{ index: CatalogIndex; pill: string }>(() => ({
     index: SYNTHETIC_INDEX,
-    pill: 'Synthetic catalog',
-  });
+    pill: requestedCatalogSelection(window.location.search) === 'real-dev' ? 'Development catalog — loading' : 'Synthetic catalog',
+  }));
   const index = catalog.index;
   const initial = useMemo(() => {
     const hydrated = hydrateCatalogUrl(SYNTHETIC_INDEX, window.location.search);
@@ -150,7 +152,12 @@ export default function CatalogApp() {
   }, []);
   const [resolution, setResolution] = useState(initial);
   const [query, setQuery] = useState(initial.query);
-  const [urlWarning, setUrlWarning] = useState(() => hydrateCatalogUrl(SYNTHETIC_INDEX, window.location.search).state === 'invalid_url_state');
+  // A real-release deep link hydrates against the real package, not the
+  // synthetic placeholder: its release/digest parameters are invalid against
+  // the synthetic index, so the initial warning would be a lie (f2/f4).
+  const [urlWarning, setUrlWarning] = useState(() =>
+    requestedCatalogSelection(window.location.search) === 'synthetic'
+    && hydrateCatalogUrl(SYNTHETIC_INDEX, window.location.search).state === 'invalid_url_state');
   const [realCatalogStatus, setRealCatalogStatus] = useState<'idle' | 'loading' | 'ready' | 'error'>(
     () => (requestedCatalogSelection(window.location.search) === 'real-dev' ? 'loading' : 'idle'),
   );
@@ -183,14 +190,20 @@ export default function CatalogApp() {
         : resolveCatalogQuery(nextIndex, '');
       setResolution(next);
       setQuery(next.query);
+      // The link warning is decided by hydration against the active package,
+      // not the synthetic placeholder shown while loading (f2/f4).
+      setUrlWarning(hydrated.state === 'invalid_url_state');
       setRealCatalogStatus('ready');
     }).catch(() => { if (!cancelled) setRealCatalogStatus('error'); });
     return () => { cancelled = true; };
   }, []);
 
+  // An explicit dev catalog selection round-trips; the default (real in the
+  // dev server, synthetic everywhere else) stays param-free. The parameter is
+  // meaningless in production builds, so it is dropped there (f2).
   const catalogParamSuffix = () => {
-    const parameters = new URLSearchParams(window.location.search);
-    return parameters.get('catalog') === 'real' ? '&catalog=real' : '';
+    const value = new URLSearchParams(window.location.search).get('catalog');
+    return import.meta.env.DEV && (value === 'real' || value === 'synthetic') ? `&catalog=${value}` : '';
   };
 
   // Pagination and sort are view state over the resolution: they stay in the
@@ -199,7 +212,8 @@ export default function CatalogApp() {
     if (resolution.state === 'initial') return;
     const parameters = new URLSearchParams(window.location.search);
     const suffixes: string[] = [];
-    if (parameters.get('catalog') === 'real') suffixes.push('catalog=real');
+    const catalogValue = parameters.get('catalog');
+    if (import.meta.env.DEV && (catalogValue === 'real' || catalogValue === 'synthetic')) suffixes.push(`catalog=${catalogValue}`);
     if (page > 1) suffixes.push(`page=${page}`);
     if (sort.factId) {
       suffixes.push(`sort=${encodeURIComponent(sort.factId)}`);
@@ -231,7 +245,8 @@ export default function CatalogApp() {
     setSort({ factId: null, dir: 'asc' });
     setResolution(emptyFor(index));
     setUrlWarning(false);
-    const suffix = new URLSearchParams(window.location.search).get('catalog') === 'real' ? '?catalog=real' : '';
+    const catalogValue = new URLSearchParams(window.location.search).get('catalog');
+    const suffix = import.meta.env.DEV && (catalogValue === 'real' || catalogValue === 'synthetic') ? `?${catalogValue === 'real' ? 'catalog=real' : 'catalog=synthetic'}` : '';
     window.history.pushState({ catalog: true }, '', `${window.location.pathname}${suffix}`);
   };
 
@@ -340,6 +355,9 @@ export default function CatalogApp() {
   };
 
   const error = stateMessage(resolution);
+  // The notice names the data actually on screen — the synthetic placeholder
+  // during a dev load, the dev release once active (f2).
+  const dataLabel = index.package.manifest.dataOrigin === 'cofounder_private_dev' ? 'Development data' : 'Synthetic data';
   const totalChoiceRecords = resolution.familyChoices.reduce((total, choice) => total + choice.count, 0);
   const shape = useMemo(() => familyShape(index, resolution.familyId), [index, resolution.familyId]);
   const sortedRecords = useMemo(() => sortRecords(view.records, sort), [view.records, sort]);
@@ -367,12 +385,12 @@ export default function CatalogApp() {
       <span className="catalog-pill">{catalog.pill}</span>
     </header>
 
-    <div className="notice" role="note" data-inspector-background><strong>Synthetic data</strong><span>{view.notice}</span><span className="release" title={view.digest}>Catalog: {view.releaseId} · {view.digest.slice(0, 19)}…<span className="sr-only"> Full catalog digest: {view.digest}</span></span></div>
+    <div className="notice" role="note" data-inspector-background><strong>{dataLabel}</strong><span>{view.notice}</span><span className="release" title={view.digest}>Catalog: {view.releaseId} · {view.digest.slice(0, 19)}…<span className="sr-only"> Full catalog digest: {view.digest}</span></span></div>
 
     <main id="main" data-inspector-background>
       {urlWarning && <section className="status-card warning" role="alert"><h2>Catalog link could not be restored</h2><p>The link contained invalid or stale catalog state. No records were inferred. Start a new search or browse below.</p></section>}
-      {realCatalogStatus === 'loading' && <section className="status-card" role="status"><span className="status-icon" aria-hidden="true">…</span><div><h2>Loading real catalog release</h2><p>The cofounder dataset release is large (~110 MB); loading may take a moment. The synthetic catalog stays visible until it is ready.</p></div></section>}
-      {realCatalogStatus === 'error' && <section className="status-card warning" role="alert"><h2>Real catalog could not be loaded</h2><p>The development catalog release failed to load or verify, so nothing from it is shown. The synthetic catalog below remains active and labelled. Check that <code>npm run catalog:build-real</code> has run and the dev server is serving <code>catalog/real-screws-v1.json</code>.</p></section>}
+      {realCatalogStatus === 'loading' && <section className="status-card" role="status"><span className="status-icon" aria-hidden="true">…</span><div><h2>Loading development catalog release</h2><p>The development catalog release is large (~110 MB) and can take up to a minute to load and verify. The labeled synthetic catalog stays visible until it is ready.</p></div></section>}
+      {realCatalogStatus === 'error' && <section className="status-card warning" role="alert"><h2>Development catalog could not be loaded</h2><p>The development catalog release could not be loaded or verified, so nothing from it is shown. The labeled synthetic catalog below stays active instead.</p></section>}
 
       {resolution.state === 'initial' && <Home index={index} onAll={browseAll} onFamily={browseFamily} onExample={value => { setQuery(value); const next = resolveCatalogQuery(index, value); commit(next); focusOutcome(next); }} />}
 

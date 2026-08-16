@@ -180,6 +180,12 @@ const paged = hydrateCatalogUrl(index, `${v3}&q=screws&page=3&sort=length_mm&dir
 assert.equal(paged.state, 'ready');
 assert.equal(hydrateCatalogUrl(index, `${v3}&q=screws&page=abc`).state, 'invalid_url_state');
 assert.equal(hydrateCatalogUrl(index, `${v3}&q=screws&dir=sideways`).state, 'invalid_url_state');
+// App-owned parameters alone are not catalog state: a bare selection or
+// paging link hydrates as empty instead of failing the q requirement (f2).
+assert.equal(hydrateCatalogUrl(index, '?catalog=real').state, 'empty');
+assert.equal(hydrateCatalogUrl(index, '?catalog=synthetic&page=2').state, 'empty');
+// …while a duplicated selection parameter is still malformed state.
+assert.equal(hydrateCatalogUrl(index, '?catalog=real&catalog=synthetic').state, 'invalid_url_state');
 // v2 links still hydrate (legacy fixed vocabulary).
 const legacy = hydrateCatalogUrl(index, url('q=M4+screws&diameter_mm=4'));
 assert.equal(legacy.state, 'ready');

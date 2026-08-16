@@ -4,10 +4,11 @@
  * (runtime boundary guard) while the application layer owns browser behavior,
  * including loading a build-time-verified release artifact.
  *
- * The synthetic package remains the
- * module-load default; the dev-only real release is fetched through this seam
- * when explicitly requested with `?catalog=real` and fails closed on any
- * load or identity error. See decisions/u1-real-catalog-data-decisions.md D5.
+ * Selection (u1 D5, amended by D6/f2): the Vite dev server defaults to the
+ * real release and `?catalog=synthetic` opts out locally. Production and
+ * preview builds keep the synthetic module-load default and never attempt
+ * the dev release — publication gates are unchanged (register +
+ * decisions/u1-real-catalog-data-decisions.md D5/D6).
  */
 import { REAL_CATALOG_DIGEST, REAL_CATALOG_URL } from './catalog/real-release-identity';
 import { parseCatalogPackage } from './catalog/parse-catalog-package';
@@ -17,7 +18,11 @@ import type { CatalogIndex } from './catalog/engine/types';
 export type CatalogSelection = 'synthetic' | 'real-dev';
 
 export function requestedCatalogSelection(search: string): CatalogSelection {
-  return new URLSearchParams(search).get('catalog') === 'real' ? 'real-dev' : 'synthetic';
+  // Production and preview never load the dev-only release, regardless of
+  // the URL parameter: the artifact is not served there and attempting it
+  // would only produce a guaranteed error.
+  if (!import.meta.env.DEV) return 'synthetic';
+  return new URLSearchParams(search).get('catalog') === 'synthetic' ? 'synthetic' : 'real-dev';
 }
 
 export async function loadDevCatalogRelease(): Promise<CatalogIndex> {

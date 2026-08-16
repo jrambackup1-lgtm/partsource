@@ -26,6 +26,13 @@ const LEGACY_PARAMETERS = new Set<string>(LEGACY_URL_FACTS.map(([parameter]) => 
 const SINGLE_VALUE_PARAMETERS = new Set([
   'v', 'release', 'digest', 'q', 'family', 'selected', 'selected_revision', 'page', 'sort', 'dir', 'catalog',
 ]);
+/**
+ * App-owned view parameters (catalog selection, paging, sorting) tolerate the
+ * URL without constituting catalog state: a URL carrying only these hydrates
+ * as empty rather than failing the `q` requirement (f2 — `?catalog=real`
+ * alone must not raise "link could not be restored").
+ */
+const APP_OWNED_PARAMETERS = new Set(['catalog', 'page', 'sort', 'dir']);
 /** Known-inert tracking parameters are dropped without invalidating state. */
 const INERT_PARAMETER_PATTERN = /^(?:utm_[a-z0-9_]+|gclid|fbclid|msclkid)$/i;
 const FILTER_PARAMETER_PATTERN = /^f_([a-z][a-z0-9_.:-]*)$/;
@@ -93,12 +100,17 @@ export function hydrateCatalogUrl(index: CatalogIndex, rawSearch: string): Catal
   if (malformedEncoding(rawSearch)) return { state: 'invalid_url_state', query: '', rejected: ['encoding'] };
   const parameters = new URLSearchParams(rawSearch);
   const recognized = Array.from(parameters.keys()).filter(key => !INERT_PARAMETER_PATTERN.test(key));
-  if (!recognized.length) return { state: 'empty' };
-  const query = parameters.get('q') ?? '';
   const rejected = recognized.filter(key => !isAllowedParameter(key));
   for (const key of new Set(recognized)) {
     if ((SINGLE_VALUE_PARAMETERS.has(key) || LEGACY_PARAMETERS.has(key)) && parameters.getAll(key).length > 1) rejected.push(key);
   }
+  // App-owned parameters alone are not catalog state — but duplicated or
+  // unknown parameters are still malformed, so the shape checks above run
+  // before this shortcut (f2).
+  if (!recognized.some(key => !APP_OWNED_PARAMETERS.has(key))) {
+    return rejected.length ? { state: 'invalid_url_state', query: '', rejected } : { state: 'empty' };
+  }
+  const query = parameters.get('q') ?? '';
   const page = parameters.get('page');
   if (page !== null && !PAGE_PATTERN.test(page)) rejected.push('page');
   const sort = parameters.get('sort');

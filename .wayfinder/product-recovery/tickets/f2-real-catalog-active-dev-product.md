@@ -1,6 +1,7 @@
 ---
 title: Real catalog becomes the active dev product experience
-status: open
+status: resolved
+resolved: 2026-08-16
 label: wayfinder:ticket
 created: 2026-08-16
 updated: 2026-08-16
@@ -28,8 +29,11 @@ Four stacked gates (gitignored artifact → dev-server-only middleware → URL p
 
 Shipping real data in the production build (blocked by `research/data-source-register.md` until the external gates clear); artifact size/perf optimization; any catalog-content change.
 
-## Verification
+## Verification (resolved 2026-08-16)
 
-- `npm run dev` + open `/`: real catalog active by default (PN-titled rows; `M4 screw` → 79-family chooser); `?catalog=synthetic` still works.
-- `npm run build && npm run preview`: synthetic default, no real fetch attempt, no error card.
-- With artifact deleted: labeled synthetic fallback, no crash, no raw error text.
+- Dev server default: real release active with no URL parameter (swap 34–81 s measured; pill "Dev catalog — cofounder data"; notice "Development data | Cofounder-provided dataset…"; "View all 26953 parts"; `M4 screw` → 79-family chooser).
+- Dev deep link (`?v=3&release=…&digest=…&q=M4+screw&f_nominal_diameter_mm=4`): loads real in 39.9 s, **zero** warning cards, 79-family chooser, URL constraint preserved as removable chip.
+- `?catalog=synthetic` opt-out: synthetic active, param round-trips across search.
+- Production mode (`vite build` + `vite preview`): default synthetic; `?catalog=real` → synthetic, 0 warnings, real fetch never attempted; duplicated `catalog` param still rejected; `utm_source`-only still inert.
+- Engine: `hydrateCatalogUrl` treats app-owned parameters (`catalog`, `page`, `sort`, `dir`) alone as empty state (f2 fix for the bare-param warning); regression assertions added (`test-engine-url-history.ts`); engine suites green.
+- Suites: lint green; `test-engine`, `test-engine-url-history` green; browser 16/16 after stabilizing the load-flaked mobile scroll-lock test (timeout 30 s → 90 s with comment; f5 scope, fixed early because it blocked repeatable green runs).
