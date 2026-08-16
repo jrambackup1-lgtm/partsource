@@ -1,6 +1,7 @@
 ---
 title: Exact-match visibility at real scale and URL truth
-status: open
+status: resolved
+resolved: 2026-08-16
 label: wayfinder:ticket
 created: 2026-08-16
 updated: 2026-08-16
@@ -28,8 +29,10 @@ Pasting `92655A331` at real scale lands in the correct family (108 parts) and th
 
 Changing the exact-ID contract (family list + highlight + user selects, never an isolated result); pagination size; virtualization.
 
-## Verification
+## Verification (resolved 2026-08-16)
 
-- `92655A331` on real catalog: lands on the page containing the highlighted row; `.exact-row` visible in viewport; URL `page` matches.
-- Canonical `?catalog=real&…&q=…` deep link: no warning card after load.
-- Engine probe: chooser narrowed to one family via filters auto-opens (matches query-time behavior).
+- Real-catalog browser probe, `92655A331`: lands on **page 2** of 3 (108 parts, 50/page) where the highlighted row lives; `.exact-row` rendered and scrolled into the viewport; banner "highlighted below" now true; URL round-trips `page=2`.
+- Page-follow logic keys on resolution/sort transitions only — manual paging away is never snapped back; the scroll-into-view effect re-fires after the page lands (deps extended with `page`).
+- urlWarning truth (landed with f2): initial warning computed only for the synthetic selection; re-decided from hydration against the active package after the real release loads; canonical real deep links show no warning card.
+- Chooser symmetry: engine change in `chooserResolution` — constraints narrowing a category-level chooser to exactly one family open that family directly (rule recorded here as the u2 single-match shortcut applied symmetrically). Engine regression added: `head_profile=button` from `screws` → `catalog_list` bhss/10 records; `material=a2_stainless` still yields a 3-family chooser.
+- Suites: lint green; `test-engine`, `test-engine-url-history`, `test-real-package` green; browser 16/16.

@@ -66,6 +66,23 @@ const chooserNoFinish = applyCatalogFilters(index, resolve('A2 stainless screws'
 assert.equal(chooserNoFinish.state, 'catalog_chooser');
 assert.deepEqual(chooserNoFinish.familyChoices.map(choice => choice.familyId), ['shcs', 'bhss', 'css']);
 
+// f4 symmetry: constraints that narrow a category-level chooser to exactly one
+// family open that family directly — the same rule as the query-time shortcut,
+// instead of a one-row chooser demanding an extra click.
+const narrowedChooser = applyCatalogFilters(index, resolve('screws'), [
+  { factId: 'head_profile', value: 'button', source: 'user' },
+], { familyId: null });
+assert.equal(narrowedChooser.state, 'catalog_list', 'single remaining family opens directly');
+assert.equal(narrowedChooser.familyId, 'bhss');
+assert.equal(narrowedChooser.records.length, 10);
+assert.deepEqual(narrowedChooser.familyChoices, []);
+// Two-plus families still show the chooser.
+const stillChooser = applyCatalogFilters(index, resolve('screws'), [
+  { factId: 'material', value: 'a2_stainless', source: 'user' },
+], { familyId: null });
+assert.equal(stillChooser.state, 'catalog_chooser');
+assert.equal(stillChooser.familyChoices.length, 3);
+
 const family = resolve('socket head cap screws');
 assert.equal(family.state, 'catalog_list');
 assert.equal(family.familyId, 'shcs');

@@ -286,7 +286,7 @@ export default function CatalogApp() {
   useEffect(() => {
     if (resolution.exact?.state !== 'one') return;
     requestAnimationFrame(() => document.querySelector(window.matchMedia('(max-width: 560px)').matches ? '.record-cards [data-exact-row]' : '.table-wrap [data-exact-row]')?.scrollIntoView({ block: 'center' }));
-  }, [resolution.exact, resolution.exactMatchRevisionId]);
+  }, [resolution.exact, resolution.exactMatchRevisionId, page]);
 
   const search = (event: FormEvent) => {
     event.preventDefault();
@@ -361,6 +361,20 @@ export default function CatalogApp() {
   const totalChoiceRecords = resolution.familyChoices.reduce((total, choice) => total + choice.count, 0);
   const shape = useMemo(() => familyShape(index, resolution.familyId), [index, resolution.familyId]);
   const sortedRecords = useMemo(() => sortRecords(view.records, sort), [view.records, sort]);
+  // An exact match must be visible at real scale: land on the page containing
+  // the highlighted row whenever the resolution (or its sort order) changes,
+  // so the banner never claims "highlighted below" across a page boundary the
+  // user cannot see. Following only resolution/sort transitions keeps user
+  // paging free — this never snaps back after a manual page change (f4).
+  const highlightedRecordId = resolution.highlightedRecordId;
+  useEffect(() => {
+    if (!highlightedRecordId) return;
+    const position = sortedRecords.findIndex(record => record.configurationId === highlightedRecordId);
+    if (position < 0) return;
+    const target = Math.floor(position / PAGE_SIZE) + 1;
+    setPage(current => (current === target ? current : target));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [highlightedRecordId, resolution, sort]);
   const totalPages = Math.max(1, Math.ceil(sortedRecords.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
   const pagedRecords = sortedRecords.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);

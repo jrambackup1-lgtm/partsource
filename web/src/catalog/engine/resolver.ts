@@ -334,6 +334,12 @@ function chooserResolution(
   const rejected = validateCatalogFilters(index, null, filters);
   if (rejected.length) return invalidFilter(index, resolution.query, resolution.normalizedQuery, rejected);
   const choices = resolveFamilyChoices(index, resolution.hierarchyNodeId, filters);
+  if (choices.length === 1) {
+    // Symmetry with query-time resolution (u2 single-match shortcut): one
+    // remaining family opens its list directly instead of a one-row chooser
+    // demanding an extra click (f4).
+    return familyListFromResolution(index, resolution, filters, choices[0].familyId);
+  }
   const root = rootContext(index);
   return Object.freeze({
     ...resolution,
@@ -344,6 +350,33 @@ function chooserResolution(
     filters: Object.freeze(filters.map(filter => Object.freeze({ ...filter }))),
     familyChoices: choices,
     records: [],
+    highlightedRecordId: null,
+    highlightedRevisionId: null,
+    selectedRecordId: null,
+    selectedRevisionId: null,
+    detail: null,
+    rejectedFields: [],
+  });
+}
+
+/** Family list state derived from an existing resolution under new filters (f4). */
+function familyListFromResolution(
+  index: CatalogIndex,
+  resolution: CatalogResolution,
+  filters: readonly CatalogFilter[],
+  familyId: string,
+): CatalogResolution {
+  const configurations = filterConfigurations(index, familyId, filters);
+  const family = index.familiesById.get(familyId)!;
+  return Object.freeze({
+    ...resolution,
+    state: configurations.length ? 'catalog_list' : 'catalog_empty',
+    familyId,
+    hierarchyNodeId: family.hierarchyNodeId,
+    hierarchyPath: index.hierarchyPathById.get(family.hierarchyNodeId) ?? [],
+    filters: Object.freeze(filters.map(filter => Object.freeze({ ...filter }))),
+    familyChoices: [],
+    records: projectRecords(index, configurations),
     highlightedRecordId: null,
     highlightedRevisionId: null,
     selectedRecordId: null,
