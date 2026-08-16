@@ -1,5 +1,7 @@
 # pSEO Audit & Indexing Strategy — partsource.io
 
+> **HISTORICAL — INACTIVE pSEO PLAN.** Preserve as risk research. Equivalent pages, bulk indexing, and rollout assumptions are not current product scope.
+
 This document outlines the Programmatic SEO (pSEO) risk scoring, content quality compliance, index gating, and sitemap deployment timeline for **partsource.io**.
 
 ---

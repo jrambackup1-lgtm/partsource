@@ -4,7 +4,7 @@ const productionBaseURL = process.env.PRODUCTION_BASE_URL;
 
 export default defineConfig({
   testDir: './tests/browser',
-  testMatch: /poc-progressive-.*\.spec\.ts/,
+  testMatch: /catalog-.*\.spec\.ts/,
   fullyParallel: true,
   retries: process.env.CI ? 2 : 0,
   reporter: process.env.CI ? 'github' : 'list',

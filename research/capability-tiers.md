@@ -1,8 +1,10 @@
 # PartSource Capability Tiers
 
-**Status:** Phase 1 capability boundary
+> **HISTORICAL — SUPERSEDED CAPABILITY ROADMAP.** Preserve as phase-planning history. Local BOM, company, enterprise, transactional, account, and supplier assumptions are not current product scope.
 
-**Authority:** This document is subordinate to `research/product-contract.md` and consistent with `research/mvp-boundary.md`. If either relationship changes, the product contract wins.
+**Status:** Historical — inactive
+
+**Authority:** Historical evidence only. `research/product-contract.md` controls current product scope.
 
 These tiers separate current personal use from later company, enterprise, and transactional capabilities. A phase or trigger makes work eligible for evaluation; it does not make the capability available until its gate and verification pass.
 

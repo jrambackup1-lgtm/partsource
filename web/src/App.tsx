@@ -1,7 +1,7 @@
-import PocApp from './poc/PocApp';
+import CatalogApp from './catalog/ui/CatalogApp';
 
 export default function App() {
-  const path = window.location.pathname;
-  if (path === '/' || path === '/partsource/') return <PocApp />;
-  return <main className="poc-shell"><section className="poc-card"><h1>Workspace route unavailable</h1><p>Use the catalog workspace route.</p></section></main>;
+  const path = window.location.pathname.replace(/\/+$/, '') || '/';
+  if (path === '/' || path === '/partsource' || path === '/catalog') return <CatalogApp />;
+  return <main className="route-error"><h1>Page not found</h1><a href="/partsource/">Return to the catalog</a></main>;
 }

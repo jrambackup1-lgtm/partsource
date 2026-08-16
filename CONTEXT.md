@@ -56,6 +56,16 @@ One item represented by stable identity, family, typed fields, identifier mappin
 
 Catalog membership does not imply approval, suitability, stock, or equivalence.
 
+## Home
+
+The start surface for global search, examples, supported catalog browsing, and data-status disclosure.
+
+Home is not a dashboard and shows no fake activity or commercial metrics.
+
+## Family workspace
+
+The catalog view for one coherent family. It keeps the hierarchy, original query, typed constraints, family-specific filters, aligned result table, and contextual selected-record detail together.
+
 ## Identifier
 
 A supported external or internal lookup key.
@@ -87,6 +97,18 @@ Non-exact search never creates a selection.
 The source or declared synthetic origin of a technical fact or identifier mapping.
 
 Provenance stays attached to the fact or mapping it supports.
+
+Default provenance is concise. Claim-level evidence is user-invoked. Raw interpretation and package references are diagnostics.
+
+## Application release
+
+The immutable deployed code artifact identified by `/partsource/release.json`.
+
+## Catalog release
+
+The immutable hierarchy, family-schema, configuration, mapping, lexicon, and provenance package used by the application.
+
+Application and catalog releases have separate identities.
 
 ## Fail-closed state
 

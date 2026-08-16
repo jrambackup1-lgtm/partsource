@@ -15,10 +15,21 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    outputs:
+      artifact_digest: ${{ steps.release-identity.outputs.artifact_digest }}
     defaults:
       run:
         working-directory: web
     steps:
+      - name: Require canonical deployment ref
+        env:
+          SOURCE_REF: ${{ github.ref }}
+          SOURCE_REF_TYPE: ${{ github.ref_type }}
+        run: |
+          test "$SOURCE_REF_TYPE" = "branch"
+          test "$SOURCE_REF" = "refs/heads/master"
+        working-directory: .
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -35,13 +46,58 @@ jobs:
       - name: Install browser dependencies
         run: npx playwright install --with-deps chromium
 
-      - name: Release audit
-        run: npm run release:audit
+      - name: Release truth contract
+        run: npm run test:release
 
-      - name: Build Pages artifact
+      - name: Release audit before build
+        run: |
+          npm run lint
+          npm run test:poc
+          npm run test:catalog
+          npm run test:documents
+
+      - name: Build Pages artifact once
         run: npm run build
 
-      - name: Upload commit-tied Pages artifact
+      - name: Test staged artifact boundaries
+        run: npm run test:boundary
+
+      - name: Test staged artifact in browser
+        env:
+          PRODUCTION_BASE_URL: http://127.0.0.1:3000
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 3000 > "$RUNNER_TEMP/partsource-preview.log" 2>&1 &
+          preview_pid=$!
+          trap 'kill "$preview_pid" 2>/dev/null || true' EXIT
+          ready=false
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent --show-error http://127.0.0.1:3000/partsource/ > /dev/null; then
+              ready=true
+              break
+            fi
+            sleep 1
+          done
+          if [ "$ready" != true ]; then
+            cat "$RUNNER_TEMP/partsource-preview.log"
+            exit 1
+          fi
+          npm run test:browser
+
+      # release.json is written after tests, then the manifest identifies every
+      # staged file except artifact-manifest.json itself. Nothing rebuilds dist.
+      - name: Generate release identity
+        id: release-identity
+        env:
+          PARTSOURCE_RELEASE_SHA: ${{ github.sha }}
+        run: npm run release:metadata
+
+      - name: Verify exact upload directory
+        env:
+          PARTSOURCE_RELEASE_SHA: ${{ github.sha }}
+          PARTSOURCE_ARTIFACT_DIGEST: ${{ steps.release-identity.outputs.artifact_digest }}
+        run: npm run release:verify
+
+      - name: Upload verified Pages artifact
         id: pages-artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -50,11 +106,15 @@ jobs:
           retention-days: 1
 
       - name: Record artifact identity
-        shell: bash
+        env:
+          SOURCE_SHA: ${{ github.sha }}
+          ARTIFACT_DIGEST: ${{ steps.release-identity.outputs.artifact_digest }}
+          ARTIFACT_ID: ${{ steps.pages-artifact.outputs.artifact_id }}
         run: |
-          echo "Commit: $GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
-          echo "Artifact: pages-$GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
-          echo "Artifact ID: ${{ steps.pages-artifact.outputs.artifact_id }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Source commit: $SOURCE_SHA" >> "$GITHUB_STEP_SUMMARY"
+          echo "Artifact digest: $ARTIFACT_DIGEST" >> "$GITHUB_STEP_SUMMARY"
+          echo "Pages artifact: pages-$SOURCE_SHA" >> "$GITHUB_STEP_SUMMARY"
+          echo "Artifact ID: $ARTIFACT_ID" >> "$GITHUB_STEP_SUMMARY"
         working-directory: .
 
   deploy:
@@ -63,9 +123,27 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    env:
+      PARTSOURCE_RELEASE_SHA: ${{ github.sha }}
+      PARTSOURCE_ARTIFACT_DIGEST: ${{ needs.verify.outputs.artifact_digest }}
+      PARTSOURCE_DEPLOYED_BASE_URL: https://jrambackup1-lgtm.github.io/partsource/
     steps:
-      - name: Deploy tested artifact to GitHub Pages
+      - name: Deploy verified artifact to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
         with:
           artifact_name: pages-${{ github.sha }}
+
+      - name: Checkout deployment verifier
+        uses: actions/checkout@v4
+
+      - name: Set up Node for deployment verification
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Verify propagated deployment identity
+        env:
+          PARTSOURCE_VERIFY_ATTEMPTS: 12
+          PARTSOURCE_VERIFY_DELAY_MS: 10000
+        run: node web/scripts/release/verify-deployed-release.mjs

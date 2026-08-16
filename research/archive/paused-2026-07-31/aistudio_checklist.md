@@ -27,7 +27,7 @@ Living checklist for partsource.io. Supersedes the old AI Studio export checklis
 - [x] Images fixed: per-category CAD schematic + SVG glyphs; Photo toggle & stock photos removed
 - [x] "Not affiliated with McMaster-Carr" disclaimer in footer; unindexed pages noindexed, no JSON-LD offers
 - [x] Historical scraper accepted spec-derived `q`; it is not part of the production buyer flow.
-- [x] 17 decoder tests + 19-check Playwright smoke, green locally and on production
+- [x] Current CI runs TypeScript checks, unit/integration suites, production build, and 3 launch-critical Playwright flows.
 - [x] Data sourcing locked: NO McMaster/skdin/Source-Search/distributor bulk scraping
       (see `research/data-sourcing-decision.md` + audit-doc guardrails); Fastener Superstore
       audited — no JSON-LD/affiliate/API → not viable
@@ -46,9 +46,9 @@ Living checklist for partsource.io. Supersedes the old AI Studio export checklis
       charts, computed torque tables, pitch/tap-drill, property classes, MPN decoding guide,
       metric-vs-imperial ID) — cross-linked with catalog parts
 - [x] Red-flag sweep: removed unused deps (@google/genai, express) & AI Studio leftovers,
-      real catalog count in footer, compliance verify-per-order caveat, admin Demo badge,
+      real catalog count in footer, removed unsupported compliance and admin surfaces,
       honest sidebar actions
-- [x] 23 unit tests + 14-check browser smoke, green locally and on production
+- [x] Superseded test count; current commands are `npm test` and `npm run test:browser`.
 
 ---
 

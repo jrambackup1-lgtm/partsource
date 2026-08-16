@@ -1,5 +1,7 @@
 # details
 
+> **HISTORICAL — SUPERSEDED PRODUCT NOTES.** Preserve as early product and business history. It does not define current product behavior, claims, architecture, or roadmap. See `product-contract.md`.
+
 ---
 
 ## 1. Product Sourcing & Vision (The Three Pillars)
@@ -112,8 +114,8 @@ No page is listed in `sitemap.xml` or indexable unless:
 
 ## 5. Technical & Design Specifications
 
-- **Framework**: Next.js (App Router, SSG export-friendly).
-- **Styling**: Vanilla CSS. High-density, high-contrast light-mode utility layout (light gray backgrounds, thin borders, monospace data tables).
+- **Framework**: Vite + React SPA on GitHub Pages, with build-time static metadata for catalog part routes.
+- **Styling**: Tailwind CSS with Radix/shadcn components. High-density, high-contrast light-mode utility layout (light gray backgrounds, thin borders, monospace data tables).
 - **Libraries**:
   - `fuse.js` (fuzzy search).
   - `papaparse` (CSV handling).

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>PartSource UX recovery prototype</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to catalog content</a>
+  <div class="synthetic-banner" role="note">
+    <span aria-hidden="true">◆</span>
+    <strong>Illustrative synthetic catalog</strong>
+    <span>30 invented configurations for UX evaluation only — not engineering authority.</span>
+  </div>
+
+  <header class="app-header">
+    <div class="header-inner">
+      <button class="brand" id="home-button" type="button" aria-label="PartSource home">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span>PartSource</span>
+      </button>
+      <form class="global-search" id="search-form" role="search">
+        <label class="sr-only" for="query">Search the synthetic component catalog</label>
+        <span class="search-icon" aria-hidden="true"></span>
+        <input id="query" name="query" type="search" autocomplete="off" spellcheck="false" placeholder="Search screws, a family, dimensions, or PSYN-SCR-0006">
+        <button type="submit">Search</button>
+      </form>
+      <nav class="primary-nav" aria-label="Primary navigation">
+        <button id="catalog-button" type="button">Catalog</button>
+        <button id="about-data-button" type="button">About data</button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1"></main>
+  <div id="live-region" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+  <div id="modal-root"></div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

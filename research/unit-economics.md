@@ -1,10 +1,12 @@
 # PartSource Unit Economics and Monetization Decision Model
 
-**Status:** MP-1.4 decision model; unvalidated
+> **HISTORICAL BUSINESS RESEARCH.** Preserve assumptions and arithmetic as an unvalidated model. Affiliate, quote-lead, SaaS, brokerage, supplier, phase, and monetization paths are not current product commitments.
+
+**Status:** Historical — unvalidated
 
 **Effective:** 2026-07-13
 
-This document is subordinate to `research/product-contract.md`. If a model assumption conflicts with that contract or `research/master-plan.md`, the contract and phase gates win. This is a decision tool, not a forecast, valuation, or claim of product-market fit.
+This is historical decision evidence, not a forecast, valuation, product commitment, or claim of product-market fit. `research/product-contract.md` controls current product scope.
 
 ## Evidence and input policy
 

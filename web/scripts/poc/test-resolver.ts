@@ -11,8 +11,14 @@ assert.equal(resolve('socket head screws').familyId, 'shcs');
 assert.equal(resolve('socket-head screws').state, 'catalog_list');
 assert.equal(resolve('socket-head screws').familyId, 'shcs');
 assert.deepEqual(resolve('black-oxide socket head screws').filters, [{ field: 'familyId', value: 'shcs' }, { field: 'finish', value: 'black_oxide' }]);
-assert.deepEqual(ids('M6 stainless socket head screws'), ['synrec-v1-shcs-05', 'synrec-v1-shcs-06']);
-assert.deepEqual(ids('M8 30 mm black oxide button head screws'), ['synrec-v1-bhss-09']);
+assert.deepEqual(ids('M6 A2 stainless socket head screws'), ['synrec-v1-shcs-05', 'synrec-v1-shcs-06']);
+assert.equal(resolve('M6 stainless socket head screws').state, 'query_unsupported');
+assert.deepEqual(resolve('M6 stainless socket head screws').trace.unsupportedTerms, ['stainless']);
+assert.equal(resolve('M6 A2 socket head screws').state, 'query_unsupported');
+assert.equal(resolve('M8 30 mm black oxide button head screws').state, 'query_unsupported');
+assert.deepEqual(ids('M8 30 mm black oxide button head socket screws'), ['synrec-v1-bhss-09']);
+assert.equal(resolve('countersunk screws').state, 'query_unsupported');
+assert.equal(resolve('button head screws').state, 'query_unsupported');
 assert.equal(resolve('M4 40 mm socket head screws').state, 'catalog_empty');
 
 const exact = resolve('PSYN-SCR-0006');

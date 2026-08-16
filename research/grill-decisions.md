@@ -1,5 +1,7 @@
 # Finalized Grill Decisions — partsource.io
 
+> **HISTORICAL — INITIAL GRILL RECORD.** These decisions are superseded. Preserve them as development history. They do not control current product behavior or implementation. See `product-contract.md`.
+
 These are the finalized requirements and configuration options decided during the initial pair-programming grill session.
 
 ## 1. Product Scope & Vision
@@ -15,15 +17,13 @@ These are the finalized requirements and configuration options decided during th
 
 
 ## 3. Architecture & Tech Specs
-- **Tech Stack**: Next.js (App Router, SSG export-friendly).
+- **Tech Stack**: Vite + React SPA on GitHub Pages, with build-time static metadata generated for catalog part routes.
 - **Utility Libraries**: Fuse.js (for client-side fuzzy-searching of part numbers) and PapaParse (for CSV import/export parsing).
 - **User Authentication**: Client-side storage (LocalStorage/IndexedDB) only. No registration/login required for basic usage or local BOM lists. Auth is deferred for future cloud-sharing or brokerage phases.
-- **Styling**: Vanilla CSS. Clean, high-contrast light-mode theme mimicking the high-information-density layouts of McMaster-Carr and Octopart. No external UI component libraries.
+- **Styling**: Tailwind CSS with Radix/shadcn components and the existing high-density light-mode design system.
 
 
 ## 4. User Experience & Flows
 - **Search & Decode Flow**: Single-page utility/widget flow for the prototype. Search, decoding, spec display, and supplier links all happen in-place on the homepage to validate the core loop (decode → specs → links) quickly.
 - **BOM View**: A dedicated tab/view on the main screen. Toggling between the "Search/Decoder" view and a full-page "BOM List" table. In the BOM view, users can accumulate parts, edit quantities, see total estimated costs, and upload/export CSV files.
-- **Post-Prototype Migration**: Plan to migrate to a fully routable, indexable path structure (e.g. `/parts/[part-number]`) to support programmatic SEO once the prototype loop is validated.
-
-
+- **Part Routes**: Routable `/parts/:partNumber` pages and build-time static metadata are implemented; sitemap inclusion remains gated by catalog validity.

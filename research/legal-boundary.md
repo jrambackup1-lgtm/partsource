@@ -1,6 +1,8 @@
 # PartSource Legal and Operational Boundary
 
-**Status:** MP-1.5 boundary memo, subordinate to `research/product-contract.md`
+> **LEGACY IMPLEMENTATION AND LEGAL RESEARCH.** Preserve current-runtime observations and source notes. BOM, supplier-handoff, account, phase, and deployment assumptions do not define current product scope. Revalidate before operational use.
+
+**Status:** Historical memo; subordinate to `research/product-contract.md`
 
 **Effective:** 2026-07-13
 

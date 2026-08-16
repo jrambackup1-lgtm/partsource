@@ -1,5 +1,7 @@
 # Business & Build Plan — partsource.io
 
+> **HISTORICAL — SUPERSEDED PRODUCT DIRECTION.** Preserved as business research only. It does not define the current product, monetization, architecture, or roadmap. See `product-contract.md`.
+
 This document consolidates the business model, brand architecture, and phase rollout strategy for the mechanical hardware sourcing tool, **partsource.io**.
 
 ---
@@ -78,6 +80,8 @@ Runs independently                 Benefits from PartSource's traffic
 ---
 
 ## 5. Build Phases
+
+Implementation correction (2026-07-11): Phase 0 is complete in Vite/React, not Next.js. The current MVP is the trusted static catalog/search/BOM/export/quote-lead tool; backend commerce remains demand-gated. The diagram below is retained as the original business phasing.
 
 ```
 ┌────────────────────────────────┐

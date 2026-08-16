@@ -1,5 +1,7 @@
 # Customer & Vendor Insights — partsource.io
 
+> **HISTORICAL CUSTOMER AND VENDOR RESEARCH.** Preserve evidence and quotes. Affiliate, supplier, procurement, and product-direction conclusions do not control the current product.
+
 This document compiles verified customer pain points, the affiliate marketing landscape, and critical corrections to common industry assumptions.
 
 ---

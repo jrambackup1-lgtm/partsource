@@ -14,10 +14,20 @@ Examples:
 
 - `screws` → Screws list.
 - `socket head screws` → Socket-head screw list.
-- `countersunk screws` → Countersunk screw list.
-- `M6 stainless socket head screws` → Socket-head screw list with matching filters.
+- `countersunk socket screws` → Countersunk socket screw list.
+- `M6 A2 stainless socket head cap screws` → Socket-head screw list filtered by M6 and A2 stainless.
+- Broad `stainless` alone stays unsupported; it does not become A2.
+- Broad `button head` or `countersunk` stays unsupported; it does not prove internal-hex drive.
 
 The category hierarchy, family, active filters, and result list stay visible.
+
+## Product surface
+
+- Home starts search and catalog browsing. It is not a dashboard.
+- Catalog shows category/family context, typed constraints, family-specific facets, and an aligned technical table.
+- Explicit selection opens contextual detail without losing the family list.
+- Concise source state is visible. Claim-level evidence is available on request. Raw traces are diagnostics.
+- Synthetic catalog status remains visible on every primary surface.
 
 ## Exact ID
 
@@ -48,6 +58,15 @@ PartSource uses:
 - fail-closed states.
 
 Runtime behavior is deterministic. No AI or agents run in the product.
+
+The application release and catalog release have separate identities. The application exposes closed release metadata (`sourceSha`, `builtAt`, and its artifact manifest); the Catalog UI separately exposes the catalog `releaseId` and finalized SHA-256 digest. Local candidate verification is not a claim that production has been deployed.
+
+## Evidence status
+
+- The active package is synthetic and remains visibly labelled synthetic.
+- The lawful pilot is an aggregate-only, permission-attested schema/audit proxy. No real family has completed mechanical review, exact-digest publication approval, or publication.
+- Automated engine and browser scenarios are proxy evidence only. No external practicing engineer has validated usability or repeated value; that human gate is open.
+- Workspace/BOM is **DEFERRED** and has no implementation or product authority. Reconsideration requires real-family and direct-engineer evidence plus an explicit reviewed change to `research/product-contract.md`.
 
 ## Fail-closed behavior
 

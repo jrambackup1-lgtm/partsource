@@ -1,8 +1,10 @@
 # PartSource competitive matrix
 
+> **HISTORICAL COMPETITIVE RESEARCH.** Preserve source comparisons. Old PartSource capability, phase, BOM, supplier-handoff, and roadmap cells are not current product claims or plans.
+
 **Packet:** MP-1.7
 **Evidence snapshot:** 2026-07-13
-**Authority:** This document is subordinate to `research/product-contract.md`. If this matrix conflicts with that contract, the contract wins.
+**Authority:** Historical evidence only. `research/product-contract.md` controls current product claims.
 
 This is a task comparison, not a claim that similarly named features have equivalent scope, evidence quality, permissions, or commercial terms. It uses current official public pages only. Account-only behavior was not tested, no accounts were created, and no purchase flow was completed.
 
@@ -161,7 +163,7 @@ All competitor sources below are official public pages. Retrieved: 2026-07-13.
 ## Internal authority sources
 
 - [P1 — Authoritative product contract](product-contract.md) — current authority read 2026-07-13.
-- [P2 — Master plan](master-plan.md) — phase ownership read 2026-07-13.
+- [P2 — Archived master plan](archive/paused-2026-07-31/master-plan.md) — historical phase ownership read 2026-07-13.
 
 ## Research limitation
 

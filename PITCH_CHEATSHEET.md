@@ -1,5 +1,7 @@
 # Pitch Cheat Sheet — partsource.io
 
+> **HISTORICAL — SUPERSEDED PITCH.** Preserve as early positioning history. Do not use its equivalent-finder, decoder, brokerage, pSEO, AI, or implementation claims. See `research/product-contract.md`.
+
 ## 1. Executive Summary & Pitch Details
 
 * **Core Vision**: "Octopart for Mechanical Hardware." A unified sourcing search engine starting with standard fasteners (screws, bolts, nuts, washers, pins) to find equivalents, bypass McMaster markups, and resolve procurement blocks.

@@ -24,11 +24,11 @@ Do not ship fake commerce, fake admin, fake tracking, fake compliance, or unveri
 
 - Frontend is Vite/React, not Next/SSG.
 - Production `base` is `/partsource/`.
-- Public routes include parts/search/BOM/admin/widget flows.
+- Public routes include search, part, BOM, reference, and widget flows; public admin is removed.
 - BOM, orders, and quote-like state are browser-local only.
-- `/admin` is client-side and unauthenticated.
-- Live scraper exists as a public Python service.
-- Current live scrape can return `403`/estimated data while UI still presents supplier-like results.
+- No auth, server database, checkout, orders, or public admin exists in the MVP.
+- A legacy Python scraper remains in the repository but is disabled in the production UI.
+- Production supplier rows are catalog/estimated and link out for buyer verification.
 - Sitemap generator can produce hundreds of URLs, but tracked sitemap is stale.
 
 ## Inferences
@@ -83,25 +83,25 @@ Do not ship fake commerce, fake admin, fake tracking, fake compliance, or unveri
 - [x] Centralize part identity resolution.
   - Success: exact, suggested, decoded, and unknown states are explicit and reused by Home/Header/PartDetail.
 
-- [ ] Tighten fuzzy matching thresholds.
+- [x] Tighten fuzzy matching thresholds.
   - Success: unknown or low-confidence query never silently maps to the wrong SKU.
 
-- [ ] Version and validate local persisted BOM data.
+- [x] Version and validate local persisted BOM data.
   - Success: bad/stale local JSON cannot crash or corrupt BOM totals.
 
-- [ ] Replace index-based BOM/order identity with stable IDs.
+- [x] Replace index-based BOM/order identity with stable IDs.
   - Success: delete/update/reorder cannot mutate the wrong line item.
 
-- [ ] Move BOM totals into pure shared functions with tests.
+- [x] Move BOM totals into pure shared functions with tests.
   - Success: pricing, quantities, multipliers, and export totals have deterministic unit coverage.
 
-- [ ] Make CSV/PDF/export the primary conversion path.
+- [x] Make CSV/PDF/export the primary conversion path.
   - Success: buyer can complete useful work without fake checkout.
 
-- [ ] Add browser tests for launch-critical flows.
+- [x] Add browser tests for launch-critical flows.
   - Success: tests cover search, part page, BOM add/edit/export, and bad-query handling.
 
-- [ ] Make CI run typecheck/lint/build/tests/browser smoke.
+- [x] Make CI run typecheck/lint/build/tests/browser smoke.
   - Success: main branch cannot pass with TypeScript or launch-flow breakage.
 
 ## P2 Checklist: Publishing And Operations
@@ -111,16 +111,16 @@ Do not ship fake commerce, fake admin, fake tracking, fake compliance, or unveri
   - Decision: GitHub Pages at `https://jrambackup1-lgtm.github.io/partsource/`
     remains canonical. `partsource.io` is deferred until purchased and configured.
 
-- [ ] Generate static metadata per part page where possible.
+- [x] Generate static metadata per part page where possible.
   - Success: crawlers receive canonical title/description/schema without relying only on client runtime.
 
-- [ ] Add lightweight production monitoring.
+- [x] Add lightweight production monitoring.
   - Success: uptime, build status, and broken route checks are visible.
 
-- [ ] Write runbook.
+- [x] Write runbook.
   - Success: new owner can deploy, regenerate sitemap, verify core flows, and rollback.
 
-- [ ] Reconcile research docs with implementation state.
+- [x] Reconcile research docs with implementation state.
   - Success: checklist/docs stop claiming browser tests, Next, auth, or live APIs that do not exist.
 
 ## Demand-Gated Backend Checklist

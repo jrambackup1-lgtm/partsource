@@ -1,5 +1,7 @@
 # PartSource Production Runbook
 
+> **LEGACY DEPLOYED-RUNTIME RUNBOOK.** This documents the currently deployed app and its old smoke routes. It is operational evidence, not current product authority. Replace direct-part and BOM smoke checks when the progressive catalog runtime ships.
+
 Canonical site: `https://jrambackup1-lgtm.github.io/partsource/`
 Canonical deploy branch: `master`
 Owner: repository owner/maintainer. The person initiating or approving a deploy owns its verification and evidence.

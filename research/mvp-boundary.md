@@ -1,8 +1,10 @@
 # PartSource MVP Boundary
 
-**Status:** Target MVP supporting contract
+**Status:** Historical phase-mapping input
 
-**Authority:** This is a supporting contract subordinate to `research/product-contract.md`. If they conflict, the product contract wins. The current shipped state is evidence, not the target launch promise.
+> **HISTORICAL — SUPERSEDED MVP DIRECTION.** Preserve phase and implementation evidence. BOM, supplier-handoff, quote, and phase-roadmap content below does not control current product scope.
+
+**Authority:** Historical evidence only. `research/product-contract.md` controls current scope.
 
 ## Target MVP capabilities
 

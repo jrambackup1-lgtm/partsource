@@ -1,6 +1,6 @@
 ---
-name: PartsSource Design System
-description: Modern SaaS Design System for Mechanical Sourcing Platform
+name: PartSource Design System
+description: Design system for a progressive mechanical-component catalog
 colors:
   primary: "#0f172a"
   bg-page: "#f8fafc"
@@ -50,13 +50,13 @@ components:
     rounded: "{rounded.lg}"
 ---
 
-# Design System: PartsSource
+# Design System: PartSource
 
 ## 1. Overview
 
 **Creative North Star: "The Mechanical Blueprint Vault"**
 
-PartsSource uses a clean, high-density, precise visual layout. The visual architecture is inspired by premium modern engineering software: clean lines, generous data densities, clear hierarchies, and subtle micro-motions. It rejects the stereotypical dark-hacker glowing grid tropes in favor of professional web standards tailored for engineers and procurement panels.
+PartSource uses a clean, high-density, precise visual layout. The interface keeps category hierarchy, family context, active filters, and result lists visible. It rejects stereotypical dark-hacker styling in favor of professional engineering-software patterns.
 
 **Key Characteristics:**
 * Clean slate-50 and white page backgrounds to establish clarity.
@@ -73,12 +73,12 @@ The color palette uses clean slate neutrals combined with high-contrast text and
 
 ### Neutral
 * **Pure White** (#ffffff): Card surfaces and active data rows.
-* **Slate Page** (#f8fafc): Background canvas of all dashboard views.
+* **Slate Page** (#f8fafc): Background canvas of catalog views.
 * **Slate Subtle** (#f1f5f9): Inactive panels, tab containers, and header panels.
 * **Slate Border** (#e2e8f0): Thin boundary dividers and card outline limits.
 
 ### Named Rules
-**The Rarity of Accent Rule.** The primary accent blue (#0284c7) is reserved solely for focus borders, matching badge details, and visual selection markers. It must never cover more than 10% of any layout surface.
+**The Rarity of Accent Rule.** The primary accent blue (#0284c7) is reserved for focus borders, active filters, exact-match highlights, and selection markers. It must never cover more than 10% of any layout surface.
 
 ## 3. Typography
 
@@ -86,13 +86,13 @@ The color palette uses clean slate neutrals combined with high-contrast text and
 **Body Font:** Inter (with system-ui fallback)
 **Label/Mono Font:** Consolas (with Monaco fallback)
 
-**Character:** Highly legible, clean grotesque sans-serif for reading bulk specs, with monospace elements reserved purely for technical identifiers (part numbers, dimensions, and prices).
+**Character:** Highly legible, clean grotesque sans-serif for reading technical fields, with monospace elements reserved for identifiers and dimensions.
 
 ### Hierarchy
 * **Display** (700, 30px, 1.25): App headers, panel titles.
 * **Headline** (600, 20px, 1.3): Section headers, modal drawer titles.
 * **Body** (400, 14px, 1.5): Spec descriptions, tabular items, helper text.
-* **Label** (500, 12px, 0.05em tracking): Monospace part numbers, unit prices, date markers.
+* **Label** (500, 12px, 0.05em tracking): Monospace identifiers, dimensions, and provenance markers.
 
 ## 4. Elevation
 
@@ -124,12 +124,12 @@ The visual layout is flat and structured, using background color tints and thin 
 ## 6. Do's and Don'ts
 
 ### Do
-* **Do** use uppercase monospace text purely for part numbers, cost fields, and registry IDs.
+* **Do** use uppercase monospace text for identifiers and registry IDs.
 * **Do** use distinct background tints to highlight table sections.
 * **Do** apply `active:scale-[0.98]` transitions on buttons to provide tactile feedback.
 
 ### Don't
-* **Don't** use neon-cyan linear gradients or wireframe grid patterns behind dashboards.
+* **Don't** use neon-cyan linear gradients or wireframe grid patterns behind catalog views.
 * **Don't** add arbitrary absolute crosshair `+` signs to container corners.
 * **Don't** place mock system tags like `[SYS-01]` or `[notice]` in text headers.
 * **Don't** combine a solid card border with heavy, wide box-shadows.

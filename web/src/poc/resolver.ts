@@ -19,7 +19,7 @@ export type ResolutionTrace = {
 export type Resolution = { state: ResolverState; query: string; normalizedQuery: string; familyId?: FamilyId; filters: Filter[]; records: CatalogRecord[]; highlightedRecordId?: string; selectedRecordId?: string; detailOpen: boolean; conflicts: Partial<Record<FilterField, Array<string | number>>>; unsupportedTerms: string[]; mappingEvidence: string[]; rejectedFields?: string[]; trace: ResolutionTrace };
 export type ResolveOptions = { selectedRecordId?: string };
 
-const aliases: Array<[FamilyId, string[]]> = [['shcs', ['socket head cap screw', 'socket head screws', 'socket head screw']], ['bhss', ['button head socket screw', 'button head screws', 'button head screw']], ['css', ['countersunk socket screw', 'countersunk screws', 'countersunk screw']]];
+const aliases: Array<[FamilyId, string[]]> = [['shcs', ['socket head cap screw', 'socket head screws', 'socket head screw']], ['bhss', ['button head socket screw']], ['css', ['countersunk socket screw']]];
 const familyOrder: FamilyId[] = ['shcs', 'bhss', 'css'];
 const materialOrder = ['a2_stainless', 'alloy_steel'];
 const filterOrder: FilterField[] = ['familyId', 'nominalDiameterMm', 'pitchMm', 'lengthMm', 'material', 'finish'];
@@ -81,7 +81,7 @@ export function resolveQuery(bundle: PocBundle, query: string, options: ResolveO
   consume(/\bm(4|5|6|8)\b/g, match => add((output.conflicts.nominalDiameterMm ??= []), Number(match[1])));
   consume(/\b(?:pitch\s+)?(0\.7|0\.8|1(?:\.0)?|1\.25)\s+mm\b/g, match => add((output.conflicts.pitchMm ??= []), Number(match[1])));
   consume(/\b(12|16|20|25|30|40)\s+mm\b/g, match => add((output.conflicts.lengthMm ??= []), Number(match[1])));
-  for (const [value, expression] of [['a2_stainless', /\ba2\s+stainless\b|\bstainless\b|\ba2\b/g], ['alloy_steel', /\balloy\s+steel\b/g], ['passivated', /\bpassivated\b/g], ['black_oxide', /\bblack\s+oxide\b/g]] as const) consume(expression, () => add((output.conflicts[value === 'passivated' || value === 'black_oxide' ? 'finish' : 'material'] ??= []), value));
+  for (const [value, expression] of [['a2_stainless', /\ba2\s+stainless\b/g], ['alloy_steel', /\balloy\s+steel\b/g], ['passivated', /\bpassivated\b/g], ['black_oxide', /\bblack\s+oxide\b/g]] as const) consume(expression, () => add((output.conflicts[value === 'passivated' || value === 'black_oxide' ? 'finish' : 'material'] ??= []), value));
   output.unsupportedTerms = rest.trim().split(/\s+/).filter(Boolean);
   for (const field of filterOrder) {
     const values = output.conflicts[field];

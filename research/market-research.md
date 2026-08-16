@@ -1,5 +1,7 @@
 # Market Research & Valuations — partsource.io
 
+> **HISTORICAL MARKET RESEARCH.** Preserve cited market evidence. Old product positioning and addressable-market claims do not define the current product. See `product-contract.md`.
+
 This document consolidates verified market sizing data (TAM), comparable manufacturing business models, and the venture capital landscape.
 
 ---

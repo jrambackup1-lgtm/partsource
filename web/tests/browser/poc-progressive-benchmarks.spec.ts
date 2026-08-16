@@ -5,7 +5,8 @@ async function search(page: import('@playwright/test').Page, query: string) { aw
 test('B01–B07 broad, family, typed, AND, and empty catalog behavior', async ({ page }) => {
   await search(page, 'screws'); await expect(page.getByText('30 matching configurations')).toBeVisible();
   await search(page, 'countersunk screws'); await expect(page.getByText('Screws / Hex-socket screws / Countersunk socket screws')).toBeVisible(); await expect(page.locator('.poc-row')).toHaveCount(10);
-  await search(page, 'M6 stainless socket head screws'); await expect(page.locator('.poc-row')).toHaveCount(2);
+  await search(page, 'M6 A2 stainless socket head screws'); await expect(page.locator('.poc-row')).toHaveCount(2);
+  await search(page, 'M6 stainless socket head screws'); await expect(page.getByRole('heading', { name: 'Unsupported query terms' })).toBeVisible();
   await search(page, 'M8 30 mm black oxide button head screws'); await expect(page.locator('.poc-row')).toHaveCount(1);
   await search(page, 'M4 40 mm socket head screws'); await expect(page.getByText('No synthetic configuration matches this exact AND filter combination.')).toBeVisible();
 });

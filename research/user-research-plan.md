@@ -1,6 +1,8 @@
 # PartSource MP-1.6 Primary Research Readiness Kit
 
-**Status:** Readiness kit complete; MP-2.10 execution not started
+> **HISTORICAL — INACTIVE RESEARCH PROTOCOL.** Preserve the method and evidence rules. Its old detail, supplier-handoff, BOM, export, monetization, and phase tasks are not the current product test plan.
+
+**Status:** Historical — execution not started
 
 **Current evidence:** 0/12 qualifying moderated sessions; 0/12 unaided passes; decisions pending
 

@@ -1,0 +1,4069 @@
+{
+  "answer_key_policy": {
+    "false_unique_definition": "Actual unique identity or unique selection when the frozen expected axis is not unique.",
+    "safe_default": "abstain",
+    "source_backed_limit": "Observed input/mapping composition only; no row is declared mechanically approved or selectable.",
+    "unresolved_items": "Score only the required safe state; do not score an unapproved engineering family/configuration answer."
+  },
+  "cases": [
+    {
+      "case_class": "namespaced_exact_id",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-72398d43f4fe416ae545"
+      },
+      "id": "EXACT-001",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "90035A110"
+        },
+        "intent": "exact_identifier",
+        "query": "90035A110",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "socket_head_cap_screws",
+        "observed_missing_import_fields": [
+          "finish"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "90035A110",
+        "target_key": "candidate-cfg-72398d43f4fe416ae545"
+      }
+    },
+    {
+      "case_class": "namespaced_exact_id",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-526e824a5b7d400fbcc1"
+      },
+      "id": "EXACT-002",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "90327A129"
+        },
+        "intent": "exact_identifier",
+        "query": "90327A129",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "socket_head_cap_screws",
+        "observed_missing_import_fields": [
+          "finish"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "90327A129",
+        "target_key": "candidate-cfg-526e824a5b7d400fbcc1"
+      }
+    },
+    {
+      "case_class": "namespaced_exact_id",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-bb4653ecc203716aec12"
+      },
+      "id": "EXACT-003",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "91290A042"
+        },
+        "intent": "exact_identifier",
+        "query": "91290A042",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "socket_head_cap_screws",
+        "observed_missing_import_fields": [
+          "finish"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "91290A042",
+        "target_key": "candidate-cfg-bb4653ecc203716aec12"
+      }
+    },
+    {
+      "case_class": "namespaced_exact_id",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-c26a9db1effd99a2cd6c"
+      },
+      "id": "EXACT-004",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "91290A556"
+        },
+        "intent": "exact_identifier",
+        "query": "91290A556",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "socket_head_cap_screws",
+        "observed_missing_import_fields": [
+          "finish"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "91290A556",
+        "target_key": "candidate-cfg-c26a9db1effd99a2cd6c"
+      }
+    },
+    {
+      "case_class": "namespaced_exact_id",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-8ed9b7baa2f8e692dc06"
+      },
+      "id": "EXACT-005",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "91292A335"
+        },
+        "intent": "exact_identifier",
+        "query": "91292A335",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "socket_head_cap_screws",
+        "observed_missing_import_fields": [
+          "finish"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "91292A335",
+        "target_key": "candidate-cfg-8ed9b7baa2f8e692dc06"
+      }
+    },
+    {
+      "case_class": "namespaced_exact_id",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-026f811ef4e79cd4387d"
+      },
+      "id": "EXACT-006",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "92290A270"
+        },
+        "intent": "exact_identifier",
+        "query": "92290A270",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "socket_head_cap_screws",
+        "observed_missing_import_fields": [
+          "finish"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "92290A270",
+        "target_key": "candidate-cfg-026f811ef4e79cd4387d"
+      }
+    },
+    {
+      "case_class": "namespaced_exact_id",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-9fb66d2e94e7d968486c"
+      },
+      "id": "EXACT-007",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "93235A352"
+        },
+        "intent": "exact_identifier",
+        "query": "93235A352",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "socket_head_cap_screws",
+        "observed_missing_import_fields": [
+          "finish",
+          "standard"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "93235A352",
+        "target_key": "candidate-cfg-9fb66d2e94e7d968486c"
+      }
+    },
+    {
+      "case_class": "namespaced_exact_id",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-6566bf8c4c506b3a3ac6"
+      },
+      "id": "EXACT-008",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "99477A149"
+        },
+        "intent": "exact_identifier",
+        "query": "99477A149",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "socket_head_cap_screws",
+        "observed_missing_import_fields": [
+          "finish"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "99477A149",
+        "target_key": "candidate-cfg-6566bf8c4c506b3a3ac6"
+      }
+    },
+    {
+      "case_class": "namespaced_exact_id",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-460e4e825e746c25f878"
+      },
+      "id": "EXACT-009",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "90943A111"
+        },
+        "intent": "exact_identifier",
+        "query": "90943A111",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "hex_socket_button_head_screws",
+        "observed_missing_import_fields": [
+          "finish"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "90943A111",
+        "target_key": "candidate-cfg-460e4e825e746c25f878"
+      }
+    },
+    {
+      "case_class": "namespaced_exact_id",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-48be5f54326a0938b121"
+      },
+      "id": "EXACT-010",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "91239A455"
+        },
+        "intent": "exact_identifier",
+        "query": "91239A455",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "hex_socket_button_head_screws",
+        "observed_missing_import_fields": [
+          "finish"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "91239A455",
+        "target_key": "candidate-cfg-48be5f54326a0938b121"
+      }
+    },
+    {
+      "case_class": "namespaced_exact_id",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-8c1134f038bc4401af00"
+      },
+      "id": "EXACT-011",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "91306A729"
+        },
+        "intent": "exact_identifier",
+        "query": "91306A729",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "hex_socket_button_head_screws",
+        "observed_missing_import_fields": [
+          "finish"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "91306A729",
+        "target_key": "candidate-cfg-8c1134f038bc4401af00"
+      }
+    },
+    {
+      "case_class": "namespaced_exact_id",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-60009b79eeba11667adf"
+      },
+      "id": "EXACT-012",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "91352A171"
+        },
+        "intent": "exact_identifier",
+        "query": "91352A171",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "hex_socket_button_head_screws",
+        "observed_missing_import_fields": [
+          "finish"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "91352A171",
+        "target_key": "candidate-cfg-60009b79eeba11667adf"
+      }
+    },
+    {
+      "case_class": "namespaced_exact_id",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-ccd4366429f53dab1582"
+      },
+      "id": "EXACT-013",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "92095A334"
+        },
+        "intent": "exact_identifier",
+        "query": "92095A334",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "hex_socket_button_head_screws",
+        "observed_missing_import_fields": [
+          "finish"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "92095A334",
+        "target_key": "candidate-cfg-ccd4366429f53dab1582"
+      }
+    },
+    {
+      "case_class": "namespaced_exact_id",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-bd2f36523b6651afa329"
+      },
+      "id": "EXACT-014",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "94500A226"
+        },
+        "intent": "exact_identifier",
+        "query": "94500A226",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "hex_socket_button_head_screws",
+        "observed_missing_import_fields": [],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "94500A226",
+        "target_key": "candidate-cfg-bd2f36523b6651afa329"
+      }
+    },
+    {
+      "case_class": "namespaced_exact_id",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-e8424d3aaf25e4e953fd"
+      },
+      "id": "EXACT-015",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "95942A111"
+        },
+        "intent": "exact_identifier",
+        "query": "95942A111",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "hex_socket_button_head_screws",
+        "observed_missing_import_fields": [
+          "finish",
+          "standard"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "95942A111",
+        "target_key": "candidate-cfg-e8424d3aaf25e4e953fd"
+      }
+    },
+    {
+      "case_class": "namespaced_exact_id",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-d2282bbf03c0870b691d"
+      },
+      "id": "EXACT-016",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "97763A826"
+        },
+        "intent": "exact_identifier",
+        "query": "97763A826",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "hex_socket_button_head_screws",
+        "observed_missing_import_fields": [
+          "finish"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "97763A826",
+        "target_key": "candidate-cfg-d2282bbf03c0870b691d"
+      }
+    },
+    {
+      "case_class": "namespaced_exact_id",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-e0892b8ef1dcc88cc257"
+      },
+      "id": "EXACT-017",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "90116A001"
+        },
+        "intent": "exact_identifier",
+        "query": "90116A001",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "pan_head_machine_screws",
+        "observed_missing_import_fields": [],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "90116A001",
+        "target_key": "candidate-cfg-e0892b8ef1dcc88cc257"
+      }
+    },
+    {
+      "case_class": "namespaced_exact_id",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-b04dd7c3f5a476aa4671"
+      },
+      "id": "EXACT-018",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "90353A177"
+        },
+        "intent": "exact_identifier",
+        "query": "90353A177",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "pan_head_machine_screws",
+        "observed_missing_import_fields": [
+          "finish"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "90353A177",
+        "target_key": "candidate-cfg-b04dd7c3f5a476aa4671"
+      }
+    },
+    {
+      "case_class": "namespaced_exact_id",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-342c3e65150c9049af0b"
+      },
+      "id": "EXACT-019",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "91200A203"
+        },
+        "intent": "exact_identifier",
+        "query": "91200A203",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "pan_head_machine_screws",
+        "observed_missing_import_fields": [],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "91200A203",
+        "target_key": "candidate-cfg-342c3e65150c9049af0b"
+      }
+    },
+    {
+      "case_class": "namespaced_exact_id",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-3547243e6d89c038dad4"
+      },
+      "id": "EXACT-020",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "92005A033"
+        },
+        "intent": "exact_identifier",
+        "query": "92005A033",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "pan_head_machine_screws",
+        "observed_missing_import_fields": [
+          "finish"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "92005A033",
+        "target_key": "candidate-cfg-3547243e6d89c038dad4"
+      }
+    },
+    {
+      "case_class": "namespaced_exact_id",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-f21ff14c507fbaaa2c6e"
+      },
+      "id": "EXACT-021",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "92492A712"
+        },
+        "intent": "exact_identifier",
+        "query": "92492A712",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "pan_head_machine_screws",
+        "observed_missing_import_fields": [
+          "finish",
+          "standard"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "92492A712",
+        "target_key": "candidate-cfg-f21ff14c507fbaaa2c6e"
+      }
+    },
+    {
+      "case_class": "namespaced_exact_id",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-e2c86c27bc6dd29ca4ef"
+      },
+      "id": "EXACT-022",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "93627A713"
+        },
+        "intent": "exact_identifier",
+        "query": "93627A713",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "pan_head_machine_screws",
+        "observed_missing_import_fields": [],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "93627A713",
+        "target_key": "candidate-cfg-e2c86c27bc6dd29ca4ef"
+      }
+    },
+    {
+      "case_class": "namespaced_exact_id",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-d934365cf0aea8e43821"
+      },
+      "id": "EXACT-023",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "95836A535"
+        },
+        "intent": "exact_identifier",
+        "query": "95836A535",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "pan_head_machine_screws",
+        "observed_missing_import_fields": [
+          "finish"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "95836A535",
+        "target_key": "candidate-cfg-d934365cf0aea8e43821"
+      }
+    },
+    {
+      "case_class": "namespaced_exact_id",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-2694adf4a430839bb42c"
+      },
+      "id": "EXACT-024",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "97056A131"
+        },
+        "intent": "exact_identifier",
+        "query": "97056A131",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "pan_head_machine_screws",
+        "observed_missing_import_fields": [
+          "finish"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "97056A131",
+        "target_key": "candidate-cfg-2694adf4a430839bb42c"
+      }
+    },
+    {
+      "case_class": "broad_family_text",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "family_not_configuration"
+        ],
+        "response_state": "family_candidates",
+        "selection_state": "candidate_set"
+      },
+      "id": "BROAD-001",
+      "input": {
+        "family_boundary_status": "reviewed_alias_only",
+        "intent": "broad_family_discovery",
+        "query": "M4 screw",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "broad_family_text",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "family_not_configuration"
+        ],
+        "response_state": "family_candidates",
+        "selection_state": "candidate_set"
+      },
+      "id": "BROAD-002",
+      "input": {
+        "family_boundary_status": "reviewed_alias_only",
+        "intent": "broad_family_discovery",
+        "query": "stainless M5 screw, 20 mm long",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "broad_family_text",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "family_not_configuration"
+        ],
+        "response_state": "family_candidates",
+        "selection_state": "candidate_set"
+      },
+      "id": "BROAD-003",
+      "input": {
+        "family_boundary_status": "reviewed_alias_only",
+        "intent": "broad_family_discovery",
+        "query": "Allen screw M4",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "broad_family_text",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "family_not_configuration"
+        ],
+        "response_state": "family_candidates",
+        "selection_state": "candidate_set"
+      },
+      "id": "BROAD-004",
+      "input": {
+        "family_boundary_status": "reviewed_alias_only",
+        "intent": "broad_family_discovery",
+        "query": "M4 socket head screw",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "broad_family_text",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "family_not_configuration"
+        ],
+        "response_state": "family_candidates",
+        "selection_state": "candidate_set"
+      },
+      "id": "BROAD-005",
+      "input": {
+        "family_boundary_status": "reviewed_alias_only",
+        "intent": "broad_family_discovery",
+        "query": "M4 button head screw",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "broad_family_text",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "family_not_configuration"
+        ],
+        "response_state": "family_candidates",
+        "selection_state": "candidate_set"
+      },
+      "id": "BROAD-006",
+      "input": {
+        "family_boundary_status": "reviewed_alias_only",
+        "intent": "broad_family_discovery",
+        "query": "M4 Phillips pan head screw",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "broad_family_text",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "family_not_configuration"
+        ],
+        "response_state": "family_candidates",
+        "selection_state": "candidate_set"
+      },
+      "id": "BROAD-007",
+      "input": {
+        "family_boundary_status": "reviewed_alias_only",
+        "intent": "broad_family_discovery",
+        "query": "metric machine screw",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "broad_family_text",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "family_not_configuration"
+        ],
+        "response_state": "family_candidates",
+        "selection_state": "candidate_set"
+      },
+      "id": "BROAD-008",
+      "input": {
+        "family_boundary_status": "reviewed_alias_only",
+        "intent": "broad_family_discovery",
+        "query": "black oxide socket screw",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "broad_family_text",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "family_not_configuration"
+        ],
+        "response_state": "family_candidates",
+        "selection_state": "candidate_set"
+      },
+      "id": "BROAD-009",
+      "input": {
+        "family_boundary_status": "reviewed_alias_only",
+        "intent": "broad_family_discovery",
+        "query": "DIN 912 screw",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "broad_family_text",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "unresolved_domain_review",
+        "identity_cardinality": "not_evaluated",
+        "reason_codes": [
+          "family_boundary_review_pending"
+        ],
+        "response_state": "clarification_required",
+        "selection_state": "abstain",
+        "unresolved_note": "Mechanical review must decide whether this term denotes a separate family, a facet, or an excluded form."
+      },
+      "id": "BROAD-010",
+      "input": {
+        "family_boundary_status": "unreviewed",
+        "intent": "broad_family_discovery",
+        "query": "low-profile socket screw M4",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "broad_family_text",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "unresolved_domain_review",
+        "identity_cardinality": "not_evaluated",
+        "reason_codes": [
+          "family_boundary_review_pending"
+        ],
+        "response_state": "clarification_required",
+        "selection_state": "abstain",
+        "unresolved_note": "Mechanical review must decide whether this term denotes a separate family, a facet, or an excluded form."
+      },
+      "id": "BROAD-011",
+      "input": {
+        "family_boundary_status": "unreviewed",
+        "intent": "broad_family_discovery",
+        "query": "button head screw with flange",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "broad_family_text",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "unresolved_domain_review",
+        "identity_cardinality": "not_evaluated",
+        "reason_codes": [
+          "family_boundary_review_pending"
+        ],
+        "response_state": "clarification_required",
+        "selection_state": "abstain",
+        "unresolved_note": "Mechanical review must decide whether this term denotes a separate family, a facet, or an excluded form."
+      },
+      "id": "BROAD-012",
+      "input": {
+        "family_boundary_status": "unreviewed",
+        "intent": "broad_family_discovery",
+        "query": "pan head screw with captive washer",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "constrained_metric_input",
+      "evidence_basis": "source_backed_composition",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "candidate_contract_only",
+          "mechanical_family_review_pending"
+        ],
+        "response_state": "constrained_candidates",
+        "selection_state": "candidate_set"
+      },
+      "id": "METRIC-001",
+      "input": {
+        "constraints": {
+          "family": [
+            "socket_head_cap_screws"
+          ],
+          "length": [
+            {
+              "supplied": "8 mm"
+            }
+          ],
+          "material_supplied": [
+            "A286 Stainless Steel"
+          ],
+          "pitch": [
+            {
+              "unit": "mm",
+              "value": "0.5 mm"
+            }
+          ],
+          "thread_designation": [
+            "M3"
+          ]
+        },
+        "intent": "constrained_discovery",
+        "query": "M3 x 0.5 mm x 8 mm socket head cap screw, A286 Stainless Steel",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "socket_head_cap_screws",
+        "observed_missing_import_fields": [
+          "finish"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "90035A111",
+        "target_key": "candidate-cfg-14857b213c464cde372b"
+      }
+    },
+    {
+      "case_class": "constrained_metric_input",
+      "evidence_basis": "source_backed_composition",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "candidate_contract_only",
+          "mechanical_family_review_pending"
+        ],
+        "response_state": "constrained_candidates",
+        "selection_state": "candidate_set"
+      },
+      "id": "METRIC-002",
+      "input": {
+        "constraints": {
+          "family": [
+            "socket_head_cap_screws"
+          ],
+          "length": [
+            {
+              "supplied": "35 mm"
+            }
+          ],
+          "material_supplied": [
+            "316 Stainless Steel"
+          ],
+          "pitch": [
+            {
+              "unit": "mm",
+              "value": "1 mm"
+            }
+          ],
+          "thread_designation": [
+            "M6"
+          ]
+        },
+        "intent": "constrained_discovery",
+        "query": "M6 x 1 mm x 35 mm socket head cap screw, 316 Stainless Steel",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "socket_head_cap_screws",
+        "observed_missing_import_fields": [
+          "finish"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "90608A428",
+        "target_key": "candidate-cfg-bdd764dab8f8e7baa129"
+      }
+    },
+    {
+      "case_class": "constrained_metric_input",
+      "evidence_basis": "source_backed_composition",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "candidate_contract_only",
+          "mechanical_family_review_pending"
+        ],
+        "response_state": "constrained_candidates",
+        "selection_state": "candidate_set"
+      },
+      "id": "METRIC-003",
+      "input": {
+        "constraints": {
+          "family": [
+            "socket_head_cap_screws"
+          ],
+          "length": [
+            {
+              "supplied": "170 mm"
+            }
+          ],
+          "material_supplied": [
+            "Black-Oxide Alloy Steel"
+          ],
+          "pitch": [
+            {
+              "unit": "mm",
+              "value": "1.5 mm"
+            }
+          ],
+          "thread_designation": [
+            "M10"
+          ]
+        },
+        "intent": "constrained_discovery",
+        "query": "M10 x 1.5 mm x 170 mm socket head cap screw, Black-Oxide Alloy Steel",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "socket_head_cap_screws",
+        "observed_missing_import_fields": [
+          "finish"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "91290A365",
+        "target_key": "candidate-cfg-e3df393eb257f0aaa24c"
+      }
+    },
+    {
+      "case_class": "constrained_metric_input",
+      "evidence_basis": "source_backed_composition",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "candidate_contract_only",
+          "mechanical_family_review_pending"
+        ],
+        "response_state": "constrained_candidates",
+        "selection_state": "candidate_set"
+      },
+      "id": "METRIC-004",
+      "input": {
+        "constraints": {
+          "family": [
+            "socket_head_cap_screws"
+          ],
+          "length": [
+            {
+              "supplied": "85 mm"
+            }
+          ],
+          "material_supplied": [
+            "18-8 Stainless Steel"
+          ],
+          "pitch": [
+            {
+              "unit": "mm",
+              "value": "0.7 mm"
+            }
+          ],
+          "thread_designation": [
+            "M4"
+          ]
+        },
+        "intent": "constrained_discovery",
+        "query": "M4 x 0.7 mm x 85 mm socket head cap screw, 18-8 Stainless Steel",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "socket_head_cap_screws",
+        "observed_missing_import_fields": [
+          "finish"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "91292A838",
+        "target_key": "candidate-cfg-475f5646160e55dc2d00"
+      }
+    },
+    {
+      "case_class": "constrained_metric_input",
+      "evidence_basis": "source_backed_composition",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "candidate_contract_only",
+          "mechanical_family_review_pending"
+        ],
+        "response_state": "constrained_candidates",
+        "selection_state": "candidate_set"
+      },
+      "id": "METRIC-005",
+      "input": {
+        "constraints": {
+          "family": [
+            "socket_head_cap_screws"
+          ],
+          "length": [
+            {
+              "supplied": "60 mm"
+            }
+          ],
+          "material_supplied": [
+            "18-8 Stainless Steel"
+          ],
+          "pitch": [
+            {
+              "unit": "mm",
+              "value": "1.25 mm"
+            }
+          ],
+          "thread_designation": [
+            "M8"
+          ]
+        },
+        "intent": "constrained_discovery",
+        "query": "M8 x 1.25 mm x 60 mm socket head cap screw, 18-8 Stainless Steel",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "socket_head_cap_screws",
+        "observed_missing_import_fields": [
+          "finish"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "92855A743",
+        "target_key": "candidate-cfg-cece9e29d7803123c3b7"
+      }
+    },
+    {
+      "case_class": "constrained_metric_input",
+      "evidence_basis": "source_backed_composition",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "candidate_contract_only",
+          "mechanical_family_review_pending"
+        ],
+        "response_state": "constrained_candidates",
+        "selection_state": "candidate_set"
+      },
+      "id": "METRIC-006",
+      "input": {
+        "constraints": {
+          "family": [
+            "socket_head_cap_screws"
+          ],
+          "length": [
+            {
+              "supplied": "25 mm"
+            }
+          ],
+          "material_supplied": [
+            "Polypropylene Plastic"
+          ],
+          "pitch": [
+            {
+              "unit": "mm",
+              "value": "1.25 mm"
+            }
+          ],
+          "thread_designation": [
+            "M8"
+          ]
+        },
+        "intent": "constrained_discovery",
+        "query": "M8 x 1.25 mm x 25 mm socket head cap screw, Polypropylene Plastic",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "socket_head_cap_screws",
+        "observed_missing_import_fields": [
+          "finish"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "99477A148",
+        "target_key": "candidate-cfg-4eff0fe853a06c4b4d09"
+      }
+    },
+    {
+      "case_class": "constrained_metric_input",
+      "evidence_basis": "source_backed_composition",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "candidate_contract_only",
+          "mechanical_family_review_pending"
+        ],
+        "response_state": "constrained_candidates",
+        "selection_state": "candidate_set"
+      },
+      "id": "METRIC-007",
+      "input": {
+        "constraints": {
+          "family": [
+            "hex_socket_button_head_screws"
+          ],
+          "length": [
+            {
+              "supplied": "8 mm"
+            }
+          ],
+          "material_supplied": [
+            "316 Stainless Steel"
+          ],
+          "pitch": [
+            {
+              "unit": "mm",
+              "value": "0.35 mm"
+            }
+          ],
+          "thread_designation": [
+            "M3"
+          ]
+        },
+        "intent": "constrained_discovery",
+        "query": "M3 x 0.35 mm x 8 mm hex socket button head screw, 316 Stainless Steel",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "hex_socket_button_head_screws",
+        "observed_missing_import_fields": [
+          "finish"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "90943A112",
+        "target_key": "candidate-cfg-59a0ec80b044d7fbeb15"
+      }
+    },
+    {
+      "case_class": "constrained_metric_input",
+      "evidence_basis": "source_backed_composition",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "candidate_contract_only",
+          "mechanical_family_review_pending"
+        ],
+        "response_state": "constrained_candidates",
+        "selection_state": "candidate_set"
+      },
+      "id": "METRIC-008",
+      "input": {
+        "constraints": {
+          "family": [
+            "hex_socket_button_head_screws"
+          ],
+          "length": [
+            {
+              "supplied": "8 mm"
+            }
+          ],
+          "material_supplied": [
+            "Zinc-Plated Alloy Steel"
+          ],
+          "pitch": [
+            {
+              "unit": "mm",
+              "value": "0.8 mm"
+            }
+          ],
+          "thread_designation": [
+            "M5"
+          ]
+        },
+        "intent": "constrained_discovery",
+        "query": "M5 x 0.8 mm x 8 mm hex socket button head screw, Zinc-Plated Alloy Steel",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "hex_socket_button_head_screws",
+        "observed_missing_import_fields": [
+          "finish"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "91306A665",
+        "target_key": "candidate-cfg-a17d2a70a232609785e5"
+      }
+    },
+    {
+      "case_class": "constrained_metric_input",
+      "evidence_basis": "source_backed_composition",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "candidate_contract_only",
+          "mechanical_family_review_pending"
+        ],
+        "response_state": "constrained_candidates",
+        "selection_state": "candidate_set"
+      },
+      "id": "METRIC-009",
+      "input": {
+        "constraints": {
+          "family": [
+            "hex_socket_button_head_screws"
+          ],
+          "length": [
+            {
+              "supplied": "50 mm"
+            }
+          ],
+          "material_supplied": [
+            "Passivated 18-8 Stainless Steel"
+          ],
+          "pitch": [
+            {
+              "unit": "mm",
+              "value": "0.7 mm"
+            }
+          ],
+          "thread_designation": [
+            "M4"
+          ]
+        },
+        "intent": "constrained_discovery",
+        "query": "M4 x 0.7 mm x 50 mm hex socket button head screw, Passivated 18-8 Stainless Steel",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "hex_socket_button_head_screws",
+        "observed_missing_import_fields": [
+          "finish"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "92095A209",
+        "target_key": "candidate-cfg-78bf2fca6021bf650aa1"
+      }
+    },
+    {
+      "case_class": "constrained_metric_input",
+      "evidence_basis": "source_backed_composition",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "candidate_contract_only",
+          "mechanical_family_review_pending"
+        ],
+        "response_state": "constrained_candidates",
+        "selection_state": "candidate_set"
+      },
+      "id": "METRIC-010",
+      "input": {
+        "constraints": {
+          "family": [
+            "hex_socket_button_head_screws"
+          ],
+          "length": [
+            {
+              "supplied": "16 mm"
+            }
+          ],
+          "material_supplied": [
+            "316 Stainless Steel"
+          ],
+          "pitch": [
+            {
+              "unit": "mm",
+              "value": "0.5 mm"
+            }
+          ],
+          "thread_designation": [
+            "M3"
+          ]
+        },
+        "intent": "constrained_discovery",
+        "query": "M3 x 0.5 mm x 16 mm hex socket button head screw, 316 Stainless Steel",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "hex_socket_button_head_screws",
+        "observed_missing_import_fields": [],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "94500A265",
+        "target_key": "candidate-cfg-a7beaad30ccdc9521b92"
+      }
+    },
+    {
+      "case_class": "constrained_metric_input",
+      "evidence_basis": "source_backed_composition",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "candidate_contract_only",
+          "mechanical_family_review_pending"
+        ],
+        "response_state": "constrained_candidates",
+        "selection_state": "candidate_set"
+      },
+      "id": "METRIC-011",
+      "input": {
+        "constraints": {
+          "family": [
+            "hex_socket_button_head_screws"
+          ],
+          "length": [
+            {
+              "supplied": "16 mm"
+            }
+          ],
+          "material_supplied": [
+            "Black-Oxide 18-8 Stainless Steel"
+          ],
+          "pitch": [
+            {
+              "unit": "mm",
+              "value": "1 mm"
+            }
+          ],
+          "thread_designation": [
+            "M6"
+          ]
+        },
+        "intent": "constrained_discovery",
+        "query": "M6 x 1 mm x 16 mm hex socket button head screw, Black-Oxide 18-8 Stainless Steel",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "hex_socket_button_head_screws",
+        "observed_missing_import_fields": [
+          "finish"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "97763A825",
+        "target_key": "candidate-cfg-bd9a7ffd466ba601cad2"
+      }
+    },
+    {
+      "case_class": "constrained_metric_input",
+      "evidence_basis": "source_backed_composition",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "candidate_contract_only",
+          "mechanical_family_review_pending"
+        ],
+        "response_state": "constrained_candidates",
+        "selection_state": "candidate_set"
+      },
+      "id": "METRIC-012",
+      "input": {
+        "constraints": {
+          "family": [
+            "pan_head_machine_screws"
+          ],
+          "length": [
+            {
+              "supplied": "4 mm"
+            }
+          ],
+          "material_supplied": [
+            "316 Stainless Steel"
+          ],
+          "pitch": [
+            {
+              "unit": "mm",
+              "value": "0.35 mm"
+            }
+          ],
+          "thread_designation": [
+            "M1.6"
+          ]
+        },
+        "intent": "constrained_discovery",
+        "query": "M1.6 x 0.35 mm x 4 mm pan head machine screw, 316 Stainless Steel",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "pan_head_machine_screws",
+        "observed_missing_import_fields": [],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "90116A002",
+        "target_key": "candidate-cfg-8fe46d8d221db1e32050"
+      }
+    },
+    {
+      "case_class": "constrained_metric_input",
+      "evidence_basis": "source_backed_composition",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "candidate_contract_only",
+          "mechanical_family_review_pending"
+        ],
+        "response_state": "constrained_candidates",
+        "selection_state": "candidate_set"
+      },
+      "id": "METRIC-013",
+      "input": {
+        "constraints": {
+          "family": [
+            "pan_head_machine_screws"
+          ],
+          "length": [
+            {
+              "supplied": "16 mm"
+            }
+          ],
+          "material_supplied": [
+            "Brass"
+          ],
+          "pitch": [
+            {
+              "unit": "mm",
+              "value": "1 mm"
+            }
+          ],
+          "thread_designation": [
+            "M6"
+          ]
+        },
+        "intent": "constrained_discovery",
+        "query": "M6 x 1 mm x 16 mm pan head machine screw, Brass",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "pan_head_machine_screws",
+        "observed_missing_import_fields": [
+          "finish"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "90928A385",
+        "target_key": "candidate-cfg-cb1195d2fd2a3ded55c5"
+      }
+    },
+    {
+      "case_class": "constrained_metric_input",
+      "evidence_basis": "source_backed_composition",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "candidate_contract_only",
+          "mechanical_family_review_pending"
+        ],
+        "response_state": "constrained_candidates",
+        "selection_state": "candidate_set"
+      },
+      "id": "METRIC-014",
+      "input": {
+        "constraints": {
+          "family": [
+            "pan_head_machine_screws"
+          ],
+          "length": [
+            {
+              "supplied": "10 mm"
+            }
+          ],
+          "material_supplied": [
+            "Zinc-Plated Steel"
+          ],
+          "pitch": [
+            {
+              "unit": "mm",
+              "value": "1 mm"
+            }
+          ],
+          "thread_designation": [
+            "M6"
+          ]
+        },
+        "intent": "constrained_discovery",
+        "query": "M6 x 1 mm x 10 mm pan head machine screw, Zinc-Plated Steel",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "pan_head_machine_screws",
+        "observed_missing_import_fields": [
+          "finish"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "92005A420",
+        "target_key": "candidate-cfg-303ac470f8d925fbe0d1"
+      }
+    },
+    {
+      "case_class": "constrained_metric_input",
+      "evidence_basis": "source_backed_composition",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "candidate_contract_only",
+          "mechanical_family_review_pending"
+        ],
+        "response_state": "constrained_candidates",
+        "selection_state": "candidate_set"
+      },
+      "id": "METRIC-015",
+      "input": {
+        "constraints": {
+          "family": [
+            "pan_head_machine_screws"
+          ],
+          "length": [
+            {
+              "supplied": "10 mm"
+            }
+          ],
+          "material_supplied": [
+            "PTFE Plastic"
+          ],
+          "pitch": [
+            {
+              "unit": "mm",
+              "value": "1 mm"
+            }
+          ],
+          "thread_designation": [
+            "M6"
+          ]
+        },
+        "intent": "constrained_discovery",
+        "query": "M6 x 1 mm x 10 mm pan head machine screw, PTFE Plastic",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "pan_head_machine_screws",
+        "observed_missing_import_fields": [
+          "finish"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "94701A789",
+        "target_key": "candidate-cfg-ae555fdcca0a90cee56f"
+      }
+    },
+    {
+      "case_class": "constrained_metric_input",
+      "evidence_basis": "source_backed_composition",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "candidate_contract_only",
+          "mechanical_family_review_pending"
+        ],
+        "response_state": "constrained_candidates",
+        "selection_state": "candidate_set"
+      },
+      "id": "METRIC-016",
+      "input": {
+        "constraints": {
+          "family": [
+            "pan_head_machine_screws"
+          ],
+          "length": [
+            {
+              "supplied": "20 mm"
+            }
+          ],
+          "material_supplied": [
+            "18-8 Stainless Steel"
+          ],
+          "pitch": [
+            {
+              "unit": "mm",
+              "value": "1 mm"
+            }
+          ],
+          "thread_designation": [
+            "M6"
+          ]
+        },
+        "intent": "constrained_discovery",
+        "query": "M6 x 1 mm x 20 mm pan head machine screw, 18-8 Stainless Steel",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "pan_head_machine_screws",
+        "observed_missing_import_fields": [
+          "finish"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "97056A130",
+        "target_key": "candidate-cfg-d44eecd8be5a5c931194"
+      }
+    },
+    {
+      "case_class": "partial_input",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "not_evaluated",
+        "reason_codes": [
+          "insufficient_constraints"
+        ],
+        "response_state": "clarification_required",
+        "selection_state": "abstain"
+      },
+      "id": "PARTIAL-001",
+      "input": {
+        "intent": "partial_requirement",
+        "query": "M4",
+        "release_id": "candidate-fastener-poc-r0",
+        "taxonomy_status": "bounded_parser_supported"
+      }
+    },
+    {
+      "case_class": "partial_input",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "not_evaluated",
+        "reason_codes": [
+          "insufficient_constraints"
+        ],
+        "response_state": "clarification_required",
+        "selection_state": "abstain"
+      },
+      "id": "PARTIAL-002",
+      "input": {
+        "intent": "partial_requirement",
+        "query": "stainless screw",
+        "release_id": "candidate-fastener-poc-r0",
+        "taxonomy_status": "bounded_parser_supported"
+      }
+    },
+    {
+      "case_class": "partial_input",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "not_evaluated",
+        "reason_codes": [
+          "insufficient_constraints"
+        ],
+        "response_state": "clarification_required",
+        "selection_state": "abstain"
+      },
+      "id": "PARTIAL-003",
+      "input": {
+        "intent": "partial_requirement",
+        "query": "20 mm long fastener",
+        "release_id": "candidate-fastener-poc-r0",
+        "taxonomy_status": "bounded_parser_supported"
+      }
+    },
+    {
+      "case_class": "partial_input",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "not_evaluated",
+        "reason_codes": [
+          "insufficient_constraints"
+        ],
+        "response_state": "clarification_required",
+        "selection_state": "abstain"
+      },
+      "id": "PARTIAL-004",
+      "input": {
+        "intent": "partial_requirement",
+        "query": "black oxide",
+        "release_id": "candidate-fastener-poc-r0",
+        "taxonomy_status": "bounded_parser_supported"
+      }
+    },
+    {
+      "case_class": "partial_input",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "unresolved_domain_review",
+        "identity_cardinality": "not_evaluated",
+        "reason_codes": [
+          "insufficient_constraints"
+        ],
+        "response_state": "clarification_required",
+        "selection_state": "abstain",
+        "unresolved_note": "The safe response is known, but the family/standard interpretation needs domain review."
+      },
+      "id": "PARTIAL-005",
+      "input": {
+        "intent": "partial_requirement",
+        "query": "DIN 912",
+        "release_id": "candidate-fastener-poc-r0",
+        "taxonomy_status": "domain_review_needed"
+      }
+    },
+    {
+      "case_class": "partial_input",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "unresolved_domain_review",
+        "identity_cardinality": "not_evaluated",
+        "reason_codes": [
+          "insufficient_constraints"
+        ],
+        "response_state": "clarification_required",
+        "selection_state": "abstain",
+        "unresolved_note": "The safe response is known, but the family/standard interpretation needs domain review."
+      },
+      "id": "PARTIAL-006",
+      "input": {
+        "intent": "partial_requirement",
+        "query": "button head",
+        "release_id": "candidate-fastener-poc-r0",
+        "taxonomy_status": "domain_review_needed"
+      }
+    },
+    {
+      "case_class": "partial_input",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "not_evaluated",
+        "reason_codes": [
+          "insufficient_constraints"
+        ],
+        "response_state": "clarification_required",
+        "selection_state": "abstain"
+      },
+      "id": "PARTIAL-007",
+      "input": {
+        "intent": "partial_requirement",
+        "query": "Phillips drive",
+        "release_id": "candidate-fastener-poc-r0",
+        "taxonomy_status": "bounded_parser_supported"
+      }
+    },
+    {
+      "case_class": "partial_input",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "not_evaluated",
+        "reason_codes": [
+          "insufficient_constraints"
+        ],
+        "response_state": "clarification_required",
+        "selection_state": "abstain"
+      },
+      "id": "PARTIAL-008",
+      "input": {
+        "intent": "partial_requirement",
+        "query": "socket screw alloy steel",
+        "release_id": "candidate-fastener-poc-r0",
+        "taxonomy_status": "bounded_parser_supported"
+      }
+    },
+    {
+      "case_class": "partial_input",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "unresolved_domain_review",
+        "identity_cardinality": "not_evaluated",
+        "reason_codes": [
+          "insufficient_constraints"
+        ],
+        "response_state": "clarification_required",
+        "selection_state": "abstain",
+        "unresolved_note": "The safe response is known, but the family/standard interpretation needs domain review."
+      },
+      "id": "PARTIAL-009",
+      "input": {
+        "intent": "partial_requirement",
+        "query": "fine thread machine screw",
+        "release_id": "candidate-fastener-poc-r0",
+        "taxonomy_status": "domain_review_needed"
+      }
+    },
+    {
+      "case_class": "partial_input",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "not_evaluated",
+        "reason_codes": [
+          "insufficient_constraints"
+        ],
+        "response_state": "clarification_required",
+        "selection_state": "abstain"
+      },
+      "id": "PARTIAL-010",
+      "input": {
+        "intent": "partial_requirement",
+        "query": "M5 x 16 mm",
+        "release_id": "candidate-fastener-poc-r0",
+        "taxonomy_status": "bounded_parser_supported"
+      }
+    },
+    {
+      "case_class": "explicit_conflict",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "zero",
+        "reason_codes": [
+          "conflicting_thread_diameter"
+        ],
+        "response_state": "conflict",
+        "selection_state": "abstain"
+      },
+      "id": "CONFLICT-001",
+      "input": {
+        "constraints": {
+          "thread_designation": [
+            "M4",
+            "M5"
+          ]
+        },
+        "intent": "constrained_discovery",
+        "query": "M4 and M5 socket head screw",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "explicit_conflict",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "zero",
+        "reason_codes": [
+          "conflicting_pitch"
+        ],
+        "response_state": "conflict",
+        "selection_state": "abstain"
+      },
+      "id": "CONFLICT-002",
+      "input": {
+        "constraints": {
+          "pitch": [
+            {
+              "unit": "mm",
+              "value": "0.7"
+            },
+            {
+              "unit": "mm",
+              "value": "0.8"
+            }
+          ]
+        },
+        "intent": "constrained_discovery",
+        "query": "M4 x 0.7 and M4 x 0.8",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "explicit_conflict",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "zero",
+        "reason_codes": [
+          "conflicting_length"
+        ],
+        "response_state": "conflict",
+        "selection_state": "abstain"
+      },
+      "id": "CONFLICT-003",
+      "input": {
+        "constraints": {
+          "length": [
+            {
+              "unit": "mm",
+              "value": "12"
+            },
+            {
+              "unit": "mm",
+              "value": "20"
+            }
+          ]
+        },
+        "intent": "constrained_discovery",
+        "query": "M4 x 12 mm and 20 mm long",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "explicit_conflict",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "zero",
+        "reason_codes": [
+          "measurement_system_conflict"
+        ],
+        "response_state": "conflict",
+        "selection_state": "abstain"
+      },
+      "id": "CONFLICT-004",
+      "input": {
+        "constraints": {
+          "measurement_system": [
+            "metric"
+          ],
+          "thread_designation": [
+            "1/4-20"
+          ]
+        },
+        "intent": "constrained_discovery",
+        "query": "metric 1/4-20 screw",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "explicit_conflict",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "zero",
+        "reason_codes": [
+          "conflicting_family"
+        ],
+        "response_state": "conflict",
+        "selection_state": "abstain"
+      },
+      "id": "CONFLICT-005",
+      "input": {
+        "constraints": {
+          "family": [
+            "socket_head_cap_screws",
+            "pan_head_machine_screws"
+          ]
+        },
+        "intent": "constrained_discovery",
+        "query": "socket head and pan head screw",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "explicit_conflict",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "zero",
+        "reason_codes": [
+          "conflicting_drive"
+        ],
+        "response_state": "conflict",
+        "selection_state": "abstain"
+      },
+      "id": "CONFLICT-006",
+      "input": {
+        "constraints": {
+          "drive": [
+            "phillips",
+            "slotted"
+          ]
+        },
+        "intent": "constrained_discovery",
+        "query": "Phillips and slotted drive only",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "explicit_conflict",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "zero",
+        "reason_codes": [
+          "conflicting_material"
+        ],
+        "response_state": "conflict",
+        "selection_state": "abstain"
+      },
+      "id": "CONFLICT-007",
+      "input": {
+        "constraints": {
+          "material": [
+            "stainless_steel",
+            "alloy_steel"
+          ]
+        },
+        "intent": "constrained_discovery",
+        "query": "stainless and alloy steel base material",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "explicit_conflict",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "zero",
+        "reason_codes": [
+          "conflicting_pitch"
+        ],
+        "response_state": "conflict",
+        "selection_state": "abstain"
+      },
+      "id": "CONFLICT-008",
+      "input": {
+        "constraints": {
+          "pitch": [
+            {
+              "unit": "mm",
+              "value": "0.8"
+            },
+            {
+              "unit": "mm",
+              "value": "1"
+            }
+          ]
+        },
+        "intent": "constrained_discovery",
+        "query": "M5 x 0.8 with 1 mm pitch",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "explicit_conflict",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "zero",
+        "reason_codes": [
+          "conflicting_exact_length"
+        ],
+        "response_state": "conflict",
+        "selection_state": "abstain"
+      },
+      "id": "CONFLICT-009",
+      "input": {
+        "constraints": {
+          "equality_mode": [
+            "exact"
+          ],
+          "length": [
+            {
+              "unit": "mm",
+              "value": "10"
+            },
+            {
+              "unit": "in",
+              "value": "3/8"
+            }
+          ]
+        },
+        "intent": "constrained_discovery",
+        "query": "10 mm and 3/8 in exact length",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "explicit_conflict",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "zero",
+        "reason_codes": [
+          "conflicting_finish"
+        ],
+        "response_state": "conflict",
+        "selection_state": "abstain"
+      },
+      "id": "CONFLICT-010",
+      "input": {
+        "constraints": {
+          "finish": [
+            "plain",
+            "zinc_plated"
+          ]
+        },
+        "intent": "constrained_discovery",
+        "query": "plain finish and zinc plated",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "ambiguous_identifier",
+      "contract_fixture": {
+        "legacy_rows": [
+          {
+            "reference_number": "SYN-AMB-001"
+          },
+          {
+            "reference_number": "SYN-AMB-001"
+          }
+        ],
+        "mappings": [
+          {
+            "namespace": "synthetic-a",
+            "release_id": "candidate-fastener-poc-r0",
+            "state": "active",
+            "target_key": "syn-a-001",
+            "value": "SYN-AMB-001"
+          },
+          {
+            "namespace": "synthetic-a",
+            "release_id": "candidate-fastener-poc-r0",
+            "state": "active",
+            "target_key": "syn-b-001",
+            "value": "SYN-AMB-001"
+          }
+        ]
+      },
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "identifier_collision"
+        ],
+        "response_state": "ambiguous_identifier",
+        "selection_state": "abstain"
+      },
+      "id": "AMBIG-001",
+      "input": {
+        "identifier": {
+          "namespace": "synthetic-a",
+          "value": "SYN-AMB-001"
+        },
+        "intent": "exact_identifier",
+        "query": "SYN-AMB-001",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "ambiguous_identifier",
+      "contract_fixture": {
+        "legacy_rows": [
+          {
+            "reference_number": "SYN-AMB-002"
+          },
+          {
+            "reference_number": "SYN-AMB-002"
+          }
+        ],
+        "mappings": [
+          {
+            "namespace": "synthetic-a",
+            "release_id": "candidate-fastener-poc-r0",
+            "state": "active",
+            "target_key": "syn-a-002",
+            "value": "SYN-AMB-002"
+          },
+          {
+            "namespace": "synthetic-a",
+            "release_id": "candidate-fastener-poc-r0",
+            "state": "active",
+            "target_key": "syn-b-002",
+            "value": "SYN-AMB-002"
+          }
+        ]
+      },
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "identifier_collision"
+        ],
+        "response_state": "ambiguous_identifier",
+        "selection_state": "abstain"
+      },
+      "id": "AMBIG-002",
+      "input": {
+        "identifier": {
+          "namespace": "synthetic-a",
+          "value": "SYN-AMB-002"
+        },
+        "intent": "exact_identifier",
+        "query": "SYN-AMB-002",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "ambiguous_identifier",
+      "contract_fixture": {
+        "legacy_rows": [
+          {
+            "reference_number": "SYN-AMB-003"
+          },
+          {
+            "reference_number": "SYN-AMB-003"
+          }
+        ],
+        "mappings": [
+          {
+            "namespace": "synthetic-a",
+            "release_id": "candidate-fastener-poc-r0",
+            "state": "active",
+            "target_key": "syn-a-003",
+            "value": "SYN-AMB-003"
+          },
+          {
+            "namespace": "synthetic-a",
+            "release_id": "candidate-fastener-poc-r0",
+            "state": "active",
+            "target_key": "syn-b-003",
+            "value": "SYN-AMB-003"
+          }
+        ]
+      },
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "identifier_collision"
+        ],
+        "response_state": "ambiguous_identifier",
+        "selection_state": "abstain"
+      },
+      "id": "AMBIG-003",
+      "input": {
+        "identifier": {
+          "namespace": "synthetic-a",
+          "value": "SYN-AMB-003"
+        },
+        "intent": "exact_identifier",
+        "query": "SYN-AMB-003",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "ambiguous_identifier",
+      "contract_fixture": {
+        "legacy_rows": [
+          {
+            "reference_number": "SYN-AMB-004"
+          },
+          {
+            "reference_number": "SYN-AMB-004"
+          }
+        ],
+        "mappings": [
+          {
+            "namespace": "synthetic-a",
+            "release_id": "candidate-fastener-poc-r0",
+            "state": "active",
+            "target_key": "syn-a-004",
+            "value": "SYN-AMB-004"
+          },
+          {
+            "namespace": "synthetic-a",
+            "release_id": "candidate-fastener-poc-r0",
+            "state": "active",
+            "target_key": "syn-b-004",
+            "value": "SYN-AMB-004"
+          }
+        ]
+      },
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "identifier_collision"
+        ],
+        "response_state": "ambiguous_identifier",
+        "selection_state": "abstain"
+      },
+      "id": "AMBIG-004",
+      "input": {
+        "identifier": {
+          "namespace": "synthetic-a",
+          "value": "SYN-AMB-004"
+        },
+        "intent": "exact_identifier",
+        "query": "SYN-AMB-004",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "ambiguous_identifier",
+      "contract_fixture": {
+        "legacy_rows": [
+          {
+            "reference_number": "SYN-AMB-005"
+          },
+          {
+            "reference_number": "SYN-AMB-005"
+          }
+        ],
+        "mappings": [
+          {
+            "namespace": "synthetic-a",
+            "release_id": "candidate-fastener-poc-r0",
+            "state": "active",
+            "target_key": "syn-a-005",
+            "value": "SYN-AMB-005"
+          },
+          {
+            "namespace": "synthetic-a",
+            "release_id": "candidate-fastener-poc-r0",
+            "state": "active",
+            "target_key": "syn-b-005",
+            "value": "SYN-AMB-005"
+          }
+        ]
+      },
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "identifier_collision"
+        ],
+        "response_state": "ambiguous_identifier",
+        "selection_state": "abstain"
+      },
+      "id": "AMBIG-005",
+      "input": {
+        "identifier": {
+          "namespace": "synthetic-a",
+          "value": "SYN-AMB-005"
+        },
+        "intent": "exact_identifier",
+        "query": "SYN-AMB-005",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "ambiguous_identifier",
+      "contract_fixture": {
+        "legacy_rows": [
+          {
+            "reference_number": "SYN-AMB-006"
+          },
+          {
+            "reference_number": "SYN-AMB-006"
+          }
+        ],
+        "mappings": [
+          {
+            "namespace": "synthetic-a",
+            "release_id": "candidate-fastener-poc-r0",
+            "state": "active",
+            "target_key": "syn-a-006",
+            "value": "SYN-AMB-006"
+          },
+          {
+            "namespace": "synthetic-b",
+            "release_id": "candidate-fastener-poc-r0",
+            "state": "active",
+            "target_key": "syn-b-006",
+            "value": "SYN-AMB-006"
+          }
+        ]
+      },
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "namespace_required"
+        ],
+        "response_state": "ambiguous_identifier",
+        "selection_state": "abstain"
+      },
+      "id": "AMBIG-006",
+      "input": {
+        "identifier": {
+          "value": "SYN-AMB-006"
+        },
+        "intent": "exact_identifier",
+        "query": "SYN-AMB-006",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "ambiguous_identifier",
+      "contract_fixture": {
+        "legacy_rows": [
+          {
+            "reference_number": "SYN-AMB-007"
+          },
+          {
+            "reference_number": "SYN-AMB-007"
+          }
+        ],
+        "mappings": [
+          {
+            "namespace": "synthetic-a",
+            "release_id": "candidate-fastener-poc-r0",
+            "state": "active",
+            "target_key": "syn-a-007",
+            "value": "SYN-AMB-007"
+          },
+          {
+            "namespace": "synthetic-b",
+            "release_id": "candidate-fastener-poc-r0",
+            "state": "active",
+            "target_key": "syn-b-007",
+            "value": "SYN-AMB-007"
+          }
+        ]
+      },
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "namespace_required"
+        ],
+        "response_state": "ambiguous_identifier",
+        "selection_state": "abstain"
+      },
+      "id": "AMBIG-007",
+      "input": {
+        "identifier": {
+          "value": "SYN-AMB-007"
+        },
+        "intent": "exact_identifier",
+        "query": "SYN-AMB-007",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "ambiguous_identifier",
+      "contract_fixture": {
+        "legacy_rows": [
+          {
+            "reference_number": "SYN-AMB-008"
+          },
+          {
+            "reference_number": "SYN-AMB-008"
+          }
+        ],
+        "mappings": [
+          {
+            "namespace": "synthetic-a",
+            "release_id": "candidate-fastener-poc-r0",
+            "state": "active",
+            "target_key": "syn-a-008",
+            "value": "SYN-AMB-008"
+          },
+          {
+            "namespace": "synthetic-b",
+            "release_id": "candidate-fastener-poc-r0",
+            "state": "active",
+            "target_key": "syn-b-008",
+            "value": "SYN-AMB-008"
+          }
+        ]
+      },
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "namespace_required"
+        ],
+        "response_state": "ambiguous_identifier",
+        "selection_state": "abstain"
+      },
+      "id": "AMBIG-008",
+      "input": {
+        "identifier": {
+          "value": "SYN-AMB-008"
+        },
+        "intent": "exact_identifier",
+        "query": "SYN-AMB-008",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "ambiguous_identifier",
+      "contract_fixture": {
+        "legacy_rows": [
+          {
+            "reference_number": "SYN-AMB-009"
+          },
+          {
+            "reference_number": "SYN-AMB-009"
+          }
+        ],
+        "mappings": [
+          {
+            "namespace": "synthetic-a",
+            "release_id": "candidate-fastener-poc-r0",
+            "state": "active",
+            "target_key": "syn-a-009",
+            "value": "SYN-AMB-009"
+          },
+          {
+            "namespace": "synthetic-b",
+            "release_id": "candidate-fastener-poc-r0",
+            "state": "active",
+            "target_key": "syn-b-009",
+            "value": "SYN-AMB-009"
+          }
+        ]
+      },
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "namespace_required"
+        ],
+        "response_state": "ambiguous_identifier",
+        "selection_state": "abstain"
+      },
+      "id": "AMBIG-009",
+      "input": {
+        "identifier": {
+          "value": "SYN-AMB-009"
+        },
+        "intent": "exact_identifier",
+        "query": "SYN-AMB-009",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "ambiguous_identifier",
+      "contract_fixture": {
+        "legacy_rows": [
+          {
+            "reference_number": "SYN-AMB-010"
+          },
+          {
+            "reference_number": "SYN-AMB-010"
+          }
+        ],
+        "mappings": [
+          {
+            "namespace": "synthetic-a",
+            "release_id": "candidate-fastener-poc-r0",
+            "state": "active",
+            "target_key": "syn-a-010",
+            "value": "SYN-AMB-010"
+          },
+          {
+            "namespace": "synthetic-b",
+            "release_id": "candidate-fastener-poc-r0",
+            "state": "active",
+            "target_key": "syn-b-010",
+            "value": "SYN-AMB-010"
+          }
+        ]
+      },
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "many",
+        "reason_codes": [
+          "namespace_required"
+        ],
+        "response_state": "ambiguous_identifier",
+        "selection_state": "abstain"
+      },
+      "id": "AMBIG-010",
+      "input": {
+        "identifier": {
+          "value": "SYN-AMB-010"
+        },
+        "intent": "exact_identifier",
+        "query": "SYN-AMB-010",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "missing_critical_facts",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed",
+          "missing_critical_facts"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-b99caa1e89a2f6864b6e"
+      },
+      "id": "MISSING-001",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "90008A221"
+        },
+        "intent": "exact_identifier",
+        "query": "90008A221",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "socket_head_cap_screws",
+        "observed_missing_import_fields": [
+          "finish",
+          "pitch"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "90008A221",
+        "target_key": "candidate-cfg-b99caa1e89a2f6864b6e"
+      }
+    },
+    {
+      "case_class": "missing_critical_facts",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed",
+          "missing_critical_facts"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-8f263d40b33991fc3ff1"
+      },
+      "id": "MISSING-002",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "90283A115"
+        },
+        "intent": "exact_identifier",
+        "query": "90283A115",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "pan_head_machine_screws",
+        "observed_missing_import_fields": [
+          "finish",
+          "pitch"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "90283A115",
+        "target_key": "candidate-cfg-8f263d40b33991fc3ff1"
+      }
+    },
+    {
+      "case_class": "missing_critical_facts",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed",
+          "missing_critical_facts"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-04d0bff78a3c50728ec2"
+      },
+      "id": "MISSING-003",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "91221A171"
+        },
+        "intent": "exact_identifier",
+        "query": "91221A171",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "socket_head_cap_screws",
+        "observed_missing_import_fields": [
+          "finish",
+          "pitch"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "91221A171",
+        "target_key": "candidate-cfg-04d0bff78a3c50728ec2"
+      }
+    },
+    {
+      "case_class": "missing_critical_facts",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed",
+          "missing_critical_facts"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-31df6d76b329b858041d"
+      },
+      "id": "MISSING-004",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "91255A720"
+        },
+        "intent": "exact_identifier",
+        "query": "91255A720",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "hex_socket_button_head_screws",
+        "observed_missing_import_fields": [
+          "finish",
+          "pitch"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "91255A720",
+        "target_key": "candidate-cfg-31df6d76b329b858041d"
+      }
+    },
+    {
+      "case_class": "missing_critical_facts",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed",
+          "missing_critical_facts"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-a551d2e4c05f1ec3b0fd"
+      },
+      "id": "MISSING-005",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "91400A201"
+        },
+        "intent": "exact_identifier",
+        "query": "91400A201",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "pan_head_machine_screws",
+        "observed_missing_import_fields": [
+          "finish",
+          "pitch"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "91400A201",
+        "target_key": "candidate-cfg-a551d2e4c05f1ec3b0fd"
+      }
+    },
+    {
+      "case_class": "missing_critical_facts",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed",
+          "missing_critical_facts"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-0b37d2129b99e1ea0140"
+      },
+      "id": "MISSING-006",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "92185A073"
+        },
+        "intent": "exact_identifier",
+        "query": "92185A073",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "socket_head_cap_screws",
+        "observed_missing_import_fields": [
+          "finish",
+          "pitch",
+          "standard"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "92185A073",
+        "target_key": "candidate-cfg-0b37d2129b99e1ea0140"
+      }
+    },
+    {
+      "case_class": "missing_critical_facts",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed",
+          "missing_critical_facts"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-4b6c974e22483920e62c"
+      },
+      "id": "MISSING-007",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "92235A111"
+        },
+        "intent": "exact_identifier",
+        "query": "92235A111",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "socket_head_cap_screws",
+        "observed_missing_import_fields": [
+          "finish",
+          "standard"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "92235A111",
+        "target_key": "candidate-cfg-4b6c974e22483920e62c"
+      }
+    },
+    {
+      "case_class": "missing_critical_facts",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed",
+          "missing_critical_facts"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-d7b973f8fce84711a933"
+      },
+      "id": "MISSING-008",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "93235A240"
+        },
+        "intent": "exact_identifier",
+        "query": "93235A240",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "socket_head_cap_screws",
+        "observed_missing_import_fields": [
+          "finish",
+          "pitch",
+          "standard"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "93235A240",
+        "target_key": "candidate-cfg-d7b973f8fce84711a933"
+      }
+    },
+    {
+      "case_class": "missing_critical_facts",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed",
+          "missing_critical_facts"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-da61db1d7abf4c64cf24"
+      },
+      "id": "MISSING-009",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "95868A819"
+        },
+        "intent": "exact_identifier",
+        "query": "95868A819",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "socket_head_cap_screws",
+        "observed_missing_import_fields": [
+          "finish",
+          "pitch",
+          "standard"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "95868A819",
+        "target_key": "candidate-cfg-da61db1d7abf4c64cf24"
+      }
+    },
+    {
+      "case_class": "missing_critical_facts",
+      "evidence_basis": "source_backed_observation",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "one",
+        "reason_codes": [
+          "candidate_record_unreviewed",
+          "missing_critical_facts"
+        ],
+        "response_state": "exact_mapping",
+        "selection_state": "abstain",
+        "target_key": "candidate-cfg-6d568492cfc9305c0673"
+      },
+      "id": "MISSING-010",
+      "input": {
+        "identifier": {
+          "namespace": "permitted-reference-clue",
+          "value": "99477A670"
+        },
+        "intent": "exact_identifier",
+        "query": "99477A670",
+        "release_id": "candidate-fastener-poc-r0"
+      },
+      "source_observation": {
+        "candidate_family": "socket_head_cap_screws",
+        "observed_missing_import_fields": [
+          "finish",
+          "pitch",
+          "standard"
+        ],
+        "record_review_state": "candidate_unreviewed",
+        "reference": "99477A670",
+        "target_key": "candidate-cfg-6d568492cfc9305c0673"
+      }
+    },
+    {
+      "case_class": "outside_release",
+      "contract_fixture": {
+        "legacy_rows": [
+          {
+            "reference_number": "SYN-OTHER-REL-001"
+          }
+        ],
+        "mappings": [
+          {
+            "namespace": "synthetic-release",
+            "release_id": "candidate-fastener-poc-r1",
+            "state": "active",
+            "target_key": "other-release-001",
+            "value": "SYN-OTHER-REL-001"
+          }
+        ]
+      },
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "zero",
+        "reason_codes": [
+          "release_mismatch"
+        ],
+        "response_state": "not_in_release",
+        "selection_state": "abstain"
+      },
+      "id": "OUTREL-001",
+      "input": {
+        "identifier": {
+          "namespace": "synthetic-release",
+          "value": "SYN-OTHER-REL-001"
+        },
+        "intent": "exact_identifier",
+        "query": "SYN-OTHER-REL-001",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "outside_release",
+      "contract_fixture": {
+        "legacy_rows": [
+          {
+            "reference_number": "SYN-OTHER-REL-002"
+          }
+        ],
+        "mappings": [
+          {
+            "namespace": "synthetic-release",
+            "release_id": "candidate-fastener-poc-r1",
+            "state": "active",
+            "target_key": "other-release-002",
+            "value": "SYN-OTHER-REL-002"
+          }
+        ]
+      },
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "zero",
+        "reason_codes": [
+          "release_mismatch"
+        ],
+        "response_state": "not_in_release",
+        "selection_state": "abstain"
+      },
+      "id": "OUTREL-002",
+      "input": {
+        "identifier": {
+          "namespace": "synthetic-release",
+          "value": "SYN-OTHER-REL-002"
+        },
+        "intent": "exact_identifier",
+        "query": "SYN-OTHER-REL-002",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "outside_release",
+      "contract_fixture": {
+        "legacy_rows": [
+          {
+            "reference_number": "SYN-OTHER-REL-003"
+          }
+        ],
+        "mappings": [
+          {
+            "namespace": "synthetic-release",
+            "release_id": "candidate-fastener-poc-r1",
+            "state": "active",
+            "target_key": "other-release-003",
+            "value": "SYN-OTHER-REL-003"
+          }
+        ]
+      },
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "zero",
+        "reason_codes": [
+          "release_mismatch"
+        ],
+        "response_state": "not_in_release",
+        "selection_state": "abstain"
+      },
+      "id": "OUTREL-003",
+      "input": {
+        "identifier": {
+          "namespace": "synthetic-release",
+          "value": "SYN-OTHER-REL-003"
+        },
+        "intent": "exact_identifier",
+        "query": "SYN-OTHER-REL-003",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "outside_release",
+      "contract_fixture": {
+        "legacy_rows": [
+          {
+            "reference_number": "SYN-OTHER-REL-004"
+          }
+        ],
+        "mappings": [
+          {
+            "namespace": "synthetic-release",
+            "release_id": "candidate-fastener-poc-r1",
+            "state": "active",
+            "target_key": "other-release-004",
+            "value": "SYN-OTHER-REL-004"
+          }
+        ]
+      },
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "zero",
+        "reason_codes": [
+          "release_mismatch"
+        ],
+        "response_state": "not_in_release",
+        "selection_state": "abstain"
+      },
+      "id": "OUTREL-004",
+      "input": {
+        "identifier": {
+          "namespace": "synthetic-release",
+          "value": "SYN-OTHER-REL-004"
+        },
+        "intent": "exact_identifier",
+        "query": "SYN-OTHER-REL-004",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "outside_release",
+      "contract_fixture": {
+        "legacy_rows": [
+          {
+            "reference_number": "SYN-OTHER-REL-005"
+          }
+        ],
+        "mappings": [
+          {
+            "namespace": "synthetic-release",
+            "release_id": "candidate-fastener-poc-r1",
+            "state": "active",
+            "target_key": "other-release-005",
+            "value": "SYN-OTHER-REL-005"
+          }
+        ]
+      },
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "zero",
+        "reason_codes": [
+          "release_mismatch"
+        ],
+        "response_state": "not_in_release",
+        "selection_state": "abstain"
+      },
+      "id": "OUTREL-005",
+      "input": {
+        "identifier": {
+          "namespace": "synthetic-release",
+          "value": "SYN-OTHER-REL-005"
+        },
+        "intent": "exact_identifier",
+        "query": "SYN-OTHER-REL-005",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "outside_release",
+      "contract_fixture": {
+        "legacy_rows": [
+          {
+            "reference_number": "SYN-OTHER-REL-006"
+          }
+        ],
+        "mappings": [
+          {
+            "namespace": "synthetic-release",
+            "release_id": "candidate-fastener-poc-r1",
+            "state": "active",
+            "target_key": "other-release-006",
+            "value": "SYN-OTHER-REL-006"
+          }
+        ]
+      },
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "zero",
+        "reason_codes": [
+          "release_mismatch"
+        ],
+        "response_state": "not_in_release",
+        "selection_state": "abstain"
+      },
+      "id": "OUTREL-006",
+      "input": {
+        "identifier": {
+          "namespace": "synthetic-release",
+          "value": "SYN-OTHER-REL-006"
+        },
+        "intent": "exact_identifier",
+        "query": "SYN-OTHER-REL-006",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "unsupported_family",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "zero",
+        "reason_codes": [
+          "unsupported_family"
+        ],
+        "response_state": "unsupported_family",
+        "selection_state": "abstain"
+      },
+      "id": "UNSUPPORTED-001",
+      "input": {
+        "intent": "broad_family_discovery",
+        "query": "AS568 O-ring",
+        "release_id": "candidate-fastener-poc-r0",
+        "requested_family": "o_ring"
+      }
+    },
+    {
+      "case_class": "unsupported_family",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "zero",
+        "reason_codes": [
+          "unsupported_family"
+        ],
+        "response_state": "unsupported_family",
+        "selection_state": "abstain"
+      },
+      "id": "UNSUPPORTED-002",
+      "input": {
+        "intent": "broad_family_discovery",
+        "query": "6203 bearing",
+        "release_id": "candidate-fastener-poc-r0",
+        "requested_family": "rolling_element_bearing"
+      }
+    },
+    {
+      "case_class": "unsupported_family",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "zero",
+        "reason_codes": [
+          "unsupported_family"
+        ],
+        "response_state": "unsupported_family",
+        "selection_state": "abstain"
+      },
+      "id": "UNSUPPORTED-003",
+      "input": {
+        "intent": "broad_family_discovery",
+        "query": "metric dowel pin",
+        "release_id": "candidate-fastener-poc-r0",
+        "requested_family": "pin"
+      }
+    },
+    {
+      "case_class": "unsupported_family",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "zero",
+        "reason_codes": [
+          "unsupported_family"
+        ],
+        "response_state": "unsupported_family",
+        "selection_state": "abstain"
+      },
+      "id": "UNSUPPORTED-004",
+      "input": {
+        "intent": "broad_family_discovery",
+        "query": "spur gear module 1",
+        "release_id": "candidate-fastener-poc-r0",
+        "requested_family": "gear"
+      }
+    },
+    {
+      "case_class": "unsupported_family",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "zero",
+        "reason_codes": [
+          "unsupported_family"
+        ],
+        "response_state": "unsupported_family",
+        "selection_state": "abstain"
+      },
+      "id": "UNSUPPORTED-005",
+      "input": {
+        "intent": "broad_family_discovery",
+        "query": "Belleville washer",
+        "release_id": "candidate-fastener-poc-r0",
+        "requested_family": "spring_washer"
+      }
+    },
+    {
+      "case_class": "unsupported_family",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "zero",
+        "reason_codes": [
+          "unsupported_family"
+        ],
+        "response_state": "unsupported_family",
+        "selection_state": "abstain"
+      },
+      "id": "UNSUPPORTED-006",
+      "input": {
+        "intent": "broad_family_discovery",
+        "query": "threaded pipe fitting",
+        "release_id": "candidate-fastener-poc-r0",
+        "requested_family": "pipe_fitting"
+      }
+    },
+    {
+      "case_class": "withdrawn",
+      "contract_fixture": {
+        "legacy_rows": [
+          {
+            "reference_number": "SYN-WITHDRAWN-001"
+          }
+        ],
+        "mappings": [
+          {
+            "namespace": "synthetic-lifecycle",
+            "release_id": "candidate-fastener-poc-r0",
+            "state": "withdrawn",
+            "target_key": "withdrawn-001",
+            "value": "SYN-WITHDRAWN-001"
+          }
+        ]
+      },
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "zero",
+        "reason_codes": [
+          "mapping_withdrawn"
+        ],
+        "response_state": "withdrawn",
+        "selection_state": "abstain"
+      },
+      "id": "WITHDRAWN-001",
+      "input": {
+        "identifier": {
+          "namespace": "synthetic-lifecycle",
+          "value": "SYN-WITHDRAWN-001"
+        },
+        "intent": "exact_identifier",
+        "query": "SYN-WITHDRAWN-001",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "withdrawn",
+      "contract_fixture": {
+        "legacy_rows": [
+          {
+            "reference_number": "SYN-WITHDRAWN-002"
+          }
+        ],
+        "mappings": [
+          {
+            "namespace": "synthetic-lifecycle",
+            "release_id": "candidate-fastener-poc-r0",
+            "state": "withdrawn",
+            "target_key": "withdrawn-002",
+            "value": "SYN-WITHDRAWN-002"
+          }
+        ]
+      },
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "zero",
+        "reason_codes": [
+          "mapping_withdrawn"
+        ],
+        "response_state": "withdrawn",
+        "selection_state": "abstain"
+      },
+      "id": "WITHDRAWN-002",
+      "input": {
+        "identifier": {
+          "namespace": "synthetic-lifecycle",
+          "value": "SYN-WITHDRAWN-002"
+        },
+        "intent": "exact_identifier",
+        "query": "SYN-WITHDRAWN-002",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "withdrawn",
+      "contract_fixture": {
+        "legacy_rows": [
+          {
+            "reference_number": "SYN-WITHDRAWN-003"
+          }
+        ],
+        "mappings": [
+          {
+            "namespace": "synthetic-lifecycle",
+            "release_id": "candidate-fastener-poc-r0",
+            "state": "withdrawn",
+            "target_key": "withdrawn-003",
+            "value": "SYN-WITHDRAWN-003"
+          }
+        ]
+      },
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "zero",
+        "reason_codes": [
+          "mapping_withdrawn"
+        ],
+        "response_state": "withdrawn",
+        "selection_state": "abstain"
+      },
+      "id": "WITHDRAWN-003",
+      "input": {
+        "identifier": {
+          "namespace": "synthetic-lifecycle",
+          "value": "SYN-WITHDRAWN-003"
+        },
+        "intent": "exact_identifier",
+        "query": "SYN-WITHDRAWN-003",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "withdrawn",
+      "contract_fixture": {
+        "legacy_rows": [
+          {
+            "reference_number": "SYN-WITHDRAWN-004"
+          }
+        ],
+        "mappings": [
+          {
+            "namespace": "synthetic-lifecycle",
+            "release_id": "candidate-fastener-poc-r0",
+            "state": "withdrawn",
+            "target_key": "withdrawn-004",
+            "value": "SYN-WITHDRAWN-004"
+          }
+        ]
+      },
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "zero",
+        "reason_codes": [
+          "mapping_withdrawn"
+        ],
+        "response_state": "withdrawn",
+        "selection_state": "abstain"
+      },
+      "id": "WITHDRAWN-004",
+      "input": {
+        "identifier": {
+          "namespace": "synthetic-lifecycle",
+          "value": "SYN-WITHDRAWN-004"
+        },
+        "intent": "exact_identifier",
+        "query": "SYN-WITHDRAWN-004",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "unavailable",
+      "contract_fixture": {
+        "legacy_rows": [
+          {
+            "reference_number": "SYN-UNAVAILABLE-001"
+          }
+        ],
+        "mappings": [
+          {
+            "namespace": "synthetic-lifecycle",
+            "release_id": "candidate-fastener-poc-r0",
+            "state": "unavailable",
+            "target_key": "unavailable-001",
+            "value": "SYN-UNAVAILABLE-001"
+          }
+        ]
+      },
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "zero",
+        "reason_codes": [
+          "mapping_unavailable"
+        ],
+        "response_state": "unavailable",
+        "selection_state": "abstain"
+      },
+      "id": "UNAVAILABLE-001",
+      "input": {
+        "identifier": {
+          "namespace": "synthetic-lifecycle",
+          "value": "SYN-UNAVAILABLE-001"
+        },
+        "intent": "exact_identifier",
+        "query": "SYN-UNAVAILABLE-001",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "unavailable",
+      "contract_fixture": {
+        "legacy_rows": [
+          {
+            "reference_number": "SYN-UNAVAILABLE-002"
+          }
+        ],
+        "mappings": [
+          {
+            "namespace": "synthetic-lifecycle",
+            "release_id": "candidate-fastener-poc-r0",
+            "state": "unavailable",
+            "target_key": "unavailable-002",
+            "value": "SYN-UNAVAILABLE-002"
+          }
+        ]
+      },
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "zero",
+        "reason_codes": [
+          "mapping_unavailable"
+        ],
+        "response_state": "unavailable",
+        "selection_state": "abstain"
+      },
+      "id": "UNAVAILABLE-002",
+      "input": {
+        "identifier": {
+          "namespace": "synthetic-lifecycle",
+          "value": "SYN-UNAVAILABLE-002"
+        },
+        "intent": "exact_identifier",
+        "query": "SYN-UNAVAILABLE-002",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "unavailable",
+      "contract_fixture": {
+        "legacy_rows": [
+          {
+            "reference_number": "SYN-UNAVAILABLE-003"
+          }
+        ],
+        "mappings": [
+          {
+            "namespace": "synthetic-lifecycle",
+            "release_id": "candidate-fastener-poc-r0",
+            "state": "unavailable",
+            "target_key": "unavailable-003",
+            "value": "SYN-UNAVAILABLE-003"
+          }
+        ]
+      },
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "zero",
+        "reason_codes": [
+          "mapping_unavailable"
+        ],
+        "response_state": "unavailable",
+        "selection_state": "abstain"
+      },
+      "id": "UNAVAILABLE-003",
+      "input": {
+        "identifier": {
+          "namespace": "synthetic-lifecycle",
+          "value": "SYN-UNAVAILABLE-003"
+        },
+        "intent": "exact_identifier",
+        "query": "SYN-UNAVAILABLE-003",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "unavailable",
+      "contract_fixture": {
+        "legacy_rows": [
+          {
+            "reference_number": "SYN-UNAVAILABLE-004"
+          }
+        ],
+        "mappings": [
+          {
+            "namespace": "synthetic-lifecycle",
+            "release_id": "candidate-fastener-poc-r0",
+            "state": "unavailable",
+            "target_key": "unavailable-004",
+            "value": "SYN-UNAVAILABLE-004"
+          }
+        ]
+      },
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "zero",
+        "reason_codes": [
+          "mapping_unavailable"
+        ],
+        "response_state": "unavailable",
+        "selection_state": "abstain"
+      },
+      "id": "UNAVAILABLE-004",
+      "input": {
+        "identifier": {
+          "namespace": "synthetic-lifecycle",
+          "value": "SYN-UNAVAILABLE-004"
+        },
+        "intent": "exact_identifier",
+        "query": "SYN-UNAVAILABLE-004",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "service_failure",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "not_evaluated",
+        "reason_codes": [
+          "service_failure"
+        ],
+        "response_state": "service_unavailable",
+        "selection_state": "abstain"
+      },
+      "id": "SERVICE-001",
+      "input": {
+        "injected_service_failure": "edge_timeout",
+        "intent": "broad_family_discovery",
+        "query": "M4 screw",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "service_failure",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "not_evaluated",
+        "reason_codes": [
+          "service_failure"
+        ],
+        "response_state": "service_unavailable",
+        "selection_state": "abstain"
+      },
+      "id": "SERVICE-002",
+      "input": {
+        "injected_service_failure": "database_timeout",
+        "intent": "broad_family_discovery",
+        "query": "M4 screw",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "service_failure",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "not_evaluated",
+        "reason_codes": [
+          "service_failure"
+        ],
+        "response_state": "service_unavailable",
+        "selection_state": "abstain"
+      },
+      "id": "SERVICE-003",
+      "input": {
+        "injected_service_failure": "rate_limit_dependency_failure",
+        "intent": "broad_family_discovery",
+        "query": "M4 screw",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "service_failure",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "not_evaluated",
+        "reason_codes": [
+          "service_failure"
+        ],
+        "response_state": "service_unavailable",
+        "selection_state": "abstain"
+      },
+      "id": "SERVICE-004",
+      "input": {
+        "injected_service_failure": "catalog_release_unavailable",
+        "intent": "broad_family_discovery",
+        "query": "M4 screw",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "service_failure",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "not_evaluated",
+        "reason_codes": [
+          "service_failure"
+        ],
+        "response_state": "service_unavailable",
+        "selection_state": "abstain"
+      },
+      "id": "SERVICE-005",
+      "input": {
+        "injected_service_failure": "network_failure",
+        "intent": "broad_family_discovery",
+        "query": "M4 screw",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "service_failure",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "not_evaluated",
+        "reason_codes": [
+          "service_failure"
+        ],
+        "response_state": "service_unavailable",
+        "selection_state": "abstain"
+      },
+      "id": "SERVICE-006",
+      "input": {
+        "injected_service_failure": "invalid_service_json",
+        "intent": "broad_family_discovery",
+        "query": "M4 screw",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "service_failure",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "not_evaluated",
+        "reason_codes": [
+          "service_failure"
+        ],
+        "response_state": "service_unavailable",
+        "selection_state": "abstain"
+      },
+      "id": "SERVICE-007",
+      "input": {
+        "injected_service_failure": "dto_validation_failure",
+        "intent": "broad_family_discovery",
+        "query": "M4 screw",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    },
+    {
+      "case_class": "service_failure",
+      "evidence_basis": "contract_synthetic",
+      "expected": {
+        "answer_key_status": "resolved_contract_or_observation",
+        "identity_cardinality": "not_evaluated",
+        "reason_codes": [
+          "service_failure"
+        ],
+        "response_state": "service_unavailable",
+        "selection_state": "abstain"
+      },
+      "id": "SERVICE-008",
+      "input": {
+        "injected_service_failure": "unknown_server_failure",
+        "intent": "broad_family_discovery",
+        "query": "M4 screw",
+        "release_id": "candidate-fastener-poc-r0"
+      }
+    }
+  ],
+  "classification_schema": {
+    "answer_key_status": [
+      "resolved_contract_or_observation",
+      "unresolved_domain_review"
+    ],
+    "case_class": [
+      "namespaced_exact_id",
+      "broad_family_text",
+      "constrained_metric_input",
+      "partial_input",
+      "explicit_conflict",
+      "ambiguous_identifier",
+      "missing_critical_facts",
+      "outside_release",
+      "unsupported_family",
+      "withdrawn",
+      "unavailable",
+      "service_failure"
+    ],
+    "evidence_basis": [
+      "source_backed_observation",
+      "source_backed_composition",
+      "contract_synthetic"
+    ],
+    "identity_cardinality": [
+      "zero",
+      "one",
+      "many",
+      "not_evaluated"
+    ],
+    "response_state": [
+      "exact_mapping",
+      "family_candidates",
+      "constrained_candidates",
+      "clarification_required",
+      "conflict",
+      "ambiguous_identifier",
+      "not_in_release",
+      "unsupported_family",
+      "withdrawn",
+      "unavailable",
+      "service_unavailable"
+    ],
+    "selection_state": [
+      "unique",
+      "candidate_set",
+      "abstain"
+    ]
+  },
+  "corpus_version": "1.0.0",
+  "frozen_at": "2026-08-09",
+  "schema_version": "fastener-truth-benchmark-schema-v1",
+  "scope": {
+    "mechanical_approval": false,
+    "notes": [
+      "Source-backed means observed in the permitted local technical packet; it does not mean mechanically reviewed or publishable.",
+      "Contract-synthetic cases test state composition only and make no real availability, withdrawal, release, or source claim.",
+      "No source key, raw private lineage, supplier offer, equivalence, suitability, or availability fact is included."
+    ],
+    "production_acceptance": false,
+    "public_claims_allowed": false,
+    "release_id": "candidate-fastener-poc-r0",
+    "status": "candidate_contract_validation_only",
+    "supported_candidate_families": [
+      "socket_head_cap_screws",
+      "hex_socket_button_head_screws",
+      "pan_head_machine_screws"
+    ]
+  },
+  "title": "Bounded POC fastener truth/composition benchmark"
+}

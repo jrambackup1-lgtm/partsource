@@ -9,10 +9,15 @@
     "preview": "vite preview",
     "clean": "rm -rf dist test-results playwright-report",
     "lint": "tsc --noEmit",
-    "test": "tsx scripts/poc/test-bundle.ts && tsx scripts/poc/test-resolver.ts && tsx scripts/poc/test-url-state.ts",
+    "test": "npm run test:poc && npm run test:catalog && npm run test:release",
+    "test:poc": "tsx scripts/poc/test-bundle.ts && tsx scripts/poc/test-resolver.ts && tsx scripts/poc/test-url-state.ts",
+    "test:catalog": "tsx scripts/catalog/test-valid-package.ts && tsx scripts/catalog/test-adversarial-validation.ts && tsx scripts/catalog/test-truth-states.ts && tsx scripts/catalog/test-engine.ts && tsx scripts/catalog/test-engine-url-history.ts && tsx scripts/catalog/test-pilot-boundary.ts",
+    "test:release": "tsx scripts/release/test-release-truth.ts",
     "test:documents": "tsx scripts/poc/test-documents.ts",
     "test:boundary": "tsx scripts/poc/test-boundary.ts",
     "release:audit": "npm run lint && npm test && npm run test:documents && npm run build && npm run test:browser && npm run test:boundary",
+    "release:metadata": "tsx scripts/release/generate-release-metadata.ts",
+    "release:verify": "tsx scripts/release/verify-release-metadata.ts",
     "test:browser": "playwright test"
   },
   "dependencies": {

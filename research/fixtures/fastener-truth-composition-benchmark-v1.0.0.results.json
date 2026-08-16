@@ -1,0 +1,2208 @@
+{
+  "case_class_counts": {
+    "ambiguous_identifier": 10,
+    "broad_family_text": 12,
+    "constrained_metric_input": 16,
+    "explicit_conflict": 10,
+    "missing_critical_facts": 10,
+    "namespaced_exact_id": 24,
+    "outside_release": 6,
+    "partial_input": 10,
+    "service_failure": 8,
+    "unavailable": 4,
+    "unsupported_family": 6,
+    "withdrawn": 4
+  },
+  "corpus": "research/fixtures/fastener-truth-composition-benchmark-v1.0.0.json",
+  "corpus_sha256": "0b4acb8152288973a9fa6465d2c4f2d066a5e0566fb33503309e968e2e5c087b",
+  "corpus_version": "1.0.0",
+  "current_import_record_count": 27009,
+  "evidence_basis_counts": {
+    "contract_synthetic": 70,
+    "source_backed_composition": 16,
+    "source_backed_observation": 34
+  },
+  "expected_selection_counts": {
+    "abstain": 95,
+    "candidate_set": 25,
+    "unique": 0
+  },
+  "limitations": [
+    "The candidate-contract score validates the frozen deterministic oracle, not production implementation.",
+    "Current SQL is emulated locally from checked-in semantics; no live Edge/database latency or deployment state is measured.",
+    "There are zero mechanically reviewed unique-selection answer keys because no reviewed immutable release exists.",
+    "Unresolved domain cases score only safe abstention/clarification, never a fabricated engineering classification."
+  ],
+  "result_schema_version": "fastener-truth-benchmark-results-v1",
+  "source_validation": {
+    "metric_compositions_checked": 16,
+    "missingness_observations_checked": 50,
+    "source_backed_cases_checked": 50,
+    "unique_reference_observations_checked": 50
+  },
+  "systems": {
+    "candidate_contract_v1": {
+      "actual_abstentions": 95,
+      "by_case_class": {
+        "ambiguous_identifier": {
+          "actual_abstentions": 10,
+          "fail": 0,
+          "false_unique_cases": 0,
+          "pass": 10,
+          "total": 10
+        },
+        "broad_family_text": {
+          "actual_abstentions": 3,
+          "fail": 0,
+          "false_unique_cases": 0,
+          "pass": 12,
+          "total": 12
+        },
+        "constrained_metric_input": {
+          "actual_abstentions": 0,
+          "fail": 0,
+          "false_unique_cases": 0,
+          "pass": 16,
+          "total": 16
+        },
+        "explicit_conflict": {
+          "actual_abstentions": 10,
+          "fail": 0,
+          "false_unique_cases": 0,
+          "pass": 10,
+          "total": 10
+        },
+        "missing_critical_facts": {
+          "actual_abstentions": 10,
+          "fail": 0,
+          "false_unique_cases": 0,
+          "pass": 10,
+          "total": 10
+        },
+        "namespaced_exact_id": {
+          "actual_abstentions": 24,
+          "fail": 0,
+          "false_unique_cases": 0,
+          "pass": 24,
+          "total": 24
+        },
+        "outside_release": {
+          "actual_abstentions": 6,
+          "fail": 0,
+          "false_unique_cases": 0,
+          "pass": 6,
+          "total": 6
+        },
+        "partial_input": {
+          "actual_abstentions": 10,
+          "fail": 0,
+          "false_unique_cases": 0,
+          "pass": 10,
+          "total": 10
+        },
+        "service_failure": {
+          "actual_abstentions": 8,
+          "fail": 0,
+          "false_unique_cases": 0,
+          "pass": 8,
+          "total": 8
+        },
+        "unavailable": {
+          "actual_abstentions": 4,
+          "fail": 0,
+          "false_unique_cases": 0,
+          "pass": 4,
+          "total": 4
+        },
+        "unsupported_family": {
+          "actual_abstentions": 6,
+          "fail": 0,
+          "false_unique_cases": 0,
+          "pass": 6,
+          "total": 6
+        },
+        "withdrawn": {
+          "actual_abstentions": 4,
+          "fail": 0,
+          "false_unique_cases": 0,
+          "pass": 4,
+          "total": 4
+        }
+      },
+      "fail": 0,
+      "failures": [],
+      "false_unique_identity": 0,
+      "false_unique_matches": 0,
+      "false_unique_selection": 0,
+      "pass": 120,
+      "system": "candidate_contract_v1",
+      "total": 120
+    },
+    "current_artifact_baseline": {
+      "actual_abstentions": 47,
+      "by_case_class": {
+        "ambiguous_identifier": {
+          "actual_abstentions": 0,
+          "fail": 10,
+          "false_unique_cases": 10,
+          "pass": 0,
+          "total": 10
+        },
+        "broad_family_text": {
+          "actual_abstentions": 5,
+          "fail": 12,
+          "false_unique_cases": 0,
+          "pass": 0,
+          "total": 12
+        },
+        "constrained_metric_input": {
+          "actual_abstentions": 16,
+          "fail": 16,
+          "false_unique_cases": 0,
+          "pass": 0,
+          "total": 16
+        },
+        "explicit_conflict": {
+          "actual_abstentions": 10,
+          "fail": 10,
+          "false_unique_cases": 0,
+          "pass": 0,
+          "total": 10
+        },
+        "missing_critical_facts": {
+          "actual_abstentions": 0,
+          "fail": 10,
+          "false_unique_cases": 10,
+          "pass": 0,
+          "total": 10
+        },
+        "namespaced_exact_id": {
+          "actual_abstentions": 0,
+          "fail": 24,
+          "false_unique_cases": 24,
+          "pass": 0,
+          "total": 24
+        },
+        "outside_release": {
+          "actual_abstentions": 0,
+          "fail": 6,
+          "false_unique_cases": 6,
+          "pass": 0,
+          "total": 6
+        },
+        "partial_input": {
+          "actual_abstentions": 2,
+          "fail": 10,
+          "false_unique_cases": 0,
+          "pass": 0,
+          "total": 10
+        },
+        "service_failure": {
+          "actual_abstentions": 8,
+          "fail": 0,
+          "false_unique_cases": 0,
+          "pass": 8,
+          "total": 8
+        },
+        "unavailable": {
+          "actual_abstentions": 0,
+          "fail": 4,
+          "false_unique_cases": 4,
+          "pass": 0,
+          "total": 4
+        },
+        "unsupported_family": {
+          "actual_abstentions": 6,
+          "fail": 6,
+          "false_unique_cases": 0,
+          "pass": 0,
+          "total": 6
+        },
+        "withdrawn": {
+          "actual_abstentions": 0,
+          "fail": 4,
+          "false_unique_cases": 4,
+          "pass": 0,
+          "total": 4
+        }
+      },
+      "fail": 112,
+      "failures": [
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-72398d43f4fe416ae545"
+          },
+          "case_class": "namespaced_exact_id",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "EXACT-001"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-526e824a5b7d400fbcc1"
+          },
+          "case_class": "namespaced_exact_id",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "EXACT-002"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-bb4653ecc203716aec12"
+          },
+          "case_class": "namespaced_exact_id",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "EXACT-003"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-c26a9db1effd99a2cd6c"
+          },
+          "case_class": "namespaced_exact_id",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "EXACT-004"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-8ed9b7baa2f8e692dc06"
+          },
+          "case_class": "namespaced_exact_id",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "EXACT-005"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-026f811ef4e79cd4387d"
+          },
+          "case_class": "namespaced_exact_id",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "EXACT-006"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-9fb66d2e94e7d968486c"
+          },
+          "case_class": "namespaced_exact_id",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "EXACT-007"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-6566bf8c4c506b3a3ac6"
+          },
+          "case_class": "namespaced_exact_id",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "EXACT-008"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-460e4e825e746c25f878"
+          },
+          "case_class": "namespaced_exact_id",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "EXACT-009"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-48be5f54326a0938b121"
+          },
+          "case_class": "namespaced_exact_id",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "EXACT-010"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-8c1134f038bc4401af00"
+          },
+          "case_class": "namespaced_exact_id",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "EXACT-011"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-60009b79eeba11667adf"
+          },
+          "case_class": "namespaced_exact_id",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "EXACT-012"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-ccd4366429f53dab1582"
+          },
+          "case_class": "namespaced_exact_id",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "EXACT-013"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-bd2f36523b6651afa329"
+          },
+          "case_class": "namespaced_exact_id",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "EXACT-014"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-e8424d3aaf25e4e953fd"
+          },
+          "case_class": "namespaced_exact_id",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "EXACT-015"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-d2282bbf03c0870b691d"
+          },
+          "case_class": "namespaced_exact_id",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "EXACT-016"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-e0892b8ef1dcc88cc257"
+          },
+          "case_class": "namespaced_exact_id",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "EXACT-017"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-b04dd7c3f5a476aa4671"
+          },
+          "case_class": "namespaced_exact_id",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "EXACT-018"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-342c3e65150c9049af0b"
+          },
+          "case_class": "namespaced_exact_id",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "EXACT-019"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-3547243e6d89c038dad4"
+          },
+          "case_class": "namespaced_exact_id",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "EXACT-020"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-f21ff14c507fbaaa2c6e"
+          },
+          "case_class": "namespaced_exact_id",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "EXACT-021"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-e2c86c27bc6dd29ca4ef"
+          },
+          "case_class": "namespaced_exact_id",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "EXACT-022"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-d934365cf0aea8e43821"
+          },
+          "case_class": "namespaced_exact_id",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "EXACT-023"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-2694adf4a430839bb42c"
+          },
+          "case_class": "namespaced_exact_id",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "EXACT-024"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "many",
+            "reason_codes": [
+              "row_first_lexical_search"
+            ],
+            "response_state": "row_results",
+            "selection_state": "candidate_set"
+          },
+          "case_class": "broad_family_text",
+          "differences": [
+            "response_state",
+            "reason_codes"
+          ],
+          "id": "BROAD-001"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "broad_family_text",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "BROAD-002"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "broad_family_text",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "BROAD-003"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "many",
+            "reason_codes": [
+              "row_first_lexical_search"
+            ],
+            "response_state": "row_results",
+            "selection_state": "candidate_set"
+          },
+          "case_class": "broad_family_text",
+          "differences": [
+            "response_state",
+            "reason_codes"
+          ],
+          "id": "BROAD-004"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "many",
+            "reason_codes": [
+              "row_first_lexical_search"
+            ],
+            "response_state": "row_results",
+            "selection_state": "candidate_set"
+          },
+          "case_class": "broad_family_text",
+          "differences": [
+            "response_state",
+            "reason_codes"
+          ],
+          "id": "BROAD-005"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "many",
+            "reason_codes": [
+              "row_first_lexical_search"
+            ],
+            "response_state": "row_results",
+            "selection_state": "candidate_set"
+          },
+          "case_class": "broad_family_text",
+          "differences": [
+            "response_state",
+            "reason_codes"
+          ],
+          "id": "BROAD-006"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "broad_family_text",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "BROAD-007"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "many",
+            "reason_codes": [
+              "row_first_lexical_search"
+            ],
+            "response_state": "row_results",
+            "selection_state": "candidate_set"
+          },
+          "case_class": "broad_family_text",
+          "differences": [
+            "response_state",
+            "reason_codes"
+          ],
+          "id": "BROAD-008"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "many",
+            "reason_codes": [
+              "row_first_lexical_search"
+            ],
+            "response_state": "row_results",
+            "selection_state": "candidate_set"
+          },
+          "case_class": "broad_family_text",
+          "differences": [
+            "response_state",
+            "reason_codes"
+          ],
+          "id": "BROAD-009"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "many",
+            "reason_codes": [
+              "row_first_lexical_search"
+            ],
+            "response_state": "row_results",
+            "selection_state": "candidate_set"
+          },
+          "case_class": "broad_family_text",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "BROAD-010"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "broad_family_text",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "reason_codes"
+          ],
+          "id": "BROAD-011"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "broad_family_text",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "reason_codes"
+          ],
+          "id": "BROAD-012"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "constrained_metric_input",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "METRIC-001"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "constrained_metric_input",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "METRIC-002"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "constrained_metric_input",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "METRIC-003"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "constrained_metric_input",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "METRIC-004"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "constrained_metric_input",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "METRIC-005"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "constrained_metric_input",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "METRIC-006"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "constrained_metric_input",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "METRIC-007"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "constrained_metric_input",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "METRIC-008"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "constrained_metric_input",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "METRIC-009"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "constrained_metric_input",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "METRIC-010"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "constrained_metric_input",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "METRIC-011"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "constrained_metric_input",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "METRIC-012"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "constrained_metric_input",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "METRIC-013"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "constrained_metric_input",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "METRIC-014"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "constrained_metric_input",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "METRIC-015"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "constrained_metric_input",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "METRIC-016"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "many",
+            "reason_codes": [
+              "row_first_lexical_search"
+            ],
+            "response_state": "row_results",
+            "selection_state": "candidate_set"
+          },
+          "case_class": "partial_input",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "PARTIAL-001"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "many",
+            "reason_codes": [
+              "row_first_lexical_search"
+            ],
+            "response_state": "row_results",
+            "selection_state": "candidate_set"
+          },
+          "case_class": "partial_input",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "PARTIAL-002"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "partial_input",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "reason_codes"
+          ],
+          "id": "PARTIAL-003"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "many",
+            "reason_codes": [
+              "row_first_lexical_search"
+            ],
+            "response_state": "row_results",
+            "selection_state": "candidate_set"
+          },
+          "case_class": "partial_input",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "PARTIAL-004"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "many",
+            "reason_codes": [
+              "row_first_lexical_search"
+            ],
+            "response_state": "row_results",
+            "selection_state": "candidate_set"
+          },
+          "case_class": "partial_input",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "PARTIAL-005"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "many",
+            "reason_codes": [
+              "row_first_lexical_search"
+            ],
+            "response_state": "row_results",
+            "selection_state": "candidate_set"
+          },
+          "case_class": "partial_input",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "PARTIAL-006"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "many",
+            "reason_codes": [
+              "row_first_lexical_search"
+            ],
+            "response_state": "row_results",
+            "selection_state": "candidate_set"
+          },
+          "case_class": "partial_input",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "PARTIAL-007"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "many",
+            "reason_codes": [
+              "row_first_lexical_search"
+            ],
+            "response_state": "row_results",
+            "selection_state": "candidate_set"
+          },
+          "case_class": "partial_input",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "PARTIAL-008"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "partial_input",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "reason_codes"
+          ],
+          "id": "PARTIAL-009"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "many",
+            "reason_codes": [
+              "row_first_lexical_search"
+            ],
+            "response_state": "row_results",
+            "selection_state": "candidate_set"
+          },
+          "case_class": "partial_input",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "PARTIAL-010"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "explicit_conflict",
+          "differences": [
+            "response_state",
+            "reason_codes"
+          ],
+          "id": "CONFLICT-001"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "explicit_conflict",
+          "differences": [
+            "response_state",
+            "reason_codes"
+          ],
+          "id": "CONFLICT-002"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "explicit_conflict",
+          "differences": [
+            "response_state",
+            "reason_codes"
+          ],
+          "id": "CONFLICT-003"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "explicit_conflict",
+          "differences": [
+            "response_state",
+            "reason_codes"
+          ],
+          "id": "CONFLICT-004"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "explicit_conflict",
+          "differences": [
+            "response_state",
+            "reason_codes"
+          ],
+          "id": "CONFLICT-005"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "explicit_conflict",
+          "differences": [
+            "response_state",
+            "reason_codes"
+          ],
+          "id": "CONFLICT-006"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "explicit_conflict",
+          "differences": [
+            "response_state",
+            "reason_codes"
+          ],
+          "id": "CONFLICT-007"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "explicit_conflict",
+          "differences": [
+            "response_state",
+            "reason_codes"
+          ],
+          "id": "CONFLICT-008"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "explicit_conflict",
+          "differences": [
+            "response_state",
+            "reason_codes"
+          ],
+          "id": "CONFLICT-009"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "explicit_conflict",
+          "differences": [
+            "response_state",
+            "reason_codes"
+          ],
+          "id": "CONFLICT-010"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "legacy-limit-one-target"
+          },
+          "case_class": "ambiguous_identifier",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "AMBIG-001"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "legacy-limit-one-target"
+          },
+          "case_class": "ambiguous_identifier",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "AMBIG-002"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "legacy-limit-one-target"
+          },
+          "case_class": "ambiguous_identifier",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "AMBIG-003"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "legacy-limit-one-target"
+          },
+          "case_class": "ambiguous_identifier",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "AMBIG-004"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "legacy-limit-one-target"
+          },
+          "case_class": "ambiguous_identifier",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "AMBIG-005"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "legacy-limit-one-target"
+          },
+          "case_class": "ambiguous_identifier",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "AMBIG-006"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "legacy-limit-one-target"
+          },
+          "case_class": "ambiguous_identifier",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "AMBIG-007"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "legacy-limit-one-target"
+          },
+          "case_class": "ambiguous_identifier",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "AMBIG-008"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "legacy-limit-one-target"
+          },
+          "case_class": "ambiguous_identifier",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "AMBIG-009"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "legacy-limit-one-target"
+          },
+          "case_class": "ambiguous_identifier",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "AMBIG-010"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-b99caa1e89a2f6864b6e"
+          },
+          "case_class": "missing_critical_facts",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "MISSING-001"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-8f263d40b33991fc3ff1"
+          },
+          "case_class": "missing_critical_facts",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "MISSING-002"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-04d0bff78a3c50728ec2"
+          },
+          "case_class": "missing_critical_facts",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "MISSING-003"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-31df6d76b329b858041d"
+          },
+          "case_class": "missing_critical_facts",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "MISSING-004"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-a551d2e4c05f1ec3b0fd"
+          },
+          "case_class": "missing_critical_facts",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "MISSING-005"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-0b37d2129b99e1ea0140"
+          },
+          "case_class": "missing_critical_facts",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "MISSING-006"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-4b6c974e22483920e62c"
+          },
+          "case_class": "missing_critical_facts",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "MISSING-007"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-d7b973f8fce84711a933"
+          },
+          "case_class": "missing_critical_facts",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "MISSING-008"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-da61db1d7abf4c64cf24"
+          },
+          "case_class": "missing_critical_facts",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "MISSING-009"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "candidate-cfg-6d568492cfc9305c0673"
+          },
+          "case_class": "missing_critical_facts",
+          "differences": [
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "MISSING-010"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "legacy-limit-one-target"
+          },
+          "case_class": "outside_release",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "OUTREL-001"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "legacy-limit-one-target"
+          },
+          "case_class": "outside_release",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "OUTREL-002"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "legacy-limit-one-target"
+          },
+          "case_class": "outside_release",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "OUTREL-003"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "legacy-limit-one-target"
+          },
+          "case_class": "outside_release",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "OUTREL-004"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "legacy-limit-one-target"
+          },
+          "case_class": "outside_release",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "OUTREL-005"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "legacy-limit-one-target"
+          },
+          "case_class": "outside_release",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "OUTREL-006"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "unsupported_family",
+          "differences": [
+            "response_state",
+            "reason_codes"
+          ],
+          "id": "UNSUPPORTED-001"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "unsupported_family",
+          "differences": [
+            "response_state",
+            "reason_codes"
+          ],
+          "id": "UNSUPPORTED-002"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "unsupported_family",
+          "differences": [
+            "response_state",
+            "reason_codes"
+          ],
+          "id": "UNSUPPORTED-003"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "unsupported_family",
+          "differences": [
+            "response_state",
+            "reason_codes"
+          ],
+          "id": "UNSUPPORTED-004"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "unsupported_family",
+          "differences": [
+            "response_state",
+            "reason_codes"
+          ],
+          "id": "UNSUPPORTED-005"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "zero",
+            "reason_codes": [
+              "no_rows"
+            ],
+            "response_state": "no_match",
+            "selection_state": "abstain"
+          },
+          "case_class": "unsupported_family",
+          "differences": [
+            "response_state",
+            "reason_codes"
+          ],
+          "id": "UNSUPPORTED-006"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "legacy-limit-one-target"
+          },
+          "case_class": "withdrawn",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "WITHDRAWN-001"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "legacy-limit-one-target"
+          },
+          "case_class": "withdrawn",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "WITHDRAWN-002"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "legacy-limit-one-target"
+          },
+          "case_class": "withdrawn",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "WITHDRAWN-003"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "legacy-limit-one-target"
+          },
+          "case_class": "withdrawn",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "WITHDRAWN-004"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "legacy-limit-one-target"
+          },
+          "case_class": "unavailable",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "UNAVAILABLE-001"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "legacy-limit-one-target"
+          },
+          "case_class": "unavailable",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "UNAVAILABLE-002"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "legacy-limit-one-target"
+          },
+          "case_class": "unavailable",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "UNAVAILABLE-003"
+        },
+        {
+          "actual": {
+            "identity_cardinality": "one",
+            "reason_codes": [
+              "legacy_limit_one"
+            ],
+            "response_state": "exact_mapping",
+            "selection_state": "unique",
+            "target_key": "legacy-limit-one-target"
+          },
+          "case_class": "unavailable",
+          "differences": [
+            "response_state",
+            "identity_cardinality",
+            "selection_state",
+            "reason_codes"
+          ],
+          "id": "UNAVAILABLE-004"
+        }
+      ],
+      "false_unique_identity": 24,
+      "false_unique_matches": 58,
+      "false_unique_selection": 58,
+      "pass": 8,
+      "system": "current_artifact_baseline",
+      "total": 120
+    }
+  },
+  "total_cases": 120,
+  "unresolved_answer_key_case_ids": [
+    "BROAD-010",
+    "BROAD-011",
+    "BROAD-012",
+    "PARTIAL-005",
+    "PARTIAL-006",
+    "PARTIAL-009"
+  ],
+  "unresolved_answer_key_count": 6
+}

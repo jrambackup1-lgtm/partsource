@@ -11,7 +11,8 @@ Research vault and development project for PartSource, a deterministic mechanica
 3. `SPEC_CONFIRMATION.md` — concise current product specification.
 4. `CONTEXT.md` — current domain language.
 5. `research/data-source-register.md` — source permission and ingestion gate.
-6. `.wayfinder/poc-ship/poc-ship-map.md` — decision history and current planning frontier.
+6. `.wayfinder/product-recovery/partsource-product-recovery-plan.md` — current recovery execution map and planning frontier.
+7. `.wayfinder/poc-ship/poc-ship-map.md` — completed deterministic POC decision history.
 
 The current product flow is:
 
@@ -26,6 +27,8 @@ All other research plans, checklists, prototypes, dated reports, and archived fi
 Historical material does not change product behavior, scope, claims, implementation priority, or completion state.
 
 Do not treat old resolver, runtime-agent, ambiguity, missing-fact, conflict, BOM, equivalence, supplier-handoff, pSEO, or isolated-part-page directions as current.
+
+The product-recovery plan may restore product presentation and catalog architecture. It does not restore superseded commercial or runtime-agent scope.
 
 ## Runtime boundary
 

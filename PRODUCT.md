@@ -1,29 +1,60 @@
 # Product
 
-## Register
+## Name
 
-product
+PartSource
 
-## Users
-Engineering design teams, procurement managers, and mechanical hardware sourcing panels. Their context is consolidating active Bills of Materials (BOM) to find direct equivalents, reduce unit costs, verify compliance, and merge shipments.
+## User
 
-## Product Purpose
-PartSource is a professional mechanical hardware sourcing platform that matches standard fasteners (e.g. McMaster parts) with approved supplier equivalents. Success looks like enabling users to optimize BOM costs, verify certifications, and execute consolidated brokerage shipping batches.
+Mechanical engineers and hardware builders searching for a component from broad text, partial specifications, or an exact identifier.
 
-## Brand Personality
-* Professional
-* Trust-first
-* Highly precise
+## Purpose
 
-## Anti-references
-* Cheesy default AI dashboards with neon gradients, linear-gradient grid backgrounds, and simulated hacker terminal elements.
-* Over-rounded interfaces, nested cards-inside-cards, and arbitrary decorative icons.
+PartSource is a deterministic mechanical-component catalog navigator.
 
-## Design Principles
-* **Information Density Over Clutter:** Present detailed technical matrices clearly without resort to simulated sci-fi jargon.
-* **Engineering Precision:** Render CAD drawings with clean, realistic mechanical blueprint standards.
-* **Workflow Clarity:** Ensure compliance toggles and action controls represent clear, distinct, and tactile states.
+`query → catalog level → family → filters → result list`
 
-## Accessibility & Inclusion
-* Min WCAG AA contrast ratios for text readability.
-* Support for reduced motion systems (`prefers-reduced-motion`).
+Exact ID opens the correct family context and result list, then highlights the matching item.
+
+The user selects what to open.
+
+## Core rule
+
+**Search determines catalog depth. Catalog context stays visible. Filters narrow the list. Exact ID highlights the matching item. User selects.**
+
+Non-exact search never auto-selects a part.
+
+## Runtime
+
+PartSource uses typed fields, category hierarchy, family schemas, filters, deterministic matching, provenance, and fail-closed states.
+
+No AI or agents run in the product.
+
+## Trust boundary
+
+PartSource does not invent facts or silently resolve conflicts.
+
+Catalog results do not claim engineering approval, suitability, equivalence, replacement, stock, price, or availability.
+
+## Product principles
+
+- Keep catalog context visible.
+- Show active filters.
+- Keep result lists dense and comparable.
+- Separate highlight from selection.
+- Keep provenance near supported facts.
+- Fail closed when safe matching is not possible.
+
+## Brand personality
+
+- Professional.
+- Precise.
+- Trust-first.
+- Dense, not cluttered.
+
+## Accessibility
+
+- Meet WCAG AA text contrast.
+- Support reduced motion.
+- Support keyboard navigation.
+- Keep focus and selection states distinct.

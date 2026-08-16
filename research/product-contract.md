@@ -19,6 +19,19 @@ PartSource is a deterministic mechanical-component catalog navigator.
 
 It helps an engineer move from a query to the correct catalog depth and a relevant result list while keeping catalog context visible.
 
+## Product surface
+
+The current product has two primary surfaces:
+
+- **Home** — a start surface for global search, supported examples, and catalog browsing. It is not a KPI dashboard.
+- **Catalog** — the active category or family workspace with visible hierarchy, typed constraints, family-specific filters, an aligned result table, and contextual selected-record detail.
+
+Broad catalog input makes the family step explicit. A family view uses its own schema and result columns.
+
+The default workflow shows concise interpretation and source state. Raw resolver traces and internal identifiers belong in optional diagnostics, not above the result task.
+
+While the active catalog is synthetic, its synthetic status must remain visible on Home, Catalog, and selected-record detail.
+
 ## Core interaction contract
 
 `query → catalog level → family → filters → result list`
@@ -61,6 +74,8 @@ Family-specific fields stay inside their family schema.
 
 Matching rules must not guess missing values or convert unsupported terms into facts.
 
+A broad material or form term must not become a narrower fact. In particular, `stainless` does not prove `A2 stainless`, and `button head` or `countersunk` alone does not prove an internal-hex drive.
+
 ## Result contract
 
 A result list contains catalog records inside visible category and family context.
@@ -74,6 +89,25 @@ Each record must keep:
 - provenance for displayed facts and mappings.
 
 A result row is not an approval, suitability decision, supplier listing, offer, equivalent, or replacement.
+
+Results should use an aligned, family-specific technical table when variants need comparison. Explicit user selection may open contextual detail while preserving the family and result-list state.
+
+## Provenance presentation
+
+Displayed technical facts and identifier mappings retain claim-level provenance.
+
+The default UI shows a concise source summary and honest unknown states. A user may inspect field or mapping evidence. Raw traces remain available only as diagnostics.
+
+Provenance supports what a source or declared fixture states. It does not establish suitability, approval, equivalence, manufacture, supply, or availability.
+
+## Release identity
+
+Application release identity and catalog release identity are separate:
+
+- the application release identifies the exact deployed code artifact;
+- the catalog release identifies the exact hierarchy, schemas, configurations, mappings, lexicon, and provenance package.
+
+Public release claims require independently fetchable application metadata and visible catalog release metadata. Synthetic package identity must not be presented as real engineering authority.
 
 ## Fail-closed contract
 

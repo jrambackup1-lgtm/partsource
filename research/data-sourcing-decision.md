@@ -1,5 +1,7 @@
 # Data Sourcing Decision Record — partsource.io
 
+> **HISTORICAL RESEARCH.** Preserve the source/legal investigation. Product-direction, decoder, supplier, and implementation recommendations do not control current scope. Source permission is controlled by `data-source-register.md`.
+
 This document records the legal and technical investigation into obtaining **real product data** for partsource.io, the dead-ends evaluated, and the chosen path. It supersedes any earlier ambiguity about whether to scrape McMaster-Carr or use a third-party scraper.
 
 **Status:** Superseded where it proposed Zoro ingestion (2026-07-12). Current policy permits only sanctioned sources; the historical implementation remains fail-closed and outside production.
