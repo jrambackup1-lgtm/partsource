@@ -10,6 +10,7 @@ import type {
   FamilySchemaRevision,
   HierarchyNode,
   IdentifierMapping,
+  IdentifierNamespace,
   LexiconRule,
   ProvenanceRecord,
 } from '../contracts';
@@ -44,6 +45,10 @@ export interface CatalogIndex {
   readonly revisionsById: ReadonlyMap<string, ConfigurationRevision>;
   readonly mappingsByQualifiedIdentifier: ReadonlyMap<string, readonly IdentifierMapping[]>;
   readonly mappingsByNormalizedIdentifier: ReadonlyMap<string, readonly IdentifierMapping[]>;
+  readonly mappingsByConfigurationRevisionId: ReadonlyMap<string, readonly IdentifierMapping[]>;
+  readonly namespacesById: ReadonlyMap<string, IdentifierNamespace>;
+  /** Compiled per-namespace recognition patterns for exact-path routing (u3). */
+  readonly namespaceRecognition: readonly Readonly<{ namespaceId: string; pattern: RegExp }>[];
   readonly provenanceById: ReadonlyMap<string, ProvenanceRecord>;
   readonly lexiconRules: readonly LexiconRule[];
 }
@@ -89,6 +94,7 @@ export interface QueryInterpretation {
 export type CatalogResolutionState =
   | 'initial'
   | 'catalog_list'
+  | 'catalog_chooser'
   | 'catalog_empty'
   | 'query_conflict'
   | 'query_unsupported'
@@ -96,6 +102,14 @@ export type CatalogResolutionState =
   | 'exact_non_unique'
   | 'invalid_filter'
   | 'invalid_selection';
+
+/** One family-level choice offered when a broad query resolves to a category node. */
+export interface CatalogFamilyChoice {
+  readonly familyId: string;
+  readonly label: string;
+  readonly hierarchyNodeId: string;
+  readonly count: number;
+}
 
 export interface CatalogRecordProjection {
   readonly configurationId: string;
@@ -108,6 +122,7 @@ export interface CatalogRecordProjection {
   readonly facts: readonly FactAssignment[];
   readonly identifiers: readonly Readonly<{
     namespaceId: string;
+    namespaceLabel: string;
     identifier: string;
     mappingId: string;
     provenanceId: string;
@@ -128,6 +143,7 @@ export interface CatalogResolution {
   readonly hierarchyNodeId: string | null;
   readonly hierarchyPath: readonly HierarchyNode[];
   readonly filters: readonly CatalogFilter[];
+  readonly familyChoices: readonly CatalogFamilyChoice[];
   readonly records: readonly CatalogRecordProjection[];
   readonly exact: AcrossNamespaceIdentifierResolution | null;
   readonly exactMatchRevisionId: string | null;
@@ -164,6 +180,7 @@ export interface CatalogViewModel {
   readonly hierarchyPath: readonly HierarchyNode[];
   readonly family: CatalogFamily | null;
   readonly filters: readonly CatalogFilter[];
+  readonly familyChoices: readonly CatalogFamilyChoice[];
   readonly facets: readonly FacetProjection[];
   readonly resultCount: number;
   readonly records: readonly CatalogRecordProjection[];

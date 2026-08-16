@@ -51,3 +51,7 @@ __pycache__/
 
 # Local historical screenshot artifacts excluded from the release packet
 archive/legacy-plans-2026-08-12/sketches/008-bounded-intent-adaptive-resolver/screenshots/*.png
+
+# u1: dev-only real catalog release artifacts (never committed, never deployed)
+web/catalog-releases/
+.tmp-profile/

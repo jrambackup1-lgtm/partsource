@@ -1,5 +1,6 @@
 import {
   CATALOG_PACKAGE_SCHEMA_VERSION,
+  type CatalogDigest,
   type CatalogPackage,
   type CatalogLifecycleStatus,
   type FactDefinition,
@@ -23,10 +24,19 @@ const PENDING_DIGEST_PATTERN = /^sha256:pending:[a-z0-9][a-z0-9.-]*$/;
 const ISO_UTC_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 const FORBIDDEN_UNICODE_PATTERN = /[\u0000-\u001f\u007f-\u009f\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]/u;
 const PROHIBITED_DISPLAY_CLAIM_PATTERN = /\b(?:certified|verified|equivalent|approved\s+(?:alternate\s+)?(?:equivalent|replacement)|alternate\s+equivalent|suppliers?|prices?|stock|availability|lead[\s-]*time)\b/iu;
-const MAX_PACKAGE_BYTES = 2_000_000;
-const MAX_PACKAGE_ROWS = 25_000;
-const MAX_ARRAY_ITEMS = 10_000;
+const MAX_PACKAGE_BYTES = 256_000_000;
+const MAX_PACKAGE_ROWS = 200_000;
+const MAX_ARRAY_ITEMS = 60_000;
+const MAX_STRUCTURAL_NODES = 12_000_000;
 const MAX_STRING_LENGTH = 512;
+
+/**
+ * Budget rationale (u1 decision D5): sized to the authorized real release
+ * shape (26,953 configurations/revisions/mappings, ~110 MB artifact JSON,
+ * ~84k total rows, ~1.5M structural nodes) with at least 2x headroom, instead
+ * of the 30-record synthetic fixture budgets these replaced. A package
+ * exceeding them is still rejected before any deep work runs.
+ */
 
 export class CatalogPackageValidationError extends Error {
   constructor(readonly path: string, message: string) {
@@ -43,7 +53,7 @@ function assertInputBudget(input: unknown): void {
   const active = new WeakSet<object>();
   let nodes = 0;
   const visit = (value: unknown, path: string, depth: number): void => {
-    if (++nodes > 100_000) fail('$', 'package exceeds structural node budget');
+    if (++nodes > MAX_STRUCTURAL_NODES) fail('$', 'package exceeds structural node budget');
     if (depth > 16) fail(path, 'package exceeds maximum nesting depth');
     if (typeof value === 'string') {
       stringAt(value, path, false);
@@ -227,9 +237,9 @@ function validateManifest(value: unknown, trustedApproval: TrustedCatalogApprova
     fail(`${path}.digest`, 'expected finalized sha256:<64 lowercase hex> or a synthetic build placeholder');
   }
   isoTimestampAt(manifest.publishedAt, `${path}.publishedAt`);
-  const allowedUse = literalAt(manifest.allowedUse, `${path}.allowedUse`, ['synthetic_demo_only', 'public_catalog']);
-  const dataOrigin = literalAt(manifest.dataOrigin, `${path}.dataOrigin`, ['synthetic', 'approved_public_projection']);
-  const status = literalAt(manifest.publicationStatus, `${path}.publicationStatus`, ['draft', 'authored_demo', 'approved_public', 'withdrawn']);
+  const allowedUse = literalAt(manifest.allowedUse, `${path}.allowedUse`, ['synthetic_demo_only', 'private_dev_only', 'public_catalog']);
+  const dataOrigin = literalAt(manifest.dataOrigin, `${path}.dataOrigin`, ['synthetic', 'cofounder_private_dev', 'approved_public_projection']);
+  const status = literalAt(manifest.publicationStatus, `${path}.publicationStatus`, ['draft', 'authored_demo', 'dev_release', 'approved_public', 'withdrawn']);
   const approvalId = nullableIdAt(manifest.approvalId, `${path}.approvalId`);
   const reviewedBy = manifest.reviewedBy === null ? null : displayStringAt(manifest.reviewedBy, `${path}.reviewedBy`);
   const reviewedAt = manifest.reviewedAt === null ? null : isoTimestampAt(manifest.reviewedAt, `${path}.reviewedAt`);
@@ -244,6 +254,14 @@ function validateManifest(value: unknown, trustedApproval: TrustedCatalogApprova
     if (!/synthetic/i.test(notice)) fail(`${path}.notice`, 'synthetic origin must be visibly disclosed');
     if (status !== 'authored_demo') fail(`${path}.publicationStatus`, 'synthetic packages must be authored_demo');
     if (approvalId || reviewedBy || reviewedAt || grantId) fail(path, 'synthetic demo cannot carry public approval metadata');
+  } else if (dataOrigin === 'cofounder_private_dev') {
+    // Dev-only release of the registered cofounder dataset (u1 decision D5):
+    // build-time digest, no public approval claims, explicit non-public notice.
+    if (!FINAL_DIGEST_PATTERN.test(digest)) fail(`${path}.digest`, 'private dev release digest must be finalized');
+    if (allowedUse !== 'private_dev_only') fail(path, 'cofounder dev data must be private_dev_only');
+    if (status !== 'dev_release') fail(`${path}.publicationStatus`, 'cofounder dev packages must be dev_release');
+    if (approvalId || reviewedBy || reviewedAt || grantId) fail(path, 'dev release cannot carry public approval metadata');
+    if (!/development|not for public|dev/i.test(notice)) fail(`${path}.notice`, 'dev release must disclose its non-public status');
   } else {
     if (!FINAL_DIGEST_PATTERN.test(digest)) fail(`${path}.digest`, 'public catalog digest must be finalized');
     if (allowedUse !== 'public_catalog') fail(path, 'approved public data must be public_catalog');
@@ -434,11 +452,12 @@ function validateProvenance(value: unknown, manifest: ObjectValue): Map<string, 
     const id = idAt(row.provenanceId, `${path}.provenanceId`);
     if (byId.has(id)) fail(`${path}.provenanceId`, 'duplicate provenance ID');
     literalAt(row.claimType, `${path}.claimType`, ['fact', 'mapping']);
-    const sourceKind = literalAt(row.sourceKind, `${path}.sourceKind`, ['synthetic_fixture', 'approved_public_projection']);
+    const sourceKind = literalAt(row.sourceKind, `${path}.sourceKind`, ['synthetic_fixture', 'cofounder_private_dev', 'approved_public_projection']);
     displayStringAt(row.sourceId, `${path}.sourceId`);
-    const publicationClass = literalAt(row.publicationClass, `${path}.publicationClass`, ['synthetic_demo', 'public']);
+    const publicationClass = literalAt(row.publicationClass, `${path}.publicationClass`, ['synthetic_demo', 'private_dev', 'public']);
     const grantId = nullableIdAt(row.permissionGrantId, `${path}.permissionGrantId`);
     if (manifest.dataOrigin === 'synthetic' && (sourceKind !== 'synthetic_fixture' || publicationClass !== 'synthetic_demo' || grantId !== null)) fail(path, 'synthetic release requires synthetic provenance');
+    if (manifest.dataOrigin === 'cofounder_private_dev' && (sourceKind !== 'cofounder_private_dev' || publicationClass !== 'private_dev' || grantId !== null)) fail(path, 'cofounder dev release requires matching private-dev provenance');
     if (manifest.dataOrigin === 'approved_public_projection' && (sourceKind !== 'approved_public_projection' || publicationClass !== 'public' || grantId !== manifest.permissionGrantId)) fail(path, 'public provenance must carry the manifest permission grant');
     const evidence = arrayAt(row.evidenceRefs, `${path}.evidenceRefs`, 1);
     const refs = new Set<string>();
@@ -498,6 +517,7 @@ function validateConfigurations(
 
   const revisionRows = arrayAt(revisionValue, '$.configurationRevisions', 1);
   const revisions = new Map<string, ObjectValue>();
+  const revisionsByConfiguration = new Map<string, ObjectValue[]>();
   const numbered = new Set<string>();
   revisionRows.forEach((item, index) => {
     const path = `$.configurationRevisions[${index}]`;
@@ -534,10 +554,14 @@ function validateConfigurations(
     unique(assignedFactIds, `${path}.facts`);
     if (!sameMembers(assignedFactIds, schema.factIds as string[])) fail(`${path}.facts`, 'fact cardinality must exactly match family schema');
     revisions.set(revisionId, row);
+    const grouped = revisionsByConfiguration.get(configurationId);
+    if (grouped) grouped.push(row); else revisionsByConfiguration.set(configurationId, [row]);
   });
 
   for (const [configurationId, configuration] of Array.from(configurations.entries())) {
-    const ownRevisions = Array.from(revisions.entries()).filter(([, row]) => row.configurationId === configurationId);
+    // Grouped once above: validating 27k configurations must stay linear,
+    // not rescan every revision per configuration.
+    const ownRevisions = (revisionsByConfiguration.get(configurationId) ?? []).map(row => [row.configurationRevisionId, row] as const);
     if (!ownRevisions.length) fail(`$.configurations.${configurationId}`, 'configuration requires at least one revision');
     const currentId = configuration.currentRevisionId as string;
     const current = revisions.get(currentId);
@@ -553,13 +577,20 @@ function validateNamespaces(value: unknown): Map<string, ObjectValue> {
   const namespaces = new Map<string, ObjectValue>();
   rows.forEach((item, index) => {
     const path = `$.identifierNamespaces[${index}]`;
-    const row = objectAt(item, path, ['namespaceId', 'label', 'trimPolicy', 'casePolicy', 'unicodePolicy']);
+    const row = objectAt(item, path, ['namespaceId', 'label', 'trimPolicy', 'casePolicy', 'unicodePolicy', 'identifierPattern']);
     const id = idAt(row.namespaceId, `${path}.namespaceId`);
     if (namespaces.has(id)) fail(`${path}.namespaceId`, 'duplicate namespace ID');
     displayStringAt(row.label, `${path}.label`);
     literalAt(row.trimPolicy, `${path}.trimPolicy`, ['trim']);
     literalAt(row.casePolicy, `${path}.casePolicy`, ['upper']);
     literalAt(row.unicodePolicy, `${path}.unicodePolicy`, ['NFKC']);
+    const pattern = stringAt(row.identifierPattern, `${path}.identifierPattern`, true, 128);
+    if (!pattern.startsWith('^') || !pattern.endsWith('$')) fail(`${path}.identifierPattern`, 'recognition pattern must be anchored (^...$)');
+    try {
+      void new RegExp(pattern, 'u');
+    } catch (error) {
+      fail(`${path}.identifierPattern`, `recognition pattern must compile: ${(error as Error).message}`);
+    }
     namespaces.set(id, row);
   });
   return namespaces;
@@ -672,8 +703,16 @@ function deepFreeze(value: unknown): void {
  * The sole public trust seam for catalog data. It validates unknown input,
  * rejects undeclared structure and inconsistent references, clones it, and
  * returns a deeply frozen package detached from the caller's object graph.
+ *
+ * `expectedDigest` binds large build-time-verified releases to a pinned
+ * identity instead of re-serializing the full graph in the browser; byte-level
+ * digest verification still runs in the build/audit tooling (u1 decision D5).
  */
-export function parseCatalogPackage(input: unknown, trustedApproval?: TrustedCatalogApproval): CatalogPackage {
+export function parseCatalogPackage(
+  input: unknown,
+  trustedApproval?: TrustedCatalogApproval,
+  expectedDigest?: CatalogDigest,
+): CatalogPackage {
   assertInputBudget(input);
   const packageRow = objectAt(input, '$', PACKAGE_KEYS);
   const rowCount = PACKAGE_KEYS.reduce((total, key) => total + (Array.isArray(packageRow[key]) ? packageRow[key].length : 0), 0);
@@ -693,10 +732,22 @@ export function parseCatalogPackage(input: unknown, trustedApproval?: TrustedCat
   validateMappings(packageRow.identifierMappings, namespaces, revisions, provenance);
   validateLexicon(packageRow.lexicon, hierarchy, families, schemas, definitions);
   const declaredDigest = manifest.digest as string;
-  const computedDigest = catalogPackageDigest(input as CatalogPackage);
-  if (FINAL_DIGEST_PATTERN.test(declaredDigest) && computedDigest !== declaredDigest) fail('$.manifest.digest', `digest mismatch (computed ${computedDigest})`);
+  let computedDigest: CatalogDigest | null = null;
+  if (expectedDigest !== undefined && FINAL_DIGEST_PATTERN.test(declaredDigest)) {
+    if (declaredDigest !== expectedDigest) {
+      fail('$.manifest.digest', `digest does not match the pinned release identity (declared ${declaredDigest})`);
+    }
+  } else {
+    computedDigest = catalogPackageDigest(input as CatalogPackage);
+    if (FINAL_DIGEST_PATTERN.test(declaredDigest) && computedDigest !== declaredDigest) {
+      fail('$.manifest.digest', `digest mismatch (computed ${computedDigest})`);
+    }
+  }
   const result = cloneValue(input);
-  if (PENDING_DIGEST_PATTERN.test(declaredDigest)) (result as CatalogPackage & { manifest: { digest: string } }).manifest.digest = computedDigest;
+  if (PENDING_DIGEST_PATTERN.test(declaredDigest)) {
+    const finalizedDigest = computedDigest ?? catalogPackageDigest(input as CatalogPackage);
+    (result as CatalogPackage & { manifest: { digest: CatalogDigest } }).manifest.digest = finalizedDigest;
+  }
   deepFreeze(result);
   return result as CatalogPackage;
 }

@@ -83,7 +83,7 @@ rejects(input => {
     correctsId: null, supersededById: 'missing.mapping',
   };
 }, /lifecycle reference must identify another record/);
-rejects(input => { input.identifierNamespaces = new Array(10_001).fill(input.identifierNamespaces[0]); }, /expected at most 10000 item/);
+rejects(input => { input.identifierNamespaces = new Array(60_001).fill(input.identifierNamespaces[0]); }, /expected at most 60000 item/);
 rejects(input => {
   input.manifest.digest = catalogPackageDigest(input);
   input.hierarchy[0].label = 'Changed after publication';

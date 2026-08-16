@@ -26,8 +26,11 @@ export function validateCatalogFilters(
   const rejected: string[] = [];
   const seen = new Set<string>();
   for (const filter of filters) {
-    if (seen.has(filter.factId)) rejected.push(filter.factId);
-    seen.add(filter.factId);
+    // Repeated factIds are allowed (OR within a fact, AND across facts, u4);
+    // an exactly repeated value is redundant and rejected as malformed.
+    const filterKey = `${filter.factId}\u0000${typeof filter.value}:${String(filter.value)}`;
+    if (seen.has(filterKey)) rejected.push(filter.factId);
+    seen.add(filterKey);
     const definition = index.factDefinitionsById.get(filter.factId);
     if (!definition || !definition.allowedValues.some(value => samePrimitive(value, filter.value))) {
       rejected.push(filter.factId);
@@ -63,11 +66,21 @@ export function configurationMatchesFilters(
   filters: readonly CatalogFilter[],
   excludedFactId?: string,
 ): boolean {
-  return filters.every(filter => {
-    if (filter.factId === excludedFactId) return true;
-    const value = configuration.facts.get(filter.factId)?.value;
-    return value?.state === 'known' && samePrimitive(value.value, filter.value);
-  });
+  if (!filters.length) return true;
+  // OR within a fact, AND across facts (u4): the active values of each fact
+  // form one disjunction.
+  const acceptedByFact = new Map<string, Set<FactPrimitive>>();
+  for (const filter of filters) {
+    if (filter.factId === excludedFactId) continue;
+    const accepted = acceptedByFact.get(filter.factId) ?? new Set<FactPrimitive>();
+    accepted.add(filter.value);
+    acceptedByFact.set(filter.factId, accepted);
+  }
+  for (const [factId, accepted] of acceptedByFact) {
+    const value = configuration.facts.get(factId)?.value;
+    if (value?.state !== 'known' || !accepted.has(value.value)) return false;
+  }
+  return true;
 }
 
 export function filterConfigurations(
@@ -105,10 +118,12 @@ export function projectRecord(
   state: Readonly<{ exactMatchRevisionId?: string | null; selectedRevisionId?: string | null }> = {},
 ): CatalogRecordProjection {
   const family = index.familiesById.get(indexed.configuration.familyId)!;
-  const identifiers = index.package.identifierMappings
-    .filter(mapping => mapping.configurationRevisionId === indexed.revision.configurationRevisionId)
+  // Indexed lookup: a per-record identifier scan is O(records x mappings)
+  // (~18.7 s measured for one broad query at 27k mappings).
+  const identifiers = (index.mappingsByConfigurationRevisionId.get(indexed.revision.configurationRevisionId) ?? [])
     .map(mapping => Object.freeze({
       namespaceId: mapping.namespaceId,
+      namespaceLabel: index.namespacesById.get(mapping.namespaceId)?.label ?? mapping.namespaceId,
       identifier: mapping.identifier,
       mappingId: mapping.mappingId,
       provenanceId: mapping.provenanceId,
@@ -155,7 +170,12 @@ export function projectDetail(
   return Object.freeze({ ...record, schema, factDefinitions, provenance });
 }
 
-/** Family-only facets with self-excluding counts and package-declared value order. */
+/**
+ * Family-only facets with self-excluding disjunctive counts and
+ * package-declared value order. Counts use a single histogram pass per facet
+ * (u4): a value-by-value full family scan measured 222–244 ms on the largest
+ * real family; one pass per facet is an order of magnitude cheaper.
+ */
 export function computeFamilyFacets(
   index: CatalogIndex,
   familyId: string,
@@ -163,17 +183,29 @@ export function computeFamilyFacets(
 ): readonly FacetProjection[] {
   if (!index.familiesById.has(familyId) || validateCatalogFilters(index, familyId, filters).length) return [];
   const familyConfigurations = index.configurationsByFamilyId.get(familyId) ?? [];
-  const active = new Map(filters.map(filter => [filter.factId, filter.value]));
+  const active = new Map<string, Set<FactPrimitive>>();
+  for (const filter of filters) {
+    const values = active.get(filter.factId) ?? new Set<FactPrimitive>();
+    values.add(filter.value);
+    active.set(filter.factId, values);
+  }
   return Object.freeze((index.facetsByFamilyId.get(familyId) ?? []).map(facet => {
     const definition = index.factDefinitionsById.get(facet.factId)!;
+    // One filtered pass over the family builds the count histogram for this
+    // facet's own values while honoring the other facts' constraints.
+    const histogram = new Map<string, number>();
+    for (const configuration of familyConfigurations) {
+      if (!configurationMatchesFilters(configuration, filters, facet.factId)) continue;
+      const value = configuration.facts.get(facet.factId)?.value;
+      if (value?.state !== 'known') continue;
+      const key = `${typeof value.value}:${String(value.value)}`;
+      histogram.set(key, (histogram.get(key) ?? 0) + 1);
+    }
+    const activeValues = active.get(facet.factId);
     const values = definition.allowedValues.map((value: FactPrimitive) => Object.freeze({
       value,
-      count: familyConfigurations.filter(configuration =>
-        configurationMatchesFilters(configuration, filters, facet.factId)
-        && configuration.facts.get(facet.factId)?.value.state === 'known'
-        && samePrimitive((configuration.facts.get(facet.factId)!.value as { state: 'known'; value: FactPrimitive }).value, value)
-      ).length,
-      active: active.has(facet.factId) && samePrimitive(active.get(facet.factId)!, value),
+      count: histogram.get(`${typeof value}:${String(value)}`) ?? 0,
+      active: activeValues?.has(value) ?? false,
     }));
     return Object.freeze({
       facetId: facet.facetId,

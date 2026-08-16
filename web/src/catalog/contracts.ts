@@ -38,9 +38,9 @@ export interface CatalogManifest {
   /** SHA-256 of the canonical package serialization, which omits only this field. */
   readonly digest: CatalogDigest;
   readonly publishedAt: string;
-  readonly allowedUse: 'synthetic_demo_only' | 'public_catalog';
-  readonly dataOrigin: 'synthetic' | 'approved_public_projection';
-  readonly publicationStatus: 'draft' | 'authored_demo' | 'approved_public' | 'withdrawn';
+  readonly allowedUse: 'synthetic_demo_only' | 'private_dev_only' | 'public_catalog';
+  readonly dataOrigin: 'synthetic' | 'cofounder_private_dev' | 'approved_public_projection';
+  readonly publicationStatus: 'draft' | 'authored_demo' | 'dev_release' | 'approved_public' | 'withdrawn';
   /** Externally authorized review identity; null only for non-public demo packages. */
   readonly approvalId: string | null;
   readonly reviewedBy: string | null;
@@ -111,9 +111,9 @@ export interface EvidenceReference {
 export interface ProvenanceRecord {
   readonly provenanceId: string;
   readonly claimType: 'fact' | 'mapping';
-  readonly sourceKind: 'synthetic_fixture' | 'approved_public_projection';
+  readonly sourceKind: 'synthetic_fixture' | 'cofounder_private_dev' | 'approved_public_projection';
   readonly sourceId: string;
-  readonly publicationClass: 'synthetic_demo' | 'public';
+  readonly publicationClass: 'synthetic_demo' | 'private_dev' | 'public';
   readonly permissionGrantId: string | null;
   readonly evidenceRefs: readonly EvidenceReference[];
 }
@@ -146,6 +146,13 @@ export interface IdentifierNamespace {
   readonly trimPolicy: 'trim';
   readonly casePolicy: 'upper';
   readonly unicodePolicy: 'NFKC';
+  /**
+   * Anchored recognition pattern over the normalized identifier form. The
+   * resolver uses it to route identifier-shaped input into the exact path
+   * (u3): separator-free vendor part numbers must attempt exact resolution
+   * and fail as "identifier not found", never as unrecognized search terms.
+   */
+  readonly identifierPattern: string;
 }
 
 export interface IdentifierMapping {

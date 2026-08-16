@@ -130,12 +130,18 @@ export function createCatalogIndex(catalogPackage: CatalogPackage): CatalogIndex
 
   const mappingsByQualifiedMutable = new Map<string, IdentifierMapping[]>();
   const mappingsByNormalizedMutable = new Map<string, IdentifierMapping[]>();
+  const mappingsByRevisionMutable = new Map<string, IdentifierMapping[]>();
   const namespacesById = new Map(catalogPackage.identifierNamespaces.map(namespace => [namespace.namespaceId, namespace]));
+  const namespaceRecognition = Object.freeze(catalogPackage.identifierNamespaces.map(namespace => Object.freeze({
+    namespaceId: namespace.namespaceId,
+    pattern: new RegExp(namespace.identifierPattern, 'u'),
+  })));
   for (const mapping of catalogPackage.identifierMappings) {
     if (!['active', 'corrected'].includes(mapping.lifecycle.status)) continue;
     const normalized = normalizeIdentifier(mapping.identifier, namespacesById.get(mapping.namespaceId)!);
     append(mappingsByQualifiedMutable, qualifiedIdentifierKey(mapping.namespaceId, normalized), mapping);
     append(mappingsByNormalizedMutable, normalized, mapping);
+    append(mappingsByRevisionMutable, mapping.configurationRevisionId, mapping);
   }
 
   return Object.freeze({
@@ -153,6 +159,9 @@ export function createCatalogIndex(catalogPackage: CatalogPackage): CatalogIndex
     revisionsById: immutableMap(revisionsById),
     mappingsByQualifiedIdentifier: frozenArrayMap(mappingsByQualifiedMutable),
     mappingsByNormalizedIdentifier: frozenArrayMap(mappingsByNormalizedMutable),
+    mappingsByConfigurationRevisionId: frozenArrayMap(mappingsByRevisionMutable),
+    namespacesById: immutableMap(namespacesById),
+    namespaceRecognition,
     provenanceById: immutableMap(new Map(catalogPackage.provenance.map(record => [record.provenanceId, record]))),
     lexiconRules: Object.freeze([...catalogPackage.lexicon].sort((a, b) =>
       b.normalizedTerm.length - a.normalizedTerm.length || a.ruleId.localeCompare(b.ruleId))),

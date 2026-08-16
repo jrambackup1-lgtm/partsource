@@ -8,17 +8,32 @@ export type CatalogUrlHydration =
   | Readonly<{ state: 'invalid_selection'; resolution: CatalogResolution; canonicalUrl: string }>
   | Readonly<{ state: 'invalid_url_state'; query: string; rejected: readonly string[] }>;
 
-const URL_FACTS = [
+/**
+ * v2 (legacy, still accepted): five fixed filter parameters, single-select.
+ * v3 (canonical): repeatable `f_<factId>` parameters (OR within a fact),
+ * plus app-owned view parameters (page, sort, dir) and the app-level catalog
+ * selection parameter. u4.
+ */
+const URL_VERSION = '3';
+const LEGACY_URL_FACTS = [
   ['diameter_mm', 'nominal_diameter_mm'],
   ['pitch_mm', 'pitch_mm'],
   ['length_mm', 'length_mm'],
   ['material', 'material'],
   ['finish', 'finish'],
 ] as const;
-const ALLOWED_PARAMETERS = new Set([
-  'v', 'release', 'digest', 'q', 'family', 'selected', 'selected_revision',
-  ...URL_FACTS.map(([parameter]) => parameter),
+const LEGACY_PARAMETERS = new Set<string>(LEGACY_URL_FACTS.map(([parameter]) => parameter));
+const SINGLE_VALUE_PARAMETERS = new Set([
+  'v', 'release', 'digest', 'q', 'family', 'selected', 'selected_revision', 'page', 'sort', 'dir', 'catalog',
 ]);
+/** Known-inert tracking parameters are dropped without invalidating state. */
+const INERT_PARAMETER_PATTERN = /^(?:utm_[a-z0-9_]+|gclid|fbclid|msclkid)$/i;
+const FILTER_PARAMETER_PATTERN = /^f_([a-z][a-z0-9_.:-]*)$/;
+const PAGE_PATTERN = /^\d+$/;
+
+function isAllowedParameter(key: string): boolean {
+  return SINGLE_VALUE_PARAMETERS.has(key) || LEGACY_PARAMETERS.has(key) || FILTER_PARAMETER_PATTERN.test(key);
+}
 
 function malformedEncoding(rawSearch: string): boolean {
   return rawSearch.replace(/^\?/, '').split(/[&=]/).some(component => {
@@ -35,16 +50,26 @@ function serializedValue(value: FactPrimitive): string {
   return String(value);
 }
 
+function filterParameter(factId: string): string {
+  return `f_${factId}`;
+}
+
+function filterOrder(index: CatalogIndex): (left: CatalogFilter, right: CatalogFilter) => number {
+  const order = new Map(index.package.factDefinitions.map((definition, position) => [definition.factId, position]));
+  return (left, right) =>
+    (order.get(left.factId) ?? Number.MAX_SAFE_INTEGER) - (order.get(right.factId) ?? Number.MAX_SAFE_INTEGER)
+    || String(left.value).localeCompare(String(right.value));
+}
+
 export function serializeCatalogUrl(index: CatalogIndex, resolution: CatalogResolution): string {
   const parameters = new URLSearchParams();
-  parameters.set('v', '2');
+  parameters.set('v', URL_VERSION);
   parameters.set('release', index.package.manifest.releaseId);
   parameters.set('digest', index.package.manifest.digest);
   parameters.set('q', resolution.query);
   if (resolution.familyId) parameters.set('family', resolution.familyId);
-  for (const [parameter, factId] of URL_FACTS) {
-    const filter = resolution.filters.find(candidate => candidate.factId === factId);
-    if (filter) parameters.set(parameter, serializedValue(filter.value));
+  for (const filter of [...resolution.filters].sort(filterOrder(index))) {
+    parameters.append(filterParameter(filter.factId), serializedValue(filter.value));
   }
   if (resolution.selectedRecordId && resolution.selectedRevisionId && resolution.records.some(record =>
     record.configurationId === resolution.selectedRecordId
@@ -67,32 +92,53 @@ function parseValue(definition: FactDefinition, raw: string): FactPrimitive | nu
 export function hydrateCatalogUrl(index: CatalogIndex, rawSearch: string): CatalogUrlHydration {
   if (malformedEncoding(rawSearch)) return { state: 'invalid_url_state', query: '', rejected: ['encoding'] };
   const parameters = new URLSearchParams(rawSearch);
-  const keys = Array.from(parameters.keys());
-  if (!keys.length) return { state: 'empty' };
+  const recognized = Array.from(parameters.keys()).filter(key => !INERT_PARAMETER_PATTERN.test(key));
+  if (!recognized.length) return { state: 'empty' };
   const query = parameters.get('q') ?? '';
-  const rejected = keys.filter(key => !ALLOWED_PARAMETERS.has(key));
-  for (const key of ALLOWED_PARAMETERS) if (parameters.getAll(key).length > 1) rejected.push(key);
-  if (parameters.get('v') !== '2') rejected.push('v');
+  const rejected = recognized.filter(key => !isAllowedParameter(key));
+  for (const key of new Set(recognized)) {
+    if ((SINGLE_VALUE_PARAMETERS.has(key) || LEGACY_PARAMETERS.has(key)) && parameters.getAll(key).length > 1) rejected.push(key);
+  }
+  const page = parameters.get('page');
+  if (page !== null && !PAGE_PATTERN.test(page)) rejected.push('page');
+  const sort = parameters.get('sort');
+  if (sort !== null && !/^[a-z][a-z0-9_.:-]*$/.test(sort)) rejected.push('sort');
+  const direction = parameters.get('dir');
+  if (direction !== null && !['asc', 'desc'].includes(direction)) rejected.push('dir');
+  const version = parameters.get('v');
+  if (version !== null && version !== URL_VERSION && version !== '2') rejected.push('v');
   if (parameters.get('release') !== index.package.manifest.releaseId) rejected.push('release');
   if (parameters.get('digest') !== index.package.manifest.digest) rejected.push('digest');
   if (!query.trim()) rejected.push('q');
 
   const familyId = parameters.get('family');
   if (familyId !== null && !index.familiesById.has(familyId)) rejected.push('family');
-  const filters: CatalogFilter[] = [];
-  for (const [parameter, factId] of URL_FACTS) {
+
+  // Filters: v3 f_<factId> parameters (repeatable, OR within a fact) with the
+  // legacy v2 single-value keys still accepted for old links.
+  const urlFilters: CatalogFilter[] = [];
+  for (const key of new Set(recognized)) {
+    const match = FILTER_PARAMETER_PATTERN.exec(key);
+    if (!match) continue;
+    if (version === '2') { rejected.push(key); continue; }
+    const factId = match[1];
+    const definition = index.factDefinitionsById.get(factId);
+    if (!definition) { rejected.push(key); continue; }
+    for (const raw of parameters.getAll(key)) {
+      const value = parseValue(definition, raw);
+      if (value === null) rejected.push(key);
+      else urlFilters.push({ factId, value, source: 'url' });
+    }
+  }
+  for (const [parameter, factId] of LEGACY_URL_FACTS) {
+    if (version === '2' && !parameters.has(parameter)) continue;
+    if (parameters.has(parameter) && version !== '2') { rejected.push(parameter); continue; }
     const raw = parameters.get(parameter);
     if (raw === null) continue;
     const definition = index.factDefinitionsById.get(factId);
     const value = definition ? parseValue(definition, raw) : null;
     if (value === null) rejected.push(parameter);
-    else filters.push({ factId, value, source: 'url' });
-  }
-  if (familyId) {
-    const schema = index.currentSchemaByFamilyId.get(familyId)!;
-    for (const filter of filters) if (!schema.factIds.includes(filter.factId)) {
-      rejected.push(URL_FACTS.find(([, factId]) => factId === filter.factId)?.[0] ?? filter.factId);
-    }
+    else urlFilters.push({ factId, value, source: 'url' });
   }
   if (rejected.length) return { state: 'invalid_url_state', query, rejected: Array.from(new Set(rejected)) };
 
@@ -100,13 +146,28 @@ export function hydrateCatalogUrl(index: CatalogIndex, rawSearch: string): Catal
   if (base.familyId && familyId && base.familyId !== familyId) {
     return { state: 'invalid_url_state', query, rejected: ['family'] };
   }
+  // URL facts EXTEND the query interpretation instead of replacing it: a URL
+  // like ?q=M4+screws&family=x keeps the query-derived M4 constraint so the
+  // results can never silently contradict the visible query (u4 / audit N6).
+  const derived = base.filters.filter(filter => filter.source === 'query');
+  const merged: CatalogFilter[] = [...derived];
+  for (const filter of urlFilters) {
+    const sameFactDerived = derived.filter(candidate => candidate.factId === filter.factId);
+    if (sameFactDerived.length && !sameFactDerived.some(candidate => candidate.value === filter.value)) {
+      return { state: 'invalid_url_state', query, rejected: [filterParameter(filter.factId)] };
+    }
+    if (!merged.some(candidate => candidate.factId === filter.factId && candidate.value === filter.value)) {
+      merged.push(filter);
+    }
+  }
+
   let resolution = base;
-  if (['catalog_list', 'catalog_empty'].includes(base.state)) {
-    resolution = applyCatalogFilters(index, base, filters, { familyId: familyId ?? null });
+  if (['catalog_list', 'catalog_empty', 'catalog_chooser'].includes(base.state)) {
+    resolution = applyCatalogFilters(index, base, merged, { familyId: familyId ?? null });
     if (resolution.state === 'invalid_filter') {
       return { state: 'invalid_url_state', query, rejected: resolution.rejectedFields };
     }
-  } else if (familyId !== null || filters.length) {
+  } else if (familyId !== null || merged.length) {
     // Structured state may not turn a failed query into a list. It must still be
     // context-consistent and otherwise remains the original fail-closed state.
     if (base.familyId && familyId !== base.familyId) return { state: 'invalid_url_state', query, rejected: ['family'] };

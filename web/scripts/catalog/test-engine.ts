@@ -2,8 +2,10 @@ import assert from 'node:assert/strict';
 import {
   SYNTHETIC_CATALOG_PACKAGE,
   applyCatalogFilters,
+  buildSyntheticCatalogPackageInput,
   computeFamilyFacets,
   createCatalogIndex,
+  parseCatalogPackage,
   projectCatalogView,
   resolveCatalogQuery,
   resolveExactIdentifier,
@@ -29,8 +31,40 @@ for (const exposed of exposedMaps) {
   assert.throws(() => mutable.delete('mutation'), /immutable/);
 }
 assert.equal(index.hierarchyPathById.get('family_node_css')?.map(node => node.nodeId).join('/'), 'screws/hex_socket_screws/family_node_css');
-assert.deepEqual(ids('screws'), [...Array(30)].map((_, position) =>
-  `synrec-v1-${position < 10 ? 'shcs' : position < 20 ? 'bhss' : 'css'}-${String((position % 10) + 1).padStart(2, '0')}`));
+
+// Broad catalog input makes the family step explicit (u2): a category-level
+// query renders matching families with live counts, never a flattened
+// mixed-family record table.
+const broadScrews = resolve('screws');
+assert.equal(broadScrews.state, 'catalog_chooser');
+assert.deepEqual(broadScrews.familyChoices.map(choice => [choice.familyId, choice.count]), [
+  ['shcs', 10], ['bhss', 10], ['css', 10],
+]);
+assert.equal(broadScrews.records.length, 0, 'chooser state must not flatten family records');
+assert.equal(broadScrews.familyId, null);
+
+const broadM4 = resolve('M4 screws');
+assert.equal(broadM4.state, 'catalog_chooser');
+assert.deepEqual(broadM4.familyChoices.map(choice => [choice.familyId, choice.count]), [
+  ['shcs', 2], ['bhss', 2], ['css', 2],
+], 'chooser counts are constraint-aware');
+assert.deepEqual(broadM4.filters.map(filter => [filter.factId, filter.value]), [['nominal_diameter_mm', 4]]);
+
+// Choosing a family is a context switch: query-derived constraints survive.
+const choseBhss = applyCatalogFilters(index, broadM4, broadM4.filters, { familyId: 'bhss' });
+assert.equal(choseBhss.state, 'catalog_list');
+assert.equal(choseBhss.familyId, 'bhss');
+assert.deepEqual(choseBhss.filters.map(filter => [filter.factId, filter.value]), [['nominal_diameter_mm', 4]]);
+assert.deepEqual(choseBhss.records.map(record => record.configurationId), ['synrec-v1-bhss-01', 'synrec-v1-bhss-02']);
+
+// Exactly one matching family opens directly (u2 shortcut): proven below on a
+// purpose-built single-family package; the shipped synthetic fixture has three
+// data-identical families, so no typed query can reach a single match.
+
+// Removing a constraint at category level recomputes the chooser.
+const chooserNoFinish = applyCatalogFilters(index, resolve('A2 stainless screws'), [], { familyId: null });
+assert.equal(chooserNoFinish.state, 'catalog_chooser');
+assert.deepEqual(chooserNoFinish.familyChoices.map(choice => choice.familyId), ['shcs', 'bhss', 'css']);
 
 const family = resolve('socket head cap screws');
 assert.equal(family.state, 'catalog_list');
@@ -83,6 +117,11 @@ assert.equal(unknown.state, 'exact_not_found');
 assert.equal(unknown.records.length, 0);
 assert.equal(unknown.familyId, null);
 assert.equal(unknown.highlightedRecordId, null);
+// Namespace-pattern recognition (u3): identifier-shaped input with fewer
+// separators than the legacy heuristic still enters the exact path.
+const shapedUnknown = resolve('psyn-x1');
+assert.equal(shapedUnknown.state, 'exact_not_found');
+assert.equal(shapedUnknown.exact?.submittedIdentifier, 'psyn-x1');
 
 const collision = resolve('PSYN-SCR-COLLIDE');
 assert.equal(collision.state, 'exact_non_unique');
@@ -101,16 +140,29 @@ assert.deepEqual(familyConflict.hierarchyPath.map(node => node.nodeId), ['screws
 assert.equal(familyConflict.familyId, null);
 assert.equal(familyConflict.records.length, 0);
 
-for (const query of ['stainless screws', 'A2 screws', 'button screws', 'button head screws', 'countersunk screws', 'countersunk head screws', 'M6 titanium socket head cap screws']) {
-  const resolution = resolve(query);
-  assert.equal(resolution.state, 'query_unsupported', `${query} must fail closed`);
-  assert.equal(resolution.records.length, 0);
-  assert.equal(resolution.highlightedRecordId, null);
-  assert.equal(resolution.selectedRecordId, null);
+// Partial application (u2): recognized typed facts apply while unrecognized
+// terms remain visible query text; negation words still fail the whole query.
+const partial = resolve('M6 socket head cap screw 20mm A2');
+assert.equal(partial.state, 'catalog_list');
+assert.equal(partial.familyId, 'shcs');
+assert.deepEqual(partial.filters.map(filter => [filter.factId, filter.value]), [
+  ['nominal_diameter_mm', 6], ['length_mm', 20],
+]);
+assert.deepEqual(partial.unsupportedTerms, ['a2']);
+assert.deepEqual(partial.records.map(record => record.configurationId), ['synrec-v1-shcs-06']);
+for (const nothingRecognized of ['M3', 'titanium bolts', 'gr5 fasteners']) {
+  const unsupported = resolve(nothingRecognized);
+  assert.equal(unsupported.state, 'query_unsupported', `${nothingRecognized} must fail closed`);
+  assert.equal(unsupported.records.length, 0);
 }
-assert.deepEqual(resolve('stainless screws').unsupportedTerms, ['stainless']);
-assert.deepEqual(resolve('A2 screws').unsupportedTerms, ['a2']);
-assert.equal(resolve('A2 stainless screws').state, 'catalog_list', 'only the published exact phrase maps to the material fact');
+// Uninterpreted negation never applies the adjacent constraint.
+assert.equal(resolve('M4 screws not black oxide').state, 'query_unsupported');
+assert.equal(resolve('M4 screws not black oxide').records.length, 0);
+// A partially recognized broad query lands on the chooser with kept text.
+const keptText = resolve('stainless screws');
+assert.equal(keptText.state, 'catalog_chooser');
+assert.deepEqual(keptText.unsupportedTerms, ['stainless']);
+assert.equal(keptText.records.length, 0);
 for (const unsafe of ['PSYN-SCR-0006 extra', 'prefix PSYN-SCR-0006', 'M4 or M6 screws', 'M4 screws not black oxide']) {
   const resolution = resolve(unsafe);
   assert.notEqual(resolution.exact?.state, 'one');
@@ -160,4 +212,61 @@ const rejectProhibitedKeys = (value: unknown): void => {
   }
 };
 rejectProhibitedKeys(projectCatalogView(index, selectedOther));
+
+// Single-family-match shortcut on a purpose-built package whose broad query
+// matches exactly one family: the chooser is skipped, no forced extra click.
+const singleFamilyInput = buildSyntheticCatalogPackageInput() as {
+  hierarchy: unknown[]; families: { familyId: string }[]; familySchemaRevisions: { familyId: string }[];
+  facets: { familySchemaRevisionId: string }[]; configurations: { familyId: string; currentRevisionId: string }[];
+  configurationRevisions: { familyId: string; configurationRevisionId: string }[];
+  identifierMappings: { configurationRevisionId: string }[]; lexicon: { targetId: string }[];
+};
+const cssOnly = {
+  ...singleFamilyInput,
+  hierarchy: singleFamilyInput.hierarchy.filter(node => (node as { nodeId: string }).nodeId !== 'family_node_shcs' && (node as { nodeId: string }).nodeId !== 'family_node_bhss'),
+  families: singleFamilyInput.families.filter(family => family.familyId === 'css'),
+  familySchemaRevisions: singleFamilyInput.familySchemaRevisions.filter(schema => schema.familyId === 'css'),
+  facets: singleFamilyInput.facets.filter(facet => facet.familySchemaRevisionId === 'family-schema:css:r1'),
+  configurations: singleFamilyInput.configurations.filter(configuration => configuration.familyId === 'css'),
+  configurationRevisions: singleFamilyInput.configurationRevisions.filter(revision => revision.familyId === 'css'),
+  identifierMappings: singleFamilyInput.identifierMappings.filter(mapping => mapping.configurationRevisionId.startsWith('synrec-v1-css')),
+  lexicon: singleFamilyInput.lexicon.filter(rule => !['shcs', 'bhss'].includes(rule.targetId)),
+};
+const cssIndex = createCatalogIndex(parseCatalogPackage(cssOnly));
+const shortcut = resolveCatalogQuery(cssIndex, 'screws');
+assert.equal(shortcut.state, 'catalog_list', 'exactly one matching family opens its list directly');
+assert.equal(shortcut.familyId, 'css');
+assert.equal(shortcut.records.length, 10);
+assert.deepEqual(shortcut.familyChoices, []);
+const shortcutConstrained = resolveCatalogQuery(cssIndex, 'M4 screws');
+assert.equal(shortcutConstrained.state, 'catalog_list');
+assert.equal(shortcutConstrained.familyId, 'css');
+assert.deepEqual(shortcutConstrained.records.map(record => record.configurationId), ['synrec-v1-css-01', 'synrec-v1-css-02']);
+
+// --- u4: multi-select facets (OR within a fact, AND across facts) ----------
+const orFilters: readonly CatalogFilter[] = [
+  { factId: 'material', value: 'a2_stainless', source: 'user' },
+  { factId: 'material', value: 'alloy_steel', source: 'user' },
+];
+const orResolution = applyCatalogFilters(index, family, orFilters);
+assert.equal(orResolution.state, 'catalog_list');
+assert.equal(orResolution.records.length, 10, 'material OR returns the full family');
+const orFacets = computeFamilyFacets(index, 'shcs', orFilters);
+const orMaterial = orFacets.find(facet => facet.factId === 'material')!;
+assert.deepEqual(orMaterial.values.map(item => [item.value, item.count, item.active]), [
+  ['a2_stainless', 6, true], ['alloy_steel', 4, true],
+], 'disjunctive counts keep both active values live');
+const andAcross = applyCatalogFilters(index, family, [
+  ...orFilters,
+  { factId: 'nominal_diameter_mm', value: 6, source: 'user' },
+]);
+assert.equal(andAcross.records.length, 3, 'OR within material AND diameter 6');
+assert.equal(applyCatalogFilters(index, family, [
+  { factId: 'material', value: 'a2_stainless', source: 'user' },
+  { factId: 'material', value: 'a2_stainless', source: 'user' },
+]).state, 'invalid_filter', 'exactly repeated filter values are malformed');
+const diameters = computeFamilyFacets(index, 'shcs', [{ factId: 'material', value: 'a2_stainless', source: 'user' }])
+  .find(facet => facet.factId === 'nominal_diameter_mm')!;
+assert.deepEqual(diameters.values.map(item => [item.value, item.count]), [[4, 1], [5, 1], [6, 2], [8, 2]], 'facet counts exclude their own fact only');
+
 console.log('catalog production engine tests: ok');

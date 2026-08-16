@@ -188,6 +188,7 @@ export function buildSyntheticCatalogPackageInput(): unknown {
       trimPolicy: 'trim',
       casePolicy: 'upper',
       unicodePolicy: 'NFKC',
+      identifierPattern: '^PSYN(?:-[A-Z0-9]+)+$',
     }],
     identifierMappings,
     provenance: [

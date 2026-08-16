@@ -16,6 +16,7 @@ export {
 } from './filter-facets';
 export {
   resolveCatalogQuery,
+  resolveFamilyChoices,
   applyCatalogFilters,
   selectCatalogRecord,
   projectCatalogView,

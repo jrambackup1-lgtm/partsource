@@ -1,6 +1,6 @@
 # PartSource Product Recovery Plan
 
-**Status:** Execution closeout current through 2026-08-16 — implementation/proxy gates recorded; adversarial re-verified; recovered candidate deployed and byte-verified in production
+**Status:** Audit ticket set u1–u6 fully resolved (2026-08-16, see §16); `release:audit` green across both catalog packages with 16/16 browser tests. Prior closeout: eight-phase recovery complete; recovered candidate deployed and byte-verified in production.
 **Authority boundary:** `research/product-contract.md` remains the sole current product contract until Jay explicitly approves a reviewed change.
 **Scope of this document:** Product archaeology, recovery decisions, target architecture, phased implementation order, and validation gates.
 **Not included:** Product authority changes, supplier integrations, runtime AI, or permission to ship BOM/workspace behavior. `research/product-contract.md` remains sole authority.
@@ -1212,3 +1212,22 @@ The approved target should be understood as:
 The initial product surface is Home + Catalog. A local Workspace/BOM layer is a later, separately validated continuity feature. Supplier and procurement behavior remain outside the recovery.
 
 That is enough to become a real product without becoming a fake marketplace.
+
+---
+
+## 15. Post-recovery frontier — user-perspective audit (2026-08-16)
+
+A six-review user-perspective audit of the live product found the recovery's engine contract intact but four user-facing CRITICAL gaps: the real dataset cannot load (architecture/budgets/no ingestion path), broad queries bypass the family step the contract mandates, real McMaster part numbers never reach the exact path, and detail lacks real identifier display. Evidence and full findings: `user-perspective-issue-audit-2026-08-16.md`. Focused ticket set: `tickets/u1` (ingestion pipeline), `u2` (family step), `u3` (exact McMaster PN), `u4` (scalable list/URL), `u5` (honest detail/language), `u6` (accessibility mechanics). Order: u1 ∥ u2 ∥ u6 → u3 → u4 → u5. Recorded decisions: no shell expansion beyond Home + Catalog without new evidence (D1); real-data publication gates remain closed — pipeline and dev-loadable catalog release only (D2). No contract change made by the audit or tickets.
+
+## 16. Ticket execution ledger (2026-08-16)
+
+| Ticket | Status | Evidence |
+|---|---|---|
+| u1 — real-catalog ingestion + scalable loading | **resolved** | Decisions `decisions/u1-real-catalog-data-decisions.md`; `npm run catalog:build-real` ETL (deterministic 109.5 MB dev release, 26,953 configurations, 192 families, build-time digest); app-layer source seam `?catalog=real` (dev-server-only, never in the production build); budgets re-scoped ≥2×; `test-real-package.ts` + `evidence/u1-real-catalog-release.md` |
+| u2 — family-step resolution for broad queries | **resolved** | `catalog_chooser` state with live constraint-aware family counts; family entry preserves query filters as removable chips; single-match shortcut; partial application with negation guard; engine/URL/Playwright regression suites |
+| u3 — exact McMaster PN path | **resolved** | Namespace-declared anchored `identifierPattern` (parser-validated, compiled on the index) routes PN-shaped input into the exact path; absent PNs fail as identifier-not-found with the submission echoed; `mcmaster_pn` displays with its namespace label; no supplier/equivalence framing |
+| u4 — scalable result list, facets, URL | **resolved** | 50/page pagination + numeric sort (URL/history round-trip); multi-select OR facets with disjunctive counts, zero-count dead-ends hidden; schema-driven varying-fact columns + constant-fact family chips; URL v3 (`f_<factId>`, q+family no longer drops query filters, utm-inert); largest-family commit 41 ms at 2,376 rows |
+| u5 — honest detail view + UI language | **resolved** | Banner states only true facts in user terms (select-other-row, filter-exclusion covered); internal ids demoted to inspector diagnostics; all counts/tree/columns derived from the package; "part" terminology + disclosure once per surface; PN-first detail with standards block; decisions `decisions/u5-terminology-and-presentation.md` |
+| u6 — accessibility and layout mechanics | **resolved** | Sticky topbar + rail reachability (overflow clip + `minmax(0,1fr)`); post-search focus announcement + assertive failures; contrast/size pass locked by computed-ratio regression test; ARIA cleanup; mobile scroll lock; `catalog-accessibility.spec.ts` |
+
+Repository verification remains `cd web && npm run release:audit` — now covering both packages (`test:catalog` builds and exercises the real release) — green 2026-08-16 with 16/16 browser tests after u1–u6. No external gate (mechanical review, field adjudication, publication approval, engineer participants) is claimed or closed by this work.
