@@ -51,9 +51,11 @@ test('exact PN opens the correct family with a visible highlighted row', async (
   // f4: the app lands on the page containing the highlighted row.
   await expect(page.locator('.table-wrap tr.exact-row')).toHaveCount(1);
   await expect(page.locator('.pager')).toContainText(/Page \d+ of \d+/);
-  const inViewport = await page.locator('.table-wrap tr.exact-row').evaluate(
-    element => { const rect = element.getBoundingClientRect(); return rect.top >= 0 && rect.bottom <= window.innerHeight; });
-  expect(inViewport).toBe(true);
+  // The scroll-into-view runs on the next animation frame after the page
+  // lands — poll rather than sample once (CI runners schedule frames later).
+  await expect.poll(async () => page.locator('.table-wrap tr.exact-row').evaluate(
+    element => { const rect = element.getBoundingClientRect(); return rect.top >= 0 && rect.bottom <= window.innerHeight; }),
+  { timeout: 15_000 }).toBe(true);
 });
 
 test('rows and detail show the real PN; diagnostics stay optional', async ({ page }) => {
